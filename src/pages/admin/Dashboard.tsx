@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -293,8 +294,8 @@ export default function Dashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <a
-              href="/admin/courses"
+            <Link
+              to="/admin/courses"
               className="flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-muted transition-colors"
             >
               <GraduationCap className="h-5 w-5 text-primary" />
@@ -302,9 +303,9 @@ export default function Dashboard() {
                 <p className="font-medium">Kurs erstellen</p>
                 <p className="text-sm text-muted-foreground">Neuen Kurs anlegen</p>
               </div>
-            </a>
-            <a
-              href="/admin/schedule"
+            </Link>
+            <Link
+              to="/admin/schedule"
               className="flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-muted transition-colors"
             >
               <Calendar className="h-5 w-5 text-primary" />
@@ -312,9 +313,9 @@ export default function Dashboard() {
                 <p className="font-medium">Termin planen</p>
                 <p className="text-sm text-muted-foreground">Neuen Kurstermin festlegen</p>
               </div>
-            </a>
-            <a
-              href="/admin/registrations"
+            </Link>
+            <Link
+              to="/admin/registrations"
               className="flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-muted transition-colors"
             >
               <CheckCircle className="h-5 w-5 text-green-500" />
@@ -322,9 +323,9 @@ export default function Dashboard() {
                 <p className="font-medium">Anmeldungen bearbeiten</p>
                 <p className="text-sm text-muted-foreground">{stats.pendingRegistrations} ausstehend</p>
               </div>
-            </a>
-            <a
-              href="/admin/statistics"
+            </Link>
+            <Link
+              to="/admin/statistics"
               className="flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-muted transition-colors"
             >
               <TrendingUp className="h-5 w-5 text-blue-500" />
@@ -332,7 +333,7 @@ export default function Dashboard() {
                 <p className="font-medium">Statistiken ansehen</p>
                 <p className="text-sm text-muted-foreground">Auswertungen & Reports</p>
               </div>
-            </a>
+            </Link>
           </CardContent>
         </Card>
       </div>
