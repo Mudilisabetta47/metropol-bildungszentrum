@@ -31,6 +31,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Loader2, Calendar, MapPin, Users } from "lucide-react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 
 interface CourseDate {
   id: string;
@@ -82,6 +83,26 @@ export default function Schedule() {
 
   useEffect(() => {
     fetchData();
+
+    // Subscribe to realtime changes for course_dates
+    const channel = supabase
+      .channel("admin_course_dates")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "course_dates",
+        },
+        () => {
+          fetchData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchData = async () => {
@@ -438,9 +459,28 @@ export default function Schedule() {
                       {courseDate.end_time && ` - ${courseDate.end_time.slice(0, 5)}`}
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-1">
-                        <Users className="h-3 w-3 text-muted-foreground" />
-                        {courseDate.current_participants} / {courseDate.max_participants}
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-1 text-sm">
+                          <Users className="h-3 w-3 text-muted-foreground" />
+                          <span className="font-medium">
+                            {courseDate.current_participants} / {courseDate.max_participants}
+                          </span>
+                        </div>
+                        <div className="w-20 h-1.5 bg-muted rounded-full overflow-hidden">
+                          <div
+                            className={cn(
+                              "h-full rounded-full transition-all",
+                              courseDate.current_participants >= courseDate.max_participants
+                                ? "bg-red-500"
+                                : courseDate.current_participants >= courseDate.max_participants * 0.8
+                                ? "bg-yellow-500"
+                                : "bg-green-500"
+                            )}
+                            style={{
+                              width: `${Math.min(100, (courseDate.current_participants / courseDate.max_participants) * 100)}%`
+                            }}
+                          />
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell>
