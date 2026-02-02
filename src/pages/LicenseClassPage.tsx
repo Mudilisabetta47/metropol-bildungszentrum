@@ -4,6 +4,9 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Contact } from "@/components/sections/Contact";
+import trucksImage from "@/assets/trucks-metropol.jpg";
+import busImage from "@/assets/bus-metropol.jpg";
+import fleetTeam from "@/assets/fleet-team.webp";
 
 interface LicenseClassData {
   slug: string;
@@ -18,7 +21,7 @@ interface LicenseClassData {
   curriculum: string[];
   benefits: string[];
   funding: string;
-  heroImage?: string;
+  heroImage: string;
 }
 
 const licenseClassesData: Record<string, LicenseClassData> = {
@@ -53,7 +56,8 @@ const licenseClassesData: Record<string, LicenseClassData> = {
       "Unterstützung bei Förderanträgen",
       "Jobvermittlung nach erfolgreichem Abschluss"
     ],
-    funding: "100% Förderung durch Bildungsgutschein der Agentur für Arbeit oder des Jobcenters möglich."
+    funding: "100% Förderung durch Bildungsgutschein der Agentur für Arbeit oder des Jobcenters möglich.",
+    heroImage: "trucks"
   },
   "d-de": {
     slug: "d-de",
@@ -88,7 +92,8 @@ const licenseClassesData: Record<string, LicenseClassData> = {
       "Kontakte zu regionalen Busunternehmen",
       "Unterstützung bei der Jobsuche"
     ],
-    funding: "100% Förderung durch Bildungsgutschein der Agentur für Arbeit oder des Jobcenters möglich."
+    funding: "100% Förderung durch Bildungsgutschein der Agentur für Arbeit oder des Jobcenters möglich.",
+    heroImage: "bus"
   },
   "fahrlehrer": {
     slug: "fahrlehrer",
@@ -122,7 +127,8 @@ const licenseClassesData: Record<string, LicenseClassData> = {
       "Karrieremöglichkeiten in der Fahrschulbranche",
       "Flexibler Beruf mit guten Verdienstmöglichkeiten"
     ],
-    funding: "Förderung durch Aufstiegs-BAföG oder Bildungsgutschein möglich. Wir beraten Sie gerne zu Ihren Möglichkeiten."
+    funding: "Förderung durch Aufstiegs-BAföG oder Bildungsgutschein möglich. Wir beraten Sie gerne zu Ihren Möglichkeiten.",
+    heroImage: "team"
   },
   "bkf-weiterbildung": {
     slug: "bkf-weiterbildung",
@@ -153,7 +159,8 @@ const licenseClassesData: Record<string, LicenseClassData> = {
       "Moderne Schulungsräume",
       "Kostenlose Getränke und Snacks"
     ],
-    funding: "Bei Arbeitslosigkeit oder drohender Arbeitslosigkeit kann die Weiterbildung gefördert werden."
+    funding: "Bei Arbeitslosigkeit oder drohender Arbeitslosigkeit kann die Weiterbildung gefördert werden.",
+    heroImage: "trucks"
   },
   "sprachkurse": {
     slug: "sprachkurse",
@@ -185,7 +192,17 @@ const licenseClassesData: Record<string, LicenseClassData> = {
       "Vorbereitung auf Führerscheinprüfung",
       "Kulturelle Integration"
     ],
-    funding: "Förderung über Integrationskurse oder BAMF möglich. Wir unterstützen Sie bei der Antragstellung."
+    funding: "Förderung über Integrationskurse oder BAMF möglich. Wir unterstützen Sie bei der Antragstellung.",
+    heroImage: "team"
+  }
+};
+
+const getHeroImage = (type: string) => {
+  switch(type) {
+    case "trucks": return trucksImage;
+    case "bus": return busImage;
+    case "team": return fleetTeam;
+    default: return fleetTeam;
   }
 };
 
@@ -208,64 +225,78 @@ export default function LicenseClassPage() {
     <div className="min-h-screen">
       <Header />
       
-      {/* Hero Section */}
-      <section 
-        className="relative pt-32 pb-20 overflow-hidden"
-        style={{
-          background: "linear-gradient(135deg, hsl(136 100% 35%) 0%, hsl(136 85% 28%) 50%, hsl(140 80% 22%) 100%)"
-        }}
-      >
-        <div className="absolute top-1/4 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -z-10" />
-        
+      {/* Hero Section with Image */}
+      <section className="pt-28 sm:pt-32">
+        <div className="relative w-full h-[300px] sm:h-[400px] overflow-hidden">
+          <img 
+            src={getHeroImage(data.heroImage)}
+            alt={data.title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+            <div className="section-container">
+              <Link to="/" className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-4 transition-colors text-sm">
+                ← Zurück zur Startseite
+              </Link>
+              <p className="text-white/80 font-medium mb-2">{data.subtitle}</p>
+              <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">
+                {data.title}
+              </h1>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Description & Key Info */}
+      <section className="py-12 bg-background">
         <div className="section-container">
-          <div className="max-w-3xl">
-            <Link to="/" className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-6 transition-colors">
-              ← Zurück zur Startseite
-            </Link>
-            
-            <p className="text-white/80 font-medium mb-2">{data.subtitle}</p>
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-              {data.title}
-            </h1>
-            <p className="text-lg sm:text-xl text-white/80 leading-relaxed mb-8">
-              {data.description}
-            </p>
-            
-            <div className="flex flex-wrap gap-6 mb-8 text-white">
-              <div className="flex items-center gap-2">
-                <Clock className="h-5 w-5 text-white/80" />
-                <span>{data.duration}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Euro className="h-5 w-5 text-white/80" />
-                <span>{data.price}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-white/80" />
-                <span>{data.locations.join(", ")}</span>
+          <div className="grid lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <p className="text-lg text-muted-foreground leading-relaxed mb-8">
+                {data.description}
+              </p>
+              
+              <div className="flex flex-wrap gap-6">
+                <div className="flex items-center gap-2">
+                  <Clock className="h-5 w-5 text-primary" />
+                  <span className="font-medium">{data.duration}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Euro className="h-5 w-5 text-primary" />
+                  <span className="font-medium">{data.price}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-5 w-5 text-primary" />
+                  <span className="font-medium">{data.locations.join(", ")}</span>
+                </div>
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button variant="heroWhite" size="xl" asChild>
-                <a href="#kontakt">
-                  Jetzt anmelden
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </a>
-              </Button>
-              <Button variant="heroOutline" size="xl" asChild>
-                <a href="tel:+49511123456">
-                  <Phone className="mr-2 h-5 w-5" />
-                  Beratung: 0511 123 456
-                </a>
-              </Button>
+            <div className="bg-primary text-primary-foreground rounded-xl p-6">
+              <h3 className="font-display font-bold text-lg mb-4">Jetzt anmelden</h3>
+              <div className="space-y-4 mb-6">
+                <Button variant="heroWhite" size="lg" className="w-full" asChild>
+                  <a href="#kontakt">
+                    Unverbindlich anfragen
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </a>
+                </Button>
+                <Button variant="heroOutline" size="lg" className="w-full" asChild>
+                  <a href="tel:+49511123456">
+                    <Phone className="mr-2 h-4 w-4" />
+                    0511 123 456
+                  </a>
+                </Button>
+              </div>
+              <p className="text-sm text-primary-foreground/80">{data.funding}</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Key Info Cards */}
-      <section className="py-16 bg-secondary">
+      <section className="py-12 bg-secondary">
         <div className="section-container">
           <div className="grid md:grid-cols-3 gap-6">
             <div className="bg-card rounded-xl p-6 border border-border shadow-sm">
@@ -284,7 +315,7 @@ export default function LicenseClassPage() {
             <div className="bg-card rounded-xl p-6 border border-border shadow-sm">
               <Award className="h-8 w-8 text-primary mb-4" />
               <h3 className="font-display font-bold text-lg mb-3">Förderung</h3>
-              <p className="text-muted-foreground">{data.funding}</p>
+              <p className="text-muted-foreground text-sm">{data.funding}</p>
             </div>
             
             <div className="bg-card rounded-xl p-6 border border-border shadow-sm">

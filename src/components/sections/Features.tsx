@@ -1,4 +1,5 @@
 import { Shield, Award, TrendingUp, Clock, CreditCard, Users } from "lucide-react";
+import fleetVehicles from "@/assets/fleet-vehicles.jpg";
 
 const features = [
   {
@@ -37,36 +38,52 @@ export function Features() {
   return (
     <section id="ueber-uns" className="py-24 bg-background">
       <div className="section-container">
-        {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <p className="text-accent font-semibold text-sm uppercase tracking-wider mb-4">Warum Metropol</p>
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
-            Ihre Vorteile bei uns
-          </h2>
-          <p className="text-lg text-muted-foreground">
-            Wir setzen auf Qualität, Erfahrung und persönliche Betreuung für Ihren Erfolg.
-          </p>
-        </div>
-
-        {/* Features grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
-            <div
-              key={feature.title}
-              className="group p-6 rounded-2xl bg-card border border-border hover:border-accent/30 hover:shadow-lg transition-all duration-300"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <div className="mb-5 inline-flex p-3 rounded-xl bg-accent/10 group-hover:bg-accent/20 transition-colors">
-                <feature.icon className="h-6 w-6 text-accent" />
-              </div>
-              <h3 className="font-display font-bold text-lg text-foreground mb-3">
-                {feature.title}
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                {feature.description}
-              </p>
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          {/* Image */}
+          <div className="relative">
+            <img 
+              src={fleetVehicles}
+              alt="Metropol Fahrzeugflotte - LKW, Bus und Fahrschulwagen"
+              className="rounded-2xl shadow-xl w-full"
+            />
+            <div className="absolute -bottom-6 -right-6 bg-primary text-primary-foreground rounded-xl p-6 shadow-xl hidden sm:block">
+              <p className="font-display text-3xl font-bold">25+</p>
+              <p className="text-sm text-primary-foreground/80">Jahre Erfahrung</p>
             </div>
-          ))}
+          </div>
+
+          {/* Content */}
+          <div>
+            <p className="text-primary font-semibold text-sm uppercase tracking-wider mb-4">Warum Metropol</p>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold text-foreground mb-6">
+              Ihre Vorteile bei uns
+            </h2>
+            <p className="text-lg text-muted-foreground mb-8">
+              Wir setzen auf Qualität, Erfahrung und persönliche Betreuung für Ihren Erfolg.
+            </p>
+
+            {/* Features grid */}
+            <div className="grid sm:grid-cols-2 gap-6">
+              {features.map((feature) => (
+                <div
+                  key={feature.title}
+                  className="flex items-start gap-4"
+                >
+                  <div className="p-2 rounded-lg bg-primary/10 shrink-0">
+                    <feature.icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-1">
+                      {feature.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {feature.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
