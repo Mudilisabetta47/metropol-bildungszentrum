@@ -1,5 +1,6 @@
-import { Shield, Award, TrendingUp, Clock, CreditCard, Users } from "lucide-react";
+import { Shield, Award, TrendingUp, Clock, CreditCard, Users, CheckCircle } from "lucide-react";
 import fleetVehicles from "@/assets/fleet-vehicles.jpg";
+import tqcertLogo from "@/assets/tqcert-logo.webp";
 
 const features = [
   {
@@ -34,10 +35,50 @@ const features = [
   },
 ];
 
+const certifications = [
+  "AZAV-zertifizierter Bildungsträger",
+  "Anerkannt durch die Agentur für Arbeit",
+  "TÜV-geprüfte Qualitätsstandards",
+  "Staatlich anerkannte Ausbildungsstätte",
+];
+
 export function Features() {
   return (
     <section id="ueber-uns" className="py-24 bg-background">
       <div className="section-container">
+        {/* Trust badges section */}
+        <div className="bg-muted/50 rounded-2xl p-8 mb-16 border border-border">
+          <div className="flex flex-col lg:flex-row items-center gap-8">
+            {/* Certificate logo */}
+            <div className="flex-shrink-0">
+              <img 
+                src={tqcertLogo}
+                alt="TQ Cert Zertifizierung"
+                className="h-24 w-auto"
+              />
+            </div>
+            
+            {/* Certificate info */}
+            <div className="flex-1 text-center lg:text-left">
+              <h3 className="font-display text-xl font-bold text-foreground mb-2">
+                Zertifizierter Bildungsträger
+              </h3>
+              <p className="text-muted-foreground mb-4">
+                Wir sind ein nach AZAV zugelassener Träger für die Förderung der beruflichen Weiterbildung. 
+                Unsere Qualität wird regelmäßig durch unabhängige Prüfstellen kontrolliert.
+              </p>
+              <div className="flex flex-wrap justify-center lg:justify-start gap-4">
+                {certifications.map((cert) => (
+                  <div key={cert} className="flex items-center gap-2 text-sm">
+                    <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
+                    <span className="text-foreground">{cert}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Image */}
           <div className="relative">
