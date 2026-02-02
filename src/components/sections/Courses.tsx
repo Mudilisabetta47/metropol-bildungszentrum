@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { ArrowRight, Clock, MapPin, Users, Calendar, Truck, Bus, GraduationCap, BookOpen, Languages, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -16,6 +17,7 @@ const courses = [
     id: 1,
     title: "Berufskraftfahrer C/CE",
     category: "lkw",
+    slug: "c-ce",
     description: "Komplette Ausbildung für den LKW-Führerschein mit praktischer und theoretischer Schulung.",
     duration: "8-10 Wochen",
     locations: ["Hannover", "Bremen", "Garbsen"],
@@ -29,6 +31,7 @@ const courses = [
     id: 2,
     title: "Busführerschein D/DE",
     category: "bus",
+    slug: "d-de",
     description: "Werden Sie Busfahrer*in und befördern Sie Menschen sicher an ihr Ziel.",
     duration: "6-8 Wochen",
     locations: ["Hannover", "Bremen"],
@@ -42,6 +45,7 @@ const courses = [
     id: 3,
     title: "Fahrlehrer*innen-Ausbildung",
     category: "fahrlehrer",
+    slug: "fahrlehrer",
     description: "Umfassende Ausbildung zum staatlich anerkannten Fahrlehrer.",
     duration: "12 Monate",
     locations: ["Hannover"],
@@ -53,34 +57,23 @@ const courses = [
   },
   {
     id: 4,
-    title: "BKF-Weiterbildung Modul 1",
+    title: "BKF-Weiterbildung Module 1-5",
     category: "weiterbildung",
-    description: "Eco-Training und Fahrsicherheit für Berufskraftfahrer.",
-    duration: "1 Tag",
+    slug: "bkf-weiterbildung",
+    description: "Gesetzlich vorgeschriebene Weiterbildung für Berufskraftfahrer.",
+    duration: "5 Tage",
     locations: ["Hannover", "Bremen", "Garbsen"],
     nextStart: "10.02.2026",
     spots: 20,
     icon: BookOpen,
     featured: false,
-    price: "120 €",
+    price: "120 € / Modul",
   },
   {
     id: 5,
-    title: "BKF-Weiterbildung Modul 2",
-    category: "weiterbildung",
-    description: "Sozialvorschriften für den Güterverkehr.",
-    duration: "1 Tag",
-    locations: ["Hannover", "Bremen", "Garbsen"],
-    nextStart: "11.02.2026",
-    spots: 20,
-    icon: BookOpen,
-    featured: false,
-    price: "120 €",
-  },
-  {
-    id: 6,
     title: "Sprachkurs für Berufskraftfahrer",
     category: "weiterbildung",
+    slug: "sprachkurse",
     description: "Deutsch für den Berufsalltag als Kraftfahrer.",
     duration: "4 Wochen",
     locations: ["Hannover", "Bremen"],
@@ -104,7 +97,7 @@ export function Courses() {
       <div className="section-container">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <p className="text-accent font-semibold text-sm uppercase tracking-wider mb-4">Unser Angebot</p>
+          <p className="text-primary font-semibold text-sm uppercase tracking-wider mb-4">Unser Angebot</p>
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
             Professionelle Aus- und Weiterbildung
           </h2>
@@ -138,26 +131,26 @@ export function Courses() {
               key={course.id}
               className={cn(
                 "card-elevated p-6 flex flex-col",
-                course.featured && "ring-2 ring-accent"
+                course.featured && "ring-2 ring-primary"
               )}
               style={{ animationDelay: `${index * 100}ms` }}
             >
               {course.featured && (
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-semibold mb-4 self-start">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-4 self-start">
                   <Award className="h-3.5 w-3.5" />
                   Beliebt
                 </div>
               )}
               
               <div className="flex items-start gap-4 mb-4">
-                <div className="p-3 rounded-xl bg-primary/5">
+                <div className="p-3 rounded-xl bg-primary/10">
                   <course.icon className="h-6 w-6 text-primary" />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-display font-bold text-lg text-foreground mb-1">
                     {course.title}
                   </h3>
-                  <p className="text-accent font-semibold">{course.price}</p>
+                  <p className="text-primary font-semibold">{course.price}</p>
                 </div>
               </div>
 
@@ -184,9 +177,11 @@ export function Courses() {
                 </div>
               </div>
 
-              <Button variant="default" className="w-full group">
-                Mehr erfahren
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              <Button variant="default" className="w-full group" asChild>
+                <Link to={`/fuehrerschein/${course.slug}`}>
+                  Mehr erfahren
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
               </Button>
             </div>
           ))}
@@ -194,9 +189,9 @@ export function Courses() {
 
         {/* CTA */}
         <div className="text-center mt-12">
-          <p className="text-muted-foreground mb-4">Nicht den passenden Kurs gefunden?</p>
-          <Button variant="outline" size="lg">
-            Alle Kurse ansehen
+          <p className="text-muted-foreground mb-4">Haben Sie Fragen zu unseren Kursen?</p>
+          <Button variant="outline" size="lg" asChild>
+            <a href="#kontakt">Jetzt Beratung anfragen</a>
           </Button>
         </div>
       </div>

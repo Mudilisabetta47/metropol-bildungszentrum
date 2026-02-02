@@ -3,107 +3,107 @@
 @tailwind utilities;
 
 /* Fahrschule Metropol Bildungszentrum - Design System
-   Professional driving education platform with modern, trustworthy aesthetics
-   Colors: Deep navy (trust), warm amber (action), clean whites
+   Professional driving education platform - Fresh green branding
+   Primary: Metropol Green #00CC28 (HSL 136 100% 40%)
 */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 @layer base {
   :root {
-    /* Core Brand Colors */
-    --background: 210 20% 98%;
-    --foreground: 213 35% 12%;
+    /* Core Brand Colors - Light Theme */
+    --background: 0 0% 100%;
+    --foreground: 140 10% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 213 35% 12%;
+    --card-foreground: 140 10% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 213 35% 12%;
+    --popover-foreground: 140 10% 15%;
 
-    /* Primary: Deep Navy Blue - Trust & Professionalism */
-    --primary: 213 55% 20%;
+    /* Primary: Metropol Green #00CC28 */
+    --primary: 136 100% 40%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary: Light blue-gray for subtle backgrounds */
-    --secondary: 210 25% 95%;
-    --secondary-foreground: 213 35% 20%;
+    /* Secondary: Light green-gray for subtle backgrounds */
+    --secondary: 136 20% 96%;
+    --secondary-foreground: 136 30% 25%;
 
-    /* Muted: Soft grays */
-    --muted: 210 15% 92%;
-    --muted-foreground: 213 15% 45%;
+    /* Muted: Soft grays with green tint */
+    --muted: 136 10% 94%;
+    --muted-foreground: 136 5% 45%;
 
-    /* Accent: Warm Amber/Orange - Energy & Action */
-    --accent: 32 95% 52%;
+    /* Accent: Same green for consistency */
+    --accent: 136 100% 40%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 213 20% 88%;
-    --input: 213 20% 88%;
-    --ring: 213 55% 20%;
+    --border: 136 15% 88%;
+    --input: 136 15% 88%;
+    --ring: 136 100% 40%;
 
     --radius: 0.75rem;
 
     /* Custom tokens for the platform */
-    --gradient-primary: linear-gradient(135deg, hsl(213 55% 20%) 0%, hsl(213 45% 30%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(32 95% 52%) 0%, hsl(25 95% 48%) 100%);
-    --gradient-hero: linear-gradient(180deg, hsl(213 55% 15%) 0%, hsl(213 45% 25%) 100%);
-    --shadow-sm: 0 1px 2px 0 hsl(213 35% 12% / 0.05);
-    --shadow-md: 0 4px 6px -1px hsl(213 35% 12% / 0.1), 0 2px 4px -2px hsl(213 35% 12% / 0.1);
-    --shadow-lg: 0 10px 15px -3px hsl(213 35% 12% / 0.1), 0 4px 6px -4px hsl(213 35% 12% / 0.1);
-    --shadow-xl: 0 20px 25px -5px hsl(213 35% 12% / 0.1), 0 8px 10px -6px hsl(213 35% 12% / 0.1);
-    --shadow-accent: 0 10px 30px -10px hsl(32 95% 52% / 0.4);
+    --gradient-primary: linear-gradient(135deg, hsl(136 100% 40%) 0%, hsl(136 80% 35%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(136 100% 40%) 0%, hsl(140 90% 35%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(136 100% 38%) 0%, hsl(136 85% 32%) 100%);
+    --shadow-sm: 0 1px 2px 0 hsl(136 20% 20% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(136 20% 20% / 0.1), 0 2px 4px -2px hsl(136 20% 20% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(136 20% 20% / 0.1), 0 4px 6px -4px hsl(136 20% 20% / 0.1);
+    --shadow-xl: 0 20px 25px -5px hsl(136 20% 20% / 0.1), 0 8px 10px -6px hsl(136 20% 20% / 0.1);
+    --shadow-accent: 0 10px 30px -10px hsl(136 100% 40% / 0.4);
 
     /* Sidebar tokens */
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 213 35% 20%;
-    --sidebar-primary: 213 55% 20%;
+    --sidebar-background: 0 0% 99%;
+    --sidebar-foreground: 136 20% 25%;
+    --sidebar-primary: 136 100% 40%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 25% 95%;
-    --sidebar-accent-foreground: 213 35% 20%;
-    --sidebar-border: 213 20% 88%;
-    --sidebar-ring: 213 55% 20%;
+    --sidebar-accent: 136 20% 96%;
+    --sidebar-accent-foreground: 136 30% 25%;
+    --sidebar-border: 136 15% 90%;
+    --sidebar-ring: 136 100% 40%;
   }
 
   .dark {
-    --background: 213 35% 8%;
-    --foreground: 210 20% 95%;
+    --background: 140 15% 8%;
+    --foreground: 136 10% 95%;
 
-    --card: 213 30% 12%;
-    --card-foreground: 210 20% 95%;
+    --card: 140 15% 12%;
+    --card-foreground: 136 10% 95%;
 
-    --popover: 213 30% 12%;
-    --popover-foreground: 210 20% 95%;
+    --popover: 140 15% 12%;
+    --popover-foreground: 136 10% 95%;
 
-    --primary: 210 40% 80%;
-    --primary-foreground: 213 35% 12%;
+    --primary: 136 90% 50%;
+    --primary-foreground: 140 20% 10%;
 
-    --secondary: 213 25% 18%;
-    --secondary-foreground: 210 20% 95%;
+    --secondary: 140 15% 18%;
+    --secondary-foreground: 136 10% 95%;
 
-    --muted: 213 25% 18%;
-    --muted-foreground: 210 15% 60%;
+    --muted: 140 15% 18%;
+    --muted-foreground: 136 10% 60%;
 
-    --accent: 32 90% 55%;
-    --accent-foreground: 213 35% 12%;
+    --accent: 136 90% 50%;
+    --accent-foreground: 140 20% 10%;
 
     --destructive: 0 62% 30%;
-    --destructive-foreground: 210 20% 95%;
+    --destructive-foreground: 0 0% 95%;
 
-    --border: 213 25% 20%;
-    --input: 213 25% 20%;
-    --ring: 210 40% 80%;
+    --border: 140 15% 22%;
+    --input: 140 15% 22%;
+    --ring: 136 90% 50%;
 
-    --sidebar-background: 213 30% 10%;
-    --sidebar-foreground: 210 20% 90%;
-    --sidebar-primary: 210 40% 70%;
-    --sidebar-primary-foreground: 213 35% 12%;
-    --sidebar-accent: 213 25% 18%;
-    --sidebar-accent-foreground: 210 20% 90%;
-    --sidebar-border: 213 25% 20%;
-    --sidebar-ring: 210 40% 70%;
+    --sidebar-background: 140 15% 10%;
+    --sidebar-foreground: 136 10% 90%;
+    --sidebar-primary: 136 90% 50%;
+    --sidebar-primary-foreground: 140 20% 10%;
+    --sidebar-accent: 140 15% 18%;
+    --sidebar-accent-foreground: 136 10% 90%;
+    --sidebar-border: 140 15% 22%;
+    --sidebar-ring: 136 90% 50%;
   }
 }
 
@@ -156,7 +156,7 @@
 
   .btn-gradient:hover {
     transform: translateY(-1px);
-    box-shadow: 0 14px 35px -10px hsl(32 95% 52% / 0.5);
+    box-shadow: 0 14px 35px -10px hsl(136 100% 40% / 0.5);
   }
 }
 
