@@ -1,9 +1,11 @@
 import { useParams, Link } from "react-router-dom";
+import { useState } from "react";
 import { ArrowRight, Clock, MapPin, Calendar, CheckCircle, Phone, Euro, Award, Users, FileText } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Contact } from "@/components/sections/Contact";
+import { BKFModuleSchedule } from "@/components/sections/BKFModuleSchedule";
 import trucksImage from "@/assets/trucks-metropol.jpg";
 import busImage from "@/assets/bus-metropol.jpg";
 import fleetTeam from "@/assets/fleet-team.webp";
@@ -209,6 +211,13 @@ const getHeroImage = (type: string) => {
 export default function LicenseClassPage() {
   const { classType } = useParams<{ classType: string }>();
   const data = classType ? licenseClassesData[classType] : null;
+  const [selectedModuleInfo, setSelectedModuleInfo] = useState<string | null>(null);
+
+  const handleModuleSelect = (moduleName: string, date: string) => {
+    setSelectedModuleInfo(`${moduleName} – ${date}`);
+  };
+
+  const isBKFWeiterbildung = classType === "bkf-weiterbildung";
 
   if (!data) {
     return (
@@ -403,8 +412,16 @@ export default function LicenseClassPage() {
         </div>
       </section>
 
-      {/* Contact Section with preselected course */}
-      <Contact preselectedCourse={data.slug} />
+      {/* BKF Module Schedule - only for bkf-weiterbildung */}
+      {isBKFWeiterbildung && (
+        <BKFModuleSchedule onSelectModule={handleModuleSelect} />
+      )}
+
+      {/* Contact Section with preselected course and optional module info */}
+      <Contact 
+        preselectedCourse={data.slug} 
+        additionalInfo={selectedModuleInfo || undefined}
+      />
       
       <Footer />
     </div>

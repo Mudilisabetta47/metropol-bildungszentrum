@@ -43,9 +43,10 @@ const slugToCourseValue: Record<string, string> = {
 
 interface ContactProps {
   preselectedCourse?: string;
+  additionalInfo?: string;
 }
 
-export function Contact({ preselectedCourse }: ContactProps) {
+export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
   const location = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -255,6 +256,12 @@ export function Contact({ preselectedCourse }: ContactProps) {
               <div className="mb-6 p-4 rounded-xl bg-primary/5 border border-primary/20">
                 <p className="text-sm text-muted-foreground mb-1">Ihr gewählter Kurs:</p>
                 <p className="font-semibold text-primary">{courseLabel}</p>
+                {additionalInfo && (
+                  <p className="text-sm text-foreground mt-2 pt-2 border-t border-primary/10">
+                    <span className="text-muted-foreground">Gewählter Termin: </span>
+                    {additionalInfo}
+                  </p>
+                )}
               </div>
             )}
 
