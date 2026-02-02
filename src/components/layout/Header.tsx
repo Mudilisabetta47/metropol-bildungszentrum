@@ -34,9 +34,9 @@ export function Header() {
       <div className="bg-primary text-primary-foreground py-2">
         <div className="section-container flex justify-between items-center text-sm">
           <div className="flex items-center gap-6">
-            <a href="tel:+49511123456" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <a href="tel:+4951164250568" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <Phone className="h-4 w-4" />
-              <span className="hidden sm:inline">0511 123 456</span>
+              <span className="hidden sm:inline">+49 (0) 511 642 50 68</span>
             </a>
             <div className="hidden md:flex items-center gap-2">
               <MapPin className="h-4 w-4" />

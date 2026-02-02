@@ -64,11 +64,12 @@ export default function DatenschutzPage() {
                   Die verantwortliche Stelle für die Datenverarbeitung auf dieser Website ist:
                 </p>
                 <p className="text-muted-foreground mt-4">
-                  Metropol Bildungszentrum GmbH<br />
+                  METROPOL Bildungszentrum GmbH<br />
+                  Inhaber Vedat Özel<br />
                   Vahrenwalder Str. 213<br />
                   30165 Hannover<br /><br />
-                  Telefon: 0511 123 456<br />
-                  E-Mail: info@mep-agentur.de
+                  Telefon: +49 (0) 511 642 50 68<br />
+                  E-Mail: info@metropol-bz.de
                 </p>
                 <p className="text-muted-foreground mt-4">
                   Verantwortliche Stelle ist die natürliche oder juristische Person, die allein oder 
@@ -201,8 +202,8 @@ export default function DatenschutzPage() {
                 </h2>
                 <p className="text-muted-foreground">
                   Wenn Sie Fragen zum Datenschutz haben, schreiben Sie uns bitte eine E-Mail an:{" "}
-                  <a href="mailto:info@mep-agentur.de" className="text-primary hover:underline">
-                    info@mep-agentur.de
+                  <a href="mailto:info@metropol-bz.de" className="text-primary hover:underline">
+                    info@metropol-bz.de
                   </a>
                 </p>
               </section>

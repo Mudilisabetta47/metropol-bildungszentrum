@@ -100,8 +100,8 @@ export function Footer() {
                 <Phone className="h-5 w-5 text-primary-foreground/80 mt-0.5" />
                 <div>
                   <p className="font-medium">Telefon</p>
-                  <a href="tel:+49511123456" className="text-primary-foreground/80 hover:text-primary-foreground">
-                    0511 123 456
+                  <a href="tel:+4951164250568" className="text-primary-foreground/80 hover:text-primary-foreground">
+                    +49 (0) 511 642 50 68
                   </a>
                 </div>
               </li>
@@ -109,8 +109,8 @@ export function Footer() {
                 <Mail className="h-5 w-5 text-primary-foreground/80 mt-0.5" />
                 <div>
                   <p className="font-medium">E-Mail</p>
-                  <a href="mailto:info@mep-agentur.de" className="text-primary-foreground/80 hover:text-primary-foreground">
-                    info@mep-agentur.de
+                  <a href="mailto:info@metropol-bz.de" className="text-primary-foreground/80 hover:text-primary-foreground">
+                    info@metropol-bz.de
                   </a>
                 </div>
               </li>

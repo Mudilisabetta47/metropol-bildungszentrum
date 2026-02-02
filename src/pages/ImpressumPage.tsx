@@ -19,7 +19,8 @@ export default function ImpressumPage() {
                   Angaben gemäß § 5 TMG
                 </h2>
                 <p className="text-muted-foreground">
-                  Metropol Bildungszentrum GmbH<br />
+                  METROPOL Bildungszentrum GmbH<br />
+                  Inhaber Vedat Özel<br />
                   Vahrenwalder Str. 213<br />
                   30165 Hannover
                 </p>
@@ -30,7 +31,7 @@ export default function ImpressumPage() {
                   Vertreten durch
                 </h2>
                 <p className="text-muted-foreground">
-                  Geschäftsführer: [Name des Geschäftsführers]
+                  Geschäftsführer Vedat Özel
                 </p>
               </section>
 
@@ -39,8 +40,8 @@ export default function ImpressumPage() {
                   Kontakt
                 </h2>
                 <p className="text-muted-foreground">
-                  Telefon: 0511 123 456<br />
-                  E-Mail: info@mep-agentur.de
+                  Telefon: +49 (0) 511 642 50 68<br />
+                  E-Mail: info@metropol-bz.de
                 </p>
               </section>
 
