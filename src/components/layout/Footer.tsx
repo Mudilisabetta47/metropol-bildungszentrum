@@ -5,18 +5,18 @@ import logoMetropol from "@/assets/logo-metropol.webp";
 const locations = [
   {
     city: "Hannover",
-    address: "Beispielstraße 123, 30159 Hannover",
+    address: "Vahrenwalder Str. 213, 30165 Hannover",
     phone: "0511 123 456",
   },
   {
-    city: "Bremen",
-    address: "Musterweg 45, 28195 Bremen",
-    phone: "0421 789 012",
+    city: "Garbsen",
+    address: "Planetenring 25 – 27, 30823 Garbsen",
+    phone: "05131 345 678",
   },
   {
-    city: "Garbsen",
-    address: "Fahrweg 78, 30823 Garbsen",
-    phone: "05131 345 678",
+    city: "Bremen",
+    address: "Bahnhofsplatz 41, 28195 Bremen",
+    phone: "0421 789 012",
   },
 ];
 
@@ -109,8 +109,8 @@ export function Footer() {
                 <Mail className="h-5 w-5 text-primary-foreground/80 mt-0.5" />
                 <div>
                   <p className="font-medium">E-Mail</p>
-                  <a href="mailto:info@metropol-bildung.de" className="text-primary-foreground/80 hover:text-primary-foreground">
-                    info@metropol-bildung.de
+                  <a href="mailto:info@mep-agentur.de" className="text-primary-foreground/80 hover:text-primary-foreground">
+                    info@mep-agentur.de
                   </a>
                 </div>
               </li>
@@ -118,7 +118,8 @@ export function Footer() {
                 <Clock className="h-5 w-5 text-primary-foreground/80 mt-0.5" />
                 <div>
                   <p className="font-medium">Öffnungszeiten</p>
-                  <p className="text-primary-foreground/80">Mo-Fr: 8:00 - 18:00 Uhr</p>
+                  <p className="text-primary-foreground/80">Mo-Fr: 08:00 - 12:00</p>
+                  <p className="text-primary-foreground/80">12:30 - 16:30 Uhr</p>
                 </div>
               </li>
             </ul>

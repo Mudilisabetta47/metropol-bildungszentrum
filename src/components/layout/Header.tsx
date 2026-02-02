@@ -20,9 +20,9 @@ const licenseClasses = [
 
 const navigation = [
   { name: "Startseite", href: "/" },
-  { name: "Standorte", href: "#standorte" },
-  { name: "Über uns", href: "#ueber-uns" },
-  { name: "Kontakt", href: "#kontakt" },
+  { name: "Standorte", href: "/#standorte" },
+  { name: "Über uns", href: "/ueber-uns" },
+  { name: "Kontakt", href: "/kontakt" },
 ];
 
 export function Header() {
@@ -97,8 +97,8 @@ export function Header() {
 
           {/* CTA Button */}
           <div className="hidden lg:flex items-center gap-4">
-            <Button variant="accent" size="lg">
-              Jetzt anmelden
+            <Button variant="accent" size="lg" asChild>
+              <Link to="/kontakt">Jetzt anmelden</Link>
             </Button>
           </div>
 
@@ -145,8 +145,8 @@ export function Header() {
                 </Link>
               ))}
               
-              <Button variant="accent" className="mt-4">
-                Jetzt anmelden
+              <Button variant="accent" className="mt-4" asChild>
+                <Link to="/kontakt" onClick={() => setMobileMenuOpen(false)}>Jetzt anmelden</Link>
               </Button>
             </div>
           </div>

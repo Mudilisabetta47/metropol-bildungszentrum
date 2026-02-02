@@ -225,7 +225,7 @@ export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
                   <a href="tel:+49511123456" className="text-primary hover:underline font-medium text-lg">
                     0511 123 456
                   </a>
-                  <p className="text-sm text-muted-foreground mt-1">Mo-Fr: 8:00 - 18:00 Uhr</p>
+                  <p className="text-sm text-muted-foreground mt-1">Mo-Fr: 08:00 - 12:00, 12:30 - 16:30 Uhr</p>
                 </div>
               </div>
 
@@ -235,8 +235,8 @@ export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
                 </div>
                 <div>
                   <p className="font-semibold text-foreground mb-1">E-Mail Kontakt</p>
-                  <a href="mailto:info@metropol-bildung.de" className="text-primary hover:underline font-medium">
-                    info@metropol-bildung.de
+                  <a href="mailto:info@mep-agentur.de" className="text-primary hover:underline font-medium">
+                    info@mep-agentur.de
                   </a>
                   <p className="text-sm text-muted-foreground mt-1">Antwort innerhalb von 24 Stunden</p>
                 </div>

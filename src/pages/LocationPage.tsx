@@ -48,12 +48,12 @@ const locationsData: Record<string, LocationData> = {
     slug: "hannover",
     name: "Hannover",
     fullName: "Fahrschule Metropol Bildungszentrum Hannover",
-    address: "Beispielstraße 123",
-    zipCity: "30159 Hannover",
+    address: "Vahrenwalder Str. 213",
+    zipCity: "30165 Hannover",
     phone: "0511 123 456",
-    email: "hannover@metropol-bildung.de",
-    openingHours: "Mo-Fr: 8:00 - 18:00 Uhr",
-    mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2435.8!2d9.732!3d52.374!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b00b514d494f85%3A0x425ac6d94ac4720!2sHannover%20Hauptbahnhof!5e0!3m2!1sde!2sde!4v1704900000000!5m2!1sde!2sde",
+    email: "info@mep-agentur.de",
+    openingHours: "Mo-Fr: 08:00 - 12:00, 12:30 - 16:30 Uhr",
+    mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2435.5!2d9.738!3d52.395!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b00b514d494f85%3A0x425ac6d94ac4720!2sVahrenwalder+Str.+213%2C+30165+Hannover!5e0!3m2!1sde!2sde!4v1704900000000!5m2!1sde!2sde",
     heroImage: "trucks",
     description: "Unser Hauptstandort in Hannover ist das größte Bildungszentrum der Metropol-Gruppe. Mit modernsten Schulungsräumen, einer großen LKW- und Bus-Flotte und erfahrenen Fahrlehrern bieten wir hier das komplette Ausbildungsprogramm an.",
     metaTitle: "Fahrschule Hannover – LKW & Bus Führerschein | Metropol Bildungszentrum",
@@ -75,19 +75,19 @@ const locationsData: Record<string, LocationData> = {
     ],
     directions: {
       car: "Über die A2 (Abfahrt Hannover-Herrenhausen) oder A7 (Abfahrt Hannover-Anderten). Folgen Sie der Beschilderung Richtung Zentrum.",
-      publicTransport: "Stadtbahn Linien 1, 2, 8 bis Haltestelle Hauptbahnhof, dann 5 Minuten Fußweg. Busse 100, 200 halten direkt vor dem Gebäude.",
-      parking: "Kostenlose Parkplätze für Kursteilnehmer direkt am Gebäude. Zusätzlich öffentliches Parkhaus in 200m Entfernung."
+      publicTransport: "Stadtbahn Linien 1, 2, 8 bis Haltestelle Vahrenwald, dann 5 Minuten Fußweg.",
+      parking: "Kostenlose Parkplätze für Kursteilnehmer direkt am Gebäude."
     }
   },
   bremen: {
     slug: "bremen",
     name: "Bremen",
     fullName: "Fahrschule Metropol Bildungszentrum Bremen",
-    address: "Musterweg 45",
+    address: "Bahnhofsplatz 41",
     zipCity: "28195 Bremen",
     phone: "0421 789 012",
-    email: "bremen@metropol-bildung.de",
-    openingHours: "Mo-Fr: 8:00 - 17:00 Uhr",
+    email: "info@mep-agentur.de",
+    openingHours: "Mo-Fr: 08:00 - 12:00, 12:30 - 16:30 Uhr",
     mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2395.5!2d8.8!3d53.08!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b1281e22502089%3A0x4240fe7314f89f0!2sBremen%20Hauptbahnhof!5e0!3m2!1sde!2sde!4v1704900000000!5m2!1sde!2sde",
     heroImage: "bus",
     description: "Der Standort Bremen ist spezialisiert auf die Ausbildung im Güter- und Personenverkehr. Die Nähe zum Bremer Hafen und den großen Logistikzentren bietet ideale Bedingungen für praxisnahe Ausbildung.",
@@ -111,19 +111,19 @@ const locationsData: Record<string, LocationData> = {
     directions: {
       car: "Über die A1 (Abfahrt Bremen-Hemelingen) oder A27 (Abfahrt Bremen-Überseestadt). Folgen Sie der Beschilderung Richtung Zentrum/Hauptbahnhof.",
       publicTransport: "Straßenbahn Linien 1, 4, 6 bis Haltestelle Hauptbahnhof. Der Standort ist 3 Minuten Fußweg vom Hauptbahnhof entfernt.",
-      parking: "Begrenzte Parkplätze am Gebäude. Öffentliche Parkhäuser am Hauptbahnhof in 5 Minuten Fußweg erreichbar."
+      parking: "Öffentliche Parkhäuser am Hauptbahnhof in 5 Minuten Fußweg erreichbar."
     }
   },
   garbsen: {
     slug: "garbsen",
     name: "Garbsen",
     fullName: "Fahrschule Metropol Bildungszentrum Garbsen",
-    address: "Fahrweg 78",
+    address: "Planetenring 25 – 27",
     zipCity: "30823 Garbsen",
     phone: "05131 345 678",
-    email: "garbsen@metropol-bildung.de",
-    openingHours: "Mo-Fr: 8:00 - 17:00 Uhr",
-    mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2433.5!2d9.59!3d52.43!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b0715d1c28e55d%3A0x422435029b0e6e0!2sGarbsen!5e0!3m2!1sde!2sde!4v1704900000000!5m2!1sde!2sde",
+    email: "info@mep-agentur.de",
+    openingHours: "Mo-Fr: 08:00 - 12:00, 12:30 - 16:30 Uhr",
+    mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d38891.32614375611!2d9.559087149999999!3d52.43!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b0715d1c28e55d%3A0x422435029b0e6e0!2sGarbsen!5e0!3m2!1sde!2sde!4v1704900000000!5m2!1sde!2sde",
     heroImage: "trucks",
     description: "Der Standort Garbsen bietet ideale Bedingungen für die praktische LKW-Ausbildung. Das weitläufige Gelände und die Nähe zur Autobahn A2 ermöglichen intensives Training unter realen Bedingungen.",
     metaTitle: "Fahrschule Garbsen – LKW Führerschein & BKF Weiterbildung | Metropol",
@@ -145,8 +145,8 @@ const locationsData: Record<string, LocationData> = {
     ],
     directions: {
       car: "Direkt an der A2, Abfahrt Garbsen. Das Bildungszentrum liegt 2 Minuten von der Autobahnabfahrt entfernt.",
-      publicTransport: "S-Bahn Linie S1 bis Garbsen, dann Bus 420 bis Haltestelle Fahrweg. Gesamtfahrzeit ab Hannover Hbf ca. 25 Minuten.",
-      parking: "Großzügiger kostenloser Parkplatz direkt am Gebäude. Ausreichend Platz für LKW und PKW."
+      publicTransport: "S-Bahn Linie S1 bis Garbsen, dann Bus 420 bis Haltestelle Planetenring.",
+      parking: "Großzügiger kostenloser Parkplatz direkt am Gebäude."
     }
   }
 };
