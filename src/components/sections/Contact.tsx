@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Send, Phone, Mail, CheckCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { Send, Phone, Mail, CheckCircle, Shield, Clock, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,18 +13,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import tqcertLogo from "@/assets/tqcert-logo.webp";
 
 const courses = [
-  { value: "c-ce", label: "Berufskraftfahrer C/CE" },
-  { value: "d-de", label: "Busführerschein D/DE" },
-  { value: "fahrlehrer", label: "Fahrlehrer*innen-Ausbildung" },
-  { value: "bkf-1", label: "BKF-Weiterbildung Modul 1" },
-  { value: "bkf-2", label: "BKF-Weiterbildung Modul 2" },
-  { value: "bkf-3", label: "BKF-Weiterbildung Modul 3" },
-  { value: "bkf-4", label: "BKF-Weiterbildung Modul 4" },
-  { value: "bkf-5", label: "BKF-Weiterbildung Modul 5" },
-  { value: "sprache", label: "Sprachkurs für Berufskraftfahrer" },
-  { value: "sonstiges", label: "Sonstiges / Beratung" },
+  { value: "c-ce", label: "Führerschein C/CE (LKW)", slug: "c-ce" },
+  { value: "d-de", label: "Führerschein D/DE (Bus)", slug: "d-de" },
+  { value: "fahrlehrer", label: "Fahrlehrer*innen-Ausbildung", slug: "fahrlehrer" },
+  { value: "bkf-weiterbildung", label: "BKF-Weiterbildung (Module 1-5)", slug: "bkf-weiterbildung" },
+  { value: "sprachkurse", label: "Sprachkurs für Berufskraftfahrer", slug: "sprachkurse" },
+  { value: "sonstiges", label: "Sonstiges / Allgemeine Beratung", slug: null },
 ];
 
 const locations = [
@@ -33,26 +32,98 @@ const locations = [
   { value: "flexible", label: "Flexibel / Alle Standorte" },
 ];
 
-export function Contact() {
+// Map URL slugs to course values
+const slugToCourseValue: Record<string, string> = {
+  "c-ce": "c-ce",
+  "d-de": "d-de",
+  "fahrlehrer": "fahrlehrer",
+  "bkf-weiterbildung": "bkf-weiterbildung",
+  "sprachkurse": "sprachkurse",
+};
+
+interface ContactProps {
+  preselectedCourse?: string;
+}
+
+export function Contact({ preselectedCourse }: ContactProps) {
+  const location = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState<string>("");
+  const [selectedLocation, setSelectedLocation] = useState<string>("");
   const { toast } = useToast();
+
+  // Detect course from URL path
+  useEffect(() => {
+    if (preselectedCourse) {
+      setSelectedCourse(preselectedCourse);
+      return;
+    }
+
+    // Extract course from URL path like /fuehrerschein/c-ce
+    const pathParts = location.pathname.split("/");
+    const courseSlug = pathParts[pathParts.length - 1];
+    
+    if (courseSlug && slugToCourseValue[courseSlug]) {
+      setSelectedCourse(slugToCourseValue[courseSlug]);
+    }
+  }, [location.pathname, preselectedCourse]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    
-    toast({
-      title: "Anfrage gesendet!",
-      description: "Wir melden uns innerhalb von 24 Stunden bei Ihnen.",
-    });
+
+    const formData = new FormData(e.currentTarget);
+    const firstName = formData.get("firstName") as string;
+    const lastName = formData.get("lastName") as string;
+    const email = formData.get("email") as string;
+    const phone = formData.get("phone") as string;
+    const message = formData.get("message") as string;
+
+    // Get UTM params from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const utmSource = urlParams.get("utm_source");
+    const utmMedium = urlParams.get("utm_medium");
+    const utmCampaign = urlParams.get("utm_campaign");
+
+    // Get course label
+    const courseLabel = courses.find(c => c.value === selectedCourse)?.label || selectedCourse;
+    const locationLabel = locations.find(l => l.value === selectedLocation)?.label || selectedLocation;
+
+    try {
+      const { error } = await supabase.from("contact_requests").insert({
+        name: `${firstName} ${lastName}`,
+        email,
+        phone: phone || null,
+        message: message || `Anfrage für: ${courseLabel}`,
+        course_interest: courseLabel,
+        location_preference: locationLabel || null,
+        source: location.pathname,
+        utm_source: utmSource,
+        utm_medium: utmMedium,
+        utm_campaign: utmCampaign,
+      });
+
+      if (error) throw error;
+
+      setIsSubmitted(true);
+      toast({
+        title: "Anfrage erfolgreich gesendet!",
+        description: "Wir melden uns innerhalb von 24 Stunden bei Ihnen.",
+      });
+    } catch (error) {
+      console.error("Error submitting contact request:", error);
+      toast({
+        variant: "destructive",
+        title: "Fehler beim Senden",
+        description: "Bitte versuchen Sie es erneut oder rufen Sie uns an.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  const courseLabel = courses.find(c => c.value === selectedCourse)?.label;
 
   if (isSubmitted) {
     return (
@@ -65,8 +136,11 @@ export function Contact() {
             <h2 className="font-display text-3xl font-bold text-foreground mb-4">
               Vielen Dank für Ihre Anfrage!
             </h2>
-            <p className="text-lg text-muted-foreground mb-8">
-              Wir haben Ihre Nachricht erhalten und werden uns innerhalb von 24 Stunden bei Ihnen melden.
+            <p className="text-lg text-muted-foreground mb-4">
+              Wir haben Ihre Anfrage{courseLabel ? ` für "${courseLabel}"` : ""} erhalten.
+            </p>
+            <p className="text-muted-foreground mb-8">
+              Ein Mitarbeiter wird sich innerhalb von 24 Stunden bei Ihnen melden, um alle Details zu besprechen.
             </p>
             <Button onClick={() => setIsSubmitted(false)} variant="outline">
               Neue Anfrage senden
@@ -83,36 +157,60 @@ export function Contact() {
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           {/* Info */}
           <div>
-            <p className="text-accent font-semibold text-sm uppercase tracking-wider mb-4">Kontakt</p>
+            <p className="text-accent font-semibold text-sm uppercase tracking-wider mb-4">Kontakt & Beratung</p>
             <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
-              Starten Sie jetzt Ihre Ausbildung
+              {selectedCourse ? `Interesse an: ${courseLabel}` : "Starten Sie jetzt Ihre Ausbildung"}
             </h2>
             <p className="text-lg text-muted-foreground mb-8">
-              Haben Sie Fragen zu unseren Kursen oder möchten Sie sich direkt anmelden? 
-              Füllen Sie das Formular aus und wir melden uns schnellstmöglich bei Ihnen.
+              {selectedCourse 
+                ? "Füllen Sie das Formular aus und wir beraten Sie kostenlos und unverbindlich zu allen Details, Voraussetzungen und Fördermöglichkeiten."
+                : "Haben Sie Fragen zu unseren Kursen oder möchten Sie sich direkt anmelden? Wir beraten Sie gerne persönlich."}
             </p>
 
-            <div className="space-y-6">
-              <div className="flex items-start gap-4 p-4 rounded-xl bg-card border border-border">
-                <div className="p-3 rounded-lg bg-accent/10">
-                  <Phone className="h-6 w-6 text-accent" />
+            {/* Guarantee badges */}
+            <div className="grid sm:grid-cols-2 gap-4 mb-8">
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-card border border-border">
+                <div className="p-2 rounded-lg bg-accent/10">
+                  <Clock className="h-5 w-5 text-accent" />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground text-sm">Schnelle Antwort</p>
+                  <p className="text-xs text-muted-foreground">Innerhalb von 24 Stunden</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-card border border-border">
+                <div className="p-2 rounded-lg bg-accent/10">
+                  <Shield className="h-5 w-5 text-accent" />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground text-sm">100% unverbindlich</p>
+                  <p className="text-xs text-muted-foreground">Kostenlose Beratung</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Contact options */}
+            <div className="space-y-4 mb-8">
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-card border border-border hover:border-primary/30 transition-colors">
+                <div className="p-3 rounded-lg bg-primary text-primary-foreground">
+                  <Phone className="h-5 w-5" />
                 </div>
                 <div>
                   <p className="font-semibold text-foreground mb-1">Telefonische Beratung</p>
-                  <a href="tel:+49511123456" className="text-accent hover:underline font-medium">
+                  <a href="tel:+49511123456" className="text-primary hover:underline font-medium text-lg">
                     0511 123 456
                   </a>
                   <p className="text-sm text-muted-foreground mt-1">Mo-Fr: 8:00 - 18:00 Uhr</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-4 p-4 rounded-xl bg-card border border-border">
-                <div className="p-3 rounded-lg bg-accent/10">
-                  <Mail className="h-6 w-6 text-accent" />
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-card border border-border hover:border-primary/30 transition-colors">
+                <div className="p-3 rounded-lg bg-primary text-primary-foreground">
+                  <Mail className="h-5 w-5" />
                 </div>
                 <div>
                   <p className="font-semibold text-foreground mb-1">E-Mail Kontakt</p>
-                  <a href="mailto:info@metropol-bildung.de" className="text-accent hover:underline font-medium">
+                  <a href="mailto:info@metropol-bildung.de" className="text-primary hover:underline font-medium">
                     info@metropol-bildung.de
                   </a>
                   <p className="text-sm text-muted-foreground mt-1">Antwort innerhalb von 24 Stunden</p>
@@ -121,55 +219,111 @@ export function Contact() {
             </div>
 
             {/* Trust badges */}
-            <div className="mt-10 pt-10 border-t border-border">
-              <p className="text-sm font-medium text-muted-foreground mb-4">Zertifizierungen & Partner</p>
-              <div className="flex flex-wrap gap-4">
-                <div className="px-4 py-2 bg-card rounded-lg border border-border text-sm font-medium text-muted-foreground">
-                  AZAV zertifiziert
+            <div className="pt-8 border-t border-border">
+              <p className="text-sm font-medium text-muted-foreground mb-4">Zertifizierungen & Qualitätssiegel</p>
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="flex items-center gap-2 px-4 py-2 bg-card rounded-lg border border-border">
+                  <Award className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-medium text-foreground">AZAV zertifiziert</span>
                 </div>
-                <div className="px-4 py-2 bg-card rounded-lg border border-border text-sm font-medium text-muted-foreground">
-                  Arbeitsagentur anerkannt
+                <div className="flex items-center gap-2 px-4 py-2 bg-card rounded-lg border border-border">
+                  <Shield className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-medium text-foreground">Agentur für Arbeit</span>
                 </div>
-                <div className="px-4 py-2 bg-card rounded-lg border border-border text-sm font-medium text-muted-foreground">
-                  TÜV geprüft
-                </div>
+                <img 
+                  src={tqcertLogo} 
+                  alt="TQCert Zertifizierung" 
+                  className="h-10 object-contain"
+                />
               </div>
             </div>
           </div>
 
           {/* Form */}
-          <div className="bg-card rounded-2xl border border-border p-8 shadow-lg">
-            <h3 className="font-display font-bold text-xl text-foreground mb-6">
-              Unverbindliche Anfrage
-            </h3>
+          <div className="bg-card rounded-2xl border-2 border-primary/20 p-8 shadow-xl">
+            <div className="mb-6">
+              <h3 className="font-display font-bold text-xl text-foreground mb-2">
+                Unverbindliche Anfrage
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Füllen Sie das Formular aus und erhalten Sie alle Informationen zu Ihrem Wunschkurs.
+              </p>
+            </div>
+
+            {/* Selected course highlight */}
+            {selectedCourse && (
+              <div className="mb-6 p-4 rounded-xl bg-primary/5 border border-primary/20">
+                <p className="text-sm text-muted-foreground mb-1">Ihr gewählter Kurs:</p>
+                <p className="font-semibold text-primary">{courseLabel}</p>
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">Vorname *</Label>
-                  <Input id="firstName" placeholder="Max" required />
+                  <Label htmlFor="firstName" className="text-foreground font-medium">
+                    Vorname <span className="text-destructive">*</span>
+                  </Label>
+                  <Input 
+                    id="firstName" 
+                    name="firstName"
+                    placeholder="Max" 
+                    required 
+                    className="h-12"
+                  />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Nachname *</Label>
-                  <Input id="lastName" placeholder="Mustermann" required />
+                  <Label htmlFor="lastName" className="text-foreground font-medium">
+                    Nachname <span className="text-destructive">*</span>
+                  </Label>
+                  <Input 
+                    id="lastName" 
+                    name="lastName"
+                    placeholder="Mustermann" 
+                    required 
+                    className="h-12"
+                  />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">E-Mail *</Label>
-                <Input id="email" type="email" placeholder="max@beispiel.de" required />
+                <Label htmlFor="email" className="text-foreground font-medium">
+                  E-Mail <span className="text-destructive">*</span>
+                </Label>
+                <Input 
+                  id="email" 
+                  name="email"
+                  type="email" 
+                  placeholder="max@beispiel.de" 
+                  required 
+                  className="h-12"
+                />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Telefon</Label>
-                <Input id="phone" type="tel" placeholder="0511 123456" />
+                <Label htmlFor="phone" className="text-foreground font-medium">
+                  Telefon <span className="text-muted-foreground text-xs">(für schnellere Kontaktaufnahme)</span>
+                </Label>
+                <Input 
+                  id="phone" 
+                  name="phone"
+                  type="tel" 
+                  placeholder="0511 123456" 
+                  className="h-12"
+                />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="course">Gewünschter Kurs *</Label>
-                <Select required>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Kurs auswählen" />
+                <Label htmlFor="course" className="text-foreground font-medium">
+                  Gewünschter Kurs <span className="text-destructive">*</span>
+                </Label>
+                <Select 
+                  value={selectedCourse} 
+                  onValueChange={setSelectedCourse}
+                  required
+                >
+                  <SelectTrigger className="h-12">
+                    <SelectValue placeholder="Kurs auswählen..." />
                   </SelectTrigger>
                   <SelectContent>
                     {courses.map((course) => (
@@ -182,10 +336,12 @@ export function Contact() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="location">Bevorzugter Standort</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Standort auswählen" />
+                <Label htmlFor="location" className="text-foreground font-medium">
+                  Bevorzugter Standort
+                </Label>
+                <Select value={selectedLocation} onValueChange={setSelectedLocation}>
+                  <SelectTrigger className="h-12">
+                    <SelectValue placeholder="Standort auswählen..." />
                   </SelectTrigger>
                   <SelectContent>
                     {locations.map((location) => (
@@ -198,11 +354,15 @@ export function Contact() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="message">Nachricht</Label>
+                <Label htmlFor="message" className="text-foreground font-medium">
+                  Nachricht <span className="text-muted-foreground text-xs">(optional)</span>
+                </Label>
                 <Textarea
                   id="message"
-                  placeholder="Haben Sie spezielle Fragen oder Wünsche?"
+                  name="message"
+                  placeholder="Haben Sie spezielle Fragen, z.B. zu Fördermöglichkeiten oder Startterminen?"
                   rows={4}
+                  className="resize-none"
                 />
               </div>
 
@@ -210,14 +370,17 @@ export function Contact() {
                 type="submit" 
                 variant="accent" 
                 size="lg" 
-                className="w-full"
-                disabled={isSubmitting}
+                className="w-full h-14 text-base font-semibold"
+                disabled={isSubmitting || !selectedCourse}
               >
                 {isSubmitting ? (
-                  "Wird gesendet..."
+                  <span className="flex items-center gap-2">
+                    <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    Wird gesendet...
+                  </span>
                 ) : (
                   <>
-                    Anfrage senden
+                    Unverbindlich anfragen
                     <Send className="ml-2 h-5 w-5" />
                   </>
                 )}
@@ -228,7 +391,7 @@ export function Contact() {
                 <a href="/datenschutz" className="underline hover:text-foreground">
                   Datenschutzerklärung
                 </a>{" "}
-                zu.
+                zu. Ihre Daten werden vertraulich behandelt.
               </p>
             </form>
           </div>
