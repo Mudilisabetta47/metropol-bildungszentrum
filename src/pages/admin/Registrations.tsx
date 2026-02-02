@@ -28,6 +28,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Search, Download, Eye, CheckCircle, XCircle, Clock, Mail } from "lucide-react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 
 interface Registration {
   id: string;
@@ -46,8 +47,11 @@ interface Registration {
   utm_campaign: string | null;
   confirmation_sent_at: string | null;
   created_at: string;
+  course_date_id: string;
   course_dates: {
     start_date: string;
+    max_participants: number;
+    current_participants: number;
     courses: { title: string };
     locations: { name: string };
   };
@@ -83,6 +87,8 @@ export default function Registrations() {
           *,
           course_dates (
             start_date,
+            max_participants,
+            current_participants,
             courses (title),
             locations (name)
           )
@@ -103,19 +109,73 @@ export default function Registrations() {
     }
   };
 
-  const updateStatus = async (id: string, newStatus: "pending" | "confirmed" | "cancelled" | "waitlist" | "completed") => {
+  const confirmAndSendEmail = async (registration: Registration) => {
+    setIsUpdating(true);
+    try {
+      // First update the status - this will trigger the participant count update
+      const { error: updateError } = await supabase
+        .from("registrations")
+        .update({ 
+          status: "confirmed",
+          confirmation_sent_at: new Date().toISOString()
+        })
+        .eq("id", registration.id);
+
+      if (updateError) throw updateError;
+
+      // Then send confirmation email
+      const { error: emailError } = await supabase.functions.invoke("send-registration-confirmation", {
+        body: {
+          registrationId: registration.id,
+          email: registration.email,
+          firstName: registration.first_name,
+          lastName: registration.last_name,
+          courseName: registration.course_dates?.courses?.title,
+          locationName: registration.course_dates?.locations?.name,
+          startDate: registration.course_dates?.start_date,
+        },
+      });
+
+      if (emailError) {
+        console.error("Email error:", emailError);
+        toast({
+          title: "Teilweise Erfolg",
+          description: "Anmeldung bestätigt, aber E-Mail konnte nicht gesendet werden.",
+        });
+      } else {
+        toast({
+          title: "Erfolg",
+          description: "Anmeldung bestätigt und Bestätigungs-E-Mail gesendet.",
+        });
+      }
+
+      fetchRegistrations();
+      setSelectedRegistration(null);
+    } catch (error) {
+      console.error("Error confirming registration:", error);
+      toast({
+        variant: "destructive",
+        title: "Fehler",
+        description: "Anmeldung konnte nicht bestätigt werden.",
+      });
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const moveToWaitlist = async (registration: Registration) => {
     setIsUpdating(true);
     try {
       const { error } = await supabase
         .from("registrations")
-        .update({ status: newStatus })
-        .eq("id", id);
+        .update({ status: "waitlist" })
+        .eq("id", registration.id);
 
       if (error) throw error;
 
       toast({
         title: "Erfolg",
-        description: "Status wurde aktualisiert.",
+        description: "Anmeldung auf Warteliste gesetzt.",
       });
       
       fetchRegistrations();
@@ -132,44 +192,30 @@ export default function Registrations() {
     }
   };
 
-  const sendConfirmation = async (registration: Registration) => {
+  const rejectRegistration = async (registration: Registration) => {
     setIsUpdating(true);
     try {
-      const { error } = await supabase.functions.invoke("send-registration-confirmation", {
-        body: {
-          registrationId: registration.id,
-          email: registration.email,
-          firstName: registration.first_name,
-          lastName: registration.last_name,
-          courseName: registration.course_dates?.courses?.title,
-          locationName: registration.course_dates?.locations?.name,
-          startDate: registration.course_dates?.start_date,
-        },
-      });
+      const { error } = await supabase
+        .from("registrations")
+        .update({ status: "cancelled" })
+        .eq("id", registration.id);
 
       if (error) throw error;
 
-      // Update confirmation_sent_at
-      await supabase
-        .from("registrations")
-        .update({ 
-          confirmation_sent_at: new Date().toISOString(),
-          status: "confirmed" 
-        })
-        .eq("id", registration.id);
-
+      // TODO: Optionally send rejection email
       toast({
         title: "Erfolg",
-        description: "Bestätigung wurde gesendet.",
+        description: "Anmeldung wurde abgelehnt.",
       });
-
+      
       fetchRegistrations();
+      setSelectedRegistration(null);
     } catch (error) {
-      console.error("Error sending confirmation:", error);
+      console.error("Error rejecting registration:", error);
       toast({
         variant: "destructive",
         title: "Fehler",
-        description: "Bestätigung konnte nicht gesendet werden.",
+        description: "Anmeldung konnte nicht abgelehnt werden.",
       });
     } finally {
       setIsUpdating(false);
@@ -450,50 +496,123 @@ export default function Registrations() {
                 </div>
               )}
 
+              {/* Capacity Info */}
+              {selectedRegistration.course_dates && (
+                <div className="border-t pt-4">
+                  <p className="text-sm text-muted-foreground mb-2">Kursauslastung</p>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                      <div
+                        className={cn(
+                          "h-full rounded-full transition-all",
+                          selectedRegistration.course_dates.current_participants >= selectedRegistration.course_dates.max_participants
+                            ? "bg-red-500"
+                            : selectedRegistration.course_dates.current_participants >= selectedRegistration.course_dates.max_participants * 0.8
+                            ? "bg-yellow-500"
+                            : "bg-green-500"
+                        )}
+                        style={{
+                          width: `${Math.min(100, (selectedRegistration.course_dates.current_participants / selectedRegistration.course_dates.max_participants) * 100)}%`
+                        }}
+                      />
+                    </div>
+                    <span className="text-sm font-medium whitespace-nowrap">
+                      {selectedRegistration.course_dates.current_participants} / {selectedRegistration.course_dates.max_participants} belegt
+                    </span>
+                  </div>
+                </div>
+              )}
+
               <div className="border-t pt-4 flex flex-wrap gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => sendConfirmation(selectedRegistration)}
-                  disabled={isUpdating}
-                >
-                  {isUpdating ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <Mail className="mr-2 h-4 w-4" />
-                  )}
-                  Bestätigung senden
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => updateStatus(selectedRegistration.id, "confirmed")}
-                  disabled={isUpdating || selectedRegistration.status === "confirmed"}
-                  className="text-green-600"
-                >
-                  <CheckCircle className="mr-2 h-4 w-4" />
-                  Bestätigen
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => updateStatus(selectedRegistration.id, "waitlist")}
-                  disabled={isUpdating || selectedRegistration.status === "waitlist"}
-                  className="text-blue-600"
-                >
-                  <Clock className="mr-2 h-4 w-4" />
-                  Warteliste
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => updateStatus(selectedRegistration.id, "cancelled")}
-                  disabled={isUpdating || selectedRegistration.status === "cancelled"}
-                  className="text-red-600"
-                >
-                  <XCircle className="mr-2 h-4 w-4" />
-                  Stornieren
-                </Button>
+                {selectedRegistration.status === "pending" && (
+                  <>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => confirmAndSendEmail(selectedRegistration)}
+                      disabled={isUpdating}
+                      className="bg-green-600 hover:bg-green-700"
+                    >
+                      {isUpdating ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <>
+                          <CheckCircle className="mr-2 h-4 w-4" />
+                          <Mail className="mr-2 h-4 w-4" />
+                        </>
+                      )}
+                      Bestätigen & E-Mail senden
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => moveToWaitlist(selectedRegistration)}
+                      disabled={isUpdating}
+                      className="text-blue-600 border-blue-300"
+                    >
+                      <Clock className="mr-2 h-4 w-4" />
+                      Auf Warteliste
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => rejectRegistration(selectedRegistration)}
+                      disabled={isUpdating}
+                      className="text-red-600 border-red-300"
+                    >
+                      <XCircle className="mr-2 h-4 w-4" />
+                      Ablehnen
+                    </Button>
+                  </>
+                )}
+                {selectedRegistration.status === "waitlist" && (
+                  <>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => confirmAndSendEmail(selectedRegistration)}
+                      disabled={isUpdating}
+                      className="bg-green-600 hover:bg-green-700"
+                    >
+                      {isUpdating ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <>
+                          <CheckCircle className="mr-2 h-4 w-4" />
+                          <Mail className="mr-2 h-4 w-4" />
+                        </>
+                      )}
+                      Jetzt bestätigen
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => rejectRegistration(selectedRegistration)}
+                      disabled={isUpdating}
+                      className="text-red-600 border-red-300"
+                    >
+                      <XCircle className="mr-2 h-4 w-4" />
+                      Ablehnen
+                    </Button>
+                  </>
+                )}
+                {selectedRegistration.status === "confirmed" && (
+                  <div className="flex items-center gap-2 text-green-600">
+                    <CheckCircle className="h-5 w-5" />
+                    <span className="font-medium">Bestätigt</span>
+                    {selectedRegistration.confirmation_sent_at && (
+                      <span className="text-muted-foreground text-sm">
+                        (E-Mail gesendet am {format(new Date(selectedRegistration.confirmation_sent_at), "dd.MM.yyyy HH:mm", { locale: de })})
+                      </span>
+                    )}
+                  </div>
+                )}
+                {selectedRegistration.status === "cancelled" && (
+                  <div className="flex items-center gap-2 text-red-600">
+                    <XCircle className="h-5 w-5" />
+                    <span className="font-medium">Abgelehnt / Storniert</span>
+                  </div>
+                )}
               </div>
             </div>
           )}
