@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import LicenseClassPage from "./pages/LicenseClassPage";
+import LocationPage from "./pages/LocationPage";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import { AdminLayout } from "./components/admin/AdminLayout";
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/fuehrerschein/:classType" element={<LicenseClassPage />} />
+            <Route path="/standort/:locationSlug" element={<LocationPage />} />
             
             {/* Admin routes */}
             <Route path="/admin" element={<AdminLayout />}>

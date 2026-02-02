@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { MapPin, Phone, Mail, Clock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -121,9 +122,11 @@ export function Locations() {
                   ))}
                 </div>
 
-                <Button variant="outline" className="w-full group/btn">
-                  Standort Details
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
+                <Button variant="outline" className="w-full group/btn" asChild>
+                  <Link to={`/standort/${location.id}`}>
+                    Standort Details
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
+                  </Link>
                 </Button>
               </div>
             </div>
