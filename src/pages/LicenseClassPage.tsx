@@ -403,8 +403,8 @@ export default function LicenseClassPage() {
         </div>
       </section>
 
-      {/* Contact Section */}
-      <Contact />
+      {/* Contact Section with preselected course */}
+      <Contact preselectedCourse={data.slug} />
       
       <Footer />
     </div>
