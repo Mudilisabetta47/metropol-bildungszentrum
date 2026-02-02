@@ -211,8 +211,8 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     // Send notification to admin
-    // TODO: Replace with actual admin email addresses
-    const adminEmails = ["info@metropol-bildung.de"];
+    // Admin email addresses
+    const adminEmails = ["info@mep-agentur.de"];
     
     console.log("Sending notification email to admin:", adminEmails);
     const adminEmailResponse = await fetch("https://api.resend.com/emails", {
