@@ -7,6 +7,8 @@ import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import LicenseClassPage from "./pages/LicenseClassPage";
 import LocationPage from "./pages/LocationPage";
+import AboutPage from "./pages/AboutPage";
+import ContactPage from "./pages/ContactPage";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import { AdminLayout } from "./components/admin/AdminLayout";
@@ -31,6 +33,8 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/ueber-uns" element={<AboutPage />} />
+            <Route path="/kontakt" element={<ContactPage />} />
             <Route path="/fuehrerschein/:classType" element={<LicenseClassPage />} />
             <Route path="/standort/:locationSlug" element={<LocationPage />} />
             
