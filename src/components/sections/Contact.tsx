@@ -92,6 +92,7 @@ export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
     const locationLabel = locations.find(l => l.value === selectedLocation)?.label || selectedLocation;
 
     try {
+      // 1. Save to database
       const { error } = await supabase.from("contact_requests").insert({
         name: `${firstName} ${lastName}`,
         email,
@@ -106,6 +107,29 @@ export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
       });
 
       if (error) throw error;
+
+      // 2. Send notification emails via edge function
+      try {
+        const { error: emailError } = await supabase.functions.invoke('send-contact-notification', {
+          body: {
+            name: `${firstName} ${lastName}`,
+            email,
+            phone: phone || undefined,
+            course: courseLabel,
+            location: locationLabel || undefined,
+            message: message || undefined,
+            source: location.pathname,
+          }
+        });
+        
+        if (emailError) {
+          console.error("Email notification failed:", emailError);
+          // Don't throw - the contact was saved, just log the email error
+        }
+      } catch (emailErr) {
+        console.error("Failed to send email notifications:", emailErr);
+        // Continue - contact was saved successfully
+      }
 
       setIsSubmitted(true);
       toast({
