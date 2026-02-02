@@ -92,6 +92,22 @@ export default function DatenschutzPage() {
                   gelöscht. Permanente Cookies bleiben auf Ihrem Endgerät gespeichert, bis Sie diese 
                   selbst löschen oder eine automatische Löschung durch Ihren Webbrowser erfolgt.
                 </p>
+                <p className="text-muted-foreground mt-4">
+                  Beim ersten Besuch unserer Website werden Sie über einen Cookie-Banner über die 
+                  Verwendung von Cookies informiert und können Ihre Einwilligung erteilen oder ablehnen. 
+                  Sie können Ihre Cookie-Einstellungen jederzeit über den Cookie-Button unten links auf 
+                  der Seite anpassen. Notwendige Cookies, die für den Betrieb der Website erforderlich 
+                  sind, werden auch ohne Ihre Einwilligung gesetzt.
+                </p>
+                <p className="text-muted-foreground mt-4">
+                  <strong>Wir verwenden folgende Cookie-Kategorien:</strong>
+                </p>
+                <ul className="list-disc list-inside text-muted-foreground mt-2 space-y-2">
+                  <li><strong>Notwendige Cookies:</strong> Diese sind für die Grundfunktionen der Website erforderlich.</li>
+                  <li><strong>Analyse-Cookies:</strong> Helfen uns zu verstehen, wie Besucher die Website nutzen.</li>
+                  <li><strong>Marketing-Cookies:</strong> Werden für personalisierte Werbung verwendet (z.B. Google, Meta).</li>
+                  <li><strong>Präferenz-Cookies:</strong> Speichern Ihre Einstellungen wie Sprache oder Region.</li>
+                </ul>
 
                 <h3 className="font-semibold text-foreground mt-6 mb-2">Kontaktformular</h3>
                 <p className="text-muted-foreground">
