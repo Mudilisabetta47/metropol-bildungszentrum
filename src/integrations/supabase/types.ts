@@ -14,16 +14,414 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      contact_requests: {
+        Row: {
+          course_interest: string | null
+          created_at: string
+          email: string
+          id: string
+          is_archived: boolean
+          is_read: boolean
+          location_preference: string | null
+          message: string
+          name: string
+          phone: string | null
+          source: string | null
+          subject: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+        }
+        Insert: {
+          course_interest?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          is_archived?: boolean
+          is_read?: boolean
+          location_preference?: string | null
+          message: string
+          name: string
+          phone?: string | null
+          source?: string | null
+          subject?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Update: {
+          course_interest?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          is_archived?: boolean
+          is_read?: boolean
+          location_preference?: string | null
+          message?: string
+          name?: string
+          phone?: string | null
+          source?: string | null
+          subject?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Relationships: []
+      }
+      course_dates: {
+        Row: {
+          course_id: string
+          created_at: string
+          current_participants: number
+          end_date: string | null
+          end_time: string | null
+          id: string
+          is_active: boolean
+          location_id: string
+          max_participants: number
+          notes: string | null
+          start_date: string
+          start_time: string | null
+          updated_at: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          current_participants?: number
+          end_date?: string | null
+          end_time?: string | null
+          id?: string
+          is_active?: boolean
+          location_id: string
+          max_participants?: number
+          notes?: string | null
+          start_date: string
+          start_time?: string | null
+          updated_at?: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          current_participants?: number
+          end_date?: string | null
+          end_time?: string | null
+          id?: string
+          is_active?: boolean
+          location_id?: string
+          max_participants?: number
+          notes?: string | null
+          start_date?: string
+          start_time?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_dates_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "course_dates_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      courses: {
+        Row: {
+          benefits: string[] | null
+          category: Database["public"]["Enums"]["course_category"]
+          created_at: string
+          description: string | null
+          duration_info: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          price: number | null
+          price_info: string | null
+          requirements: string | null
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          benefits?: string[] | null
+          category: Database["public"]["Enums"]["course_category"]
+          created_at?: string
+          description?: string | null
+          duration_info?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          price?: number | null
+          price_info?: string | null
+          requirements?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          benefits?: string[] | null
+          category?: Database["public"]["Enums"]["course_category"]
+          created_at?: string
+          description?: string | null
+          duration_info?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          price?: number | null
+          price_info?: string | null
+          requirements?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      lead_sources: {
+        Row: {
+          created_at: string
+          id: string
+          ip_address: string | null
+          landing_page: string | null
+          referrer: string | null
+          registration_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          landing_page?: string | null
+          referrer?: string | null
+          registration_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          landing_page?: string | null
+          referrer?: string | null
+          registration_id?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_sources_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: false
+            referencedRelation: "registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      locations: {
+        Row: {
+          address: string
+          created_at: string
+          email: string | null
+          id: string
+          is_active: boolean
+          map_url: string | null
+          name: string
+          opening_hours: string | null
+          phone: string | null
+          slug: string
+          updated_at: string
+          zip_city: string
+        }
+        Insert: {
+          address: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          map_url?: string | null
+          name: string
+          opening_hours?: string | null
+          phone?: string | null
+          slug: string
+          updated_at?: string
+          zip_city: string
+        }
+        Update: {
+          address?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          map_url?: string | null
+          name?: string
+          opening_hours?: string | null
+          phone?: string | null
+          slug?: string
+          updated_at?: string
+          zip_city?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          first_name: string | null
+          id: string
+          last_name: string | null
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      registrations: {
+        Row: {
+          address: string | null
+          confirmation_sent_at: string | null
+          course_date_id: string
+          created_at: string
+          date_of_birth: string | null
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          message: string | null
+          phone: string | null
+          source: string | null
+          status: Database["public"]["Enums"]["registration_status"]
+          updated_at: string
+          user_id: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          zip_city: string | null
+        }
+        Insert: {
+          address?: string | null
+          confirmation_sent_at?: string | null
+          course_date_id: string
+          created_at?: string
+          date_of_birth?: string | null
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          message?: string | null
+          phone?: string | null
+          source?: string | null
+          status?: Database["public"]["Enums"]["registration_status"]
+          updated_at?: string
+          user_id?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          zip_city?: string | null
+        }
+        Update: {
+          address?: string | null
+          confirmation_sent_at?: string | null
+          course_date_id?: string
+          created_at?: string
+          date_of_birth?: string | null
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          message?: string | null
+          phone?: string | null
+          source?: string | null
+          status?: Database["public"]["Enums"]["registration_status"]
+          updated_at?: string
+          user_id?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          zip_city?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "registrations_course_date_id_fkey"
+            columns: ["course_date_id"]
+            isOneToOne: false
+            referencedRelation: "course_dates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_staff: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "employee" | "user"
+      course_category:
+        | "lkw"
+        | "bus"
+        | "fahrlehrer"
+        | "bkf"
+        | "sprache"
+        | "sonstige"
+      registration_status:
+        | "pending"
+        | "confirmed"
+        | "cancelled"
+        | "waitlist"
+        | "completed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +548,23 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "employee", "user"],
+      course_category: [
+        "lkw",
+        "bus",
+        "fahrlehrer",
+        "bkf",
+        "sprache",
+        "sonstige",
+      ],
+      registration_status: [
+        "pending",
+        "confirmed",
+        "cancelled",
+        "waitlist",
+        "completed",
+      ],
+    },
   },
 } as const
