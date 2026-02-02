@@ -28,6 +28,19 @@ const courses = [
   { name: "Sprachkurse für BKF", href: "/fuehrerschein/sprachkurse" },
 ];
 
+const seoLinks = [
+  { name: "Fahrlehrer Ausbildung Hannover", href: "/standort/hannover", location: "Hannover" },
+  { name: "Fahrlehrer werden Bremen", href: "/standort/bremen", location: "Bremen" },
+  { name: "Fahrlehrer werden Garbsen", href: "/standort/garbsen", location: "Garbsen" },
+  { name: "LKW Führerschein Hannover", href: "/fuehrerschein/c-ce", location: "Hannover" },
+  { name: "Busfahrer Ausbildung Bremen", href: "/fuehrerschein/d-de", location: "Bremen" },
+  { name: "BKF Weiterbildung Hannover", href: "/fuehrerschein/bkf-weiterbildung", location: "Hannover" },
+  { name: "Berufskraftfahrer Ausbildung Niedersachsen", href: "/fuehrerschein/c-ce", location: "Region" },
+  { name: "BKF Module Niedersachsen", href: "/fuehrerschein/bkf-weiterbildung", location: "Region" },
+  { name: "LKW Führerschein Bremen", href: "/fuehrerschein/c-ce", location: "Bremen" },
+  { name: "Bus Führerschein Hannover", href: "/fuehrerschein/d-de", location: "Hannover" },
+];
+
 const legal = [
   { name: "Impressum", href: "/impressum" },
   { name: "Datenschutz", href: "/datenschutz" },
@@ -127,11 +140,36 @@ export function Footer() {
         </div>
       </div>
 
+      {/* SEO Keywords Section */}
+      <div className="border-t border-primary-foreground/10">
+        <div className="section-container py-8">
+          <h3 className="font-display font-semibold text-sm text-primary-foreground/70 mb-4 uppercase tracking-wider">
+            Ausbildungen & Standorte
+          </h3>
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            {seoLinks.map((link) => (
+              <Link
+                key={link.name}
+                to={link.href}
+                className="text-sm text-primary-foreground/60 hover:text-primary-foreground transition-colors"
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
+          <p className="text-xs text-primary-foreground/40 mt-6 max-w-4xl">
+            METROPOL Bildungszentrum – Ihre Fahrschule für Berufskraftfahrer-Ausbildung in Niedersachsen und Bremen. 
+            Wir bieten LKW-Führerschein (Klasse C/CE), Bus-Führerschein (Klasse D/DE), Fahrlehrer-Ausbildung und 
+            BKF-Weiterbildung an unseren Standorten Hannover, Bremen und Garbsen.
+          </p>
+        </div>
+      </div>
+
       {/* Bottom bar */}
       <div className="border-t border-primary-foreground/10">
         <div className="section-container py-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-primary-foreground/60">
-            © {new Date().getFullYear()} Metropol Bildungszentrum GmbH. Alle Rechte vorbehalten.
+            © {new Date().getFullYear()} METROPOL Bildungszentrum GmbH. Alle Rechte vorbehalten.
           </p>
           <div className="flex gap-6">
             {legal.map((item) => (
