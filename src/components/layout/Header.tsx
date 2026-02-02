@@ -1,10 +1,25 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, Phone, MapPin } from "lucide-react";
+import { Menu, X, Phone, MapPin, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import logoMetropol from "@/assets/logo-metropol.webp";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+const licenseClasses = [
+  { name: "Führerschein C/CE", href: "/fuehrerschein/c-ce", description: "LKW-Führerschein" },
+  { name: "Führerschein D/DE", href: "/fuehrerschein/d-de", description: "Bus-Führerschein" },
+  { name: "Fahrlehrer-Ausbildung", href: "/fuehrerschein/fahrlehrer", description: "Werden Sie Fahrlehrer" },
+  { name: "BKF-Weiterbildung", href: "/fuehrerschein/bkf-weiterbildung", description: "Module 1-5" },
+  { name: "Sprachkurse", href: "/fuehrerschein/sprachkurse", description: "Für Berufskraftfahrer" },
+];
 
 const navigation = [
-  { name: "Kurse", href: "#kurse" },
+  { name: "Startseite", href: "/" },
   { name: "Standorte", href: "#standorte" },
   { name: "Über uns", href: "#ueber-uns" },
   { name: "Kontakt", href: "#kontakt" },
@@ -14,7 +29,7 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-lg border-b border-border">
       {/* Top bar */}
       <div className="bg-primary text-primary-foreground py-2">
         <div className="section-container flex justify-between items-center text-sm">
@@ -38,30 +53,46 @@ export function Header() {
       </div>
 
       {/* Main navigation */}
-      <nav className="section-container py-4">
+      <nav className="section-container py-3">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-display font-bold text-xl">M</span>
-            </div>
-            <div className="hidden sm:block">
-              <p className="font-display font-bold text-lg text-foreground">Fahrschule Metropol</p>
-              <p className="text-xs text-muted-foreground">Bildungszentrum</p>
-            </div>
+          <Link to="/" className="flex items-center">
+            <img 
+              src={logoMetropol} 
+              alt="Metropol Bildungszentrum GmbH" 
+              className="h-14 sm:h-16 w-auto"
+            />
           </Link>
 
           {/* Desktop navigation */}
-          <div className="hidden lg:flex items-center gap-8">
+          <div className="hidden lg:flex items-center gap-6">
             {navigation.map((item) => (
-              <a
+              <Link
                 key={item.name}
-                href={item.href}
-                className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
+                to={item.href}
+                className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
               >
                 {item.name}
-              </a>
+              </Link>
             ))}
+            
+            {/* Dropdown for license classes */}
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium text-foreground/80 hover:text-primary transition-colors">
+                Führerscheinklassen
+                <ChevronDown className="h-4 w-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-64">
+                {licenseClasses.map((item) => (
+                  <DropdownMenuItem key={item.href} asChild>
+                    <Link to={item.href} className="flex flex-col items-start py-2">
+                      <span className="font-medium">{item.name}</span>
+                      <span className="text-xs text-muted-foreground">{item.description}</span>
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {/* CTA Button */}
@@ -88,17 +119,32 @@ export function Header() {
         {/* Mobile navigation */}
         {mobileMenuOpen && (
           <div className="lg:hidden mt-4 pb-4 animate-fade-in">
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1">
               {navigation.map((item) => (
-                <a
+                <Link
                   key={item.name}
-                  href={item.href}
+                  to={item.href}
                   className="px-4 py-3 rounded-lg text-foreground hover:bg-muted transition-colors"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {item.name}
-                </a>
+                </Link>
               ))}
+              
+              <div className="px-4 py-2 text-sm font-semibold text-muted-foreground mt-2">
+                Führerscheinklassen
+              </div>
+              {licenseClasses.map((item) => (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  className="px-4 py-3 rounded-lg text-foreground hover:bg-muted transition-colors ml-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              ))}
+              
               <Button variant="accent" className="mt-4">
                 Jetzt anmelden
               </Button>

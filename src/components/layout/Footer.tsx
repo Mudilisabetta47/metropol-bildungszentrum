@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Phone, Mail, Clock, Facebook, Instagram, Linkedin } from "lucide-react";
+import logoMetropol from "@/assets/logo-metropol.webp";
 
 const locations = [
   {
@@ -20,11 +21,11 @@ const locations = [
 ];
 
 const courses = [
-  "Berufskraftfahrer C/CE",
-  "Busführerschein D/DE",
-  "Fahrlehrer*innen-Ausbildung",
-  "BKF-Weiterbildung Module 1-5",
-  "Sprachkurse für BKF",
+  { name: "Berufskraftfahrer C/CE", href: "/fuehrerschein/c-ce" },
+  { name: "Busführerschein D/DE", href: "/fuehrerschein/d-de" },
+  { name: "Fahrlehrer*innen-Ausbildung", href: "/fuehrerschein/fahrlehrer" },
+  { name: "BKF-Weiterbildung Module 1-5", href: "/fuehrerschein/bkf-weiterbildung" },
+  { name: "Sprachkurse für BKF", href: "/fuehrerschein/sprachkurse" },
 ];
 
 const legal = [
@@ -41,14 +42,12 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-lg bg-primary-foreground/10 flex items-center justify-center">
-                <span className="font-display font-bold text-xl">M</span>
-              </div>
-              <div>
-                <p className="font-display font-bold text-lg">Fahrschule Metropol</p>
-                <p className="text-sm text-primary-foreground/70">Bildungszentrum</p>
-              </div>
+            <div className="mb-6">
+              <img 
+                src={logoMetropol} 
+                alt="Metropol Bildungszentrum GmbH" 
+                className="h-16 w-auto brightness-0 invert"
+              />
             </div>
             <p className="text-sm text-primary-foreground/80 leading-relaxed mb-6">
               Ihr Partner für professionelle Berufskraftfahrer-Ausbildung und Weiterbildung in Niedersachsen und Bremen.
@@ -71,10 +70,10 @@ export function Footer() {
             <h3 className="font-display font-semibold text-lg mb-6">Unsere Kurse</h3>
             <ul className="space-y-3">
               {courses.map((course) => (
-                <li key={course}>
-                  <a href="#kurse" className="text-sm text-primary-foreground/80 hover:text-primary-foreground transition-colors">
-                    {course}
-                  </a>
+                <li key={course.name}>
+                  <Link to={course.href} className="text-sm text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+                    {course.name}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -98,7 +97,7 @@ export function Footer() {
             <h3 className="font-display font-semibold text-lg mb-6">Kontakt</h3>
             <ul className="space-y-4">
               <li className="flex items-start gap-3 text-sm">
-                <Phone className="h-5 w-5 text-accent mt-0.5" />
+                <Phone className="h-5 w-5 text-primary-foreground/80 mt-0.5" />
                 <div>
                   <p className="font-medium">Telefon</p>
                   <a href="tel:+49511123456" className="text-primary-foreground/80 hover:text-primary-foreground">
@@ -107,7 +106,7 @@ export function Footer() {
                 </div>
               </li>
               <li className="flex items-start gap-3 text-sm">
-                <Mail className="h-5 w-5 text-accent mt-0.5" />
+                <Mail className="h-5 w-5 text-primary-foreground/80 mt-0.5" />
                 <div>
                   <p className="font-medium">E-Mail</p>
                   <a href="mailto:info@metropol-bildung.de" className="text-primary-foreground/80 hover:text-primary-foreground">
@@ -116,7 +115,7 @@ export function Footer() {
                 </div>
               </li>
               <li className="flex items-start gap-3 text-sm">
-                <Clock className="h-5 w-5 text-accent mt-0.5" />
+                <Clock className="h-5 w-5 text-primary-foreground/80 mt-0.5" />
                 <div>
                   <p className="font-medium">Öffnungszeiten</p>
                   <p className="text-primary-foreground/80">Mo-Fr: 8:00 - 18:00 Uhr</p>
@@ -131,7 +130,7 @@ export function Footer() {
       <div className="border-t border-primary-foreground/10">
         <div className="section-container py-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-primary-foreground/60">
-            © {new Date().getFullYear()} Fahrschule Metropol Bildungszentrum. Alle Rechte vorbehalten.
+            © {new Date().getFullYear()} Metropol Bildungszentrum GmbH. Alle Rechte vorbehalten.
           </p>
           <div className="flex gap-6">
             {legal.map((item) => (
