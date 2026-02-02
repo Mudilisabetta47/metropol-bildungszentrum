@@ -9,6 +9,8 @@ import LicenseClassPage from "./pages/LicenseClassPage";
 import LocationPage from "./pages/LocationPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
+import ImpressumPage from "./pages/ImpressumPage";
+import DatenschutzPage from "./pages/DatenschutzPage";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import { AdminLayout } from "./components/admin/AdminLayout";
@@ -35,6 +37,8 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/ueber-uns" element={<AboutPage />} />
             <Route path="/kontakt" element={<ContactPage />} />
+            <Route path="/impressum" element={<ImpressumPage />} />
+            <Route path="/datenschutz" element={<DatenschutzPage />} />
             <Route path="/fuehrerschein/:classType" element={<LicenseClassPage />} />
             <Route path="/standort/:locationSlug" element={<LocationPage />} />
             
