@@ -22,10 +22,12 @@ const locations = [
 
 const courses = [
   { name: "Berufskraftfahrer C/CE", href: "/fuehrerschein/c-ce" },
+  { name: "Führerschein C1/C1E", href: "/fuehrerschein/c1-c1e" },
   { name: "Busführerschein D/DE", href: "/fuehrerschein/d-de" },
   { name: "Fahrlehrer*innen-Ausbildung", href: "/fuehrerschein/fahrlehrer" },
   { name: "BKF-Weiterbildung Module 1-5", href: "/fuehrerschein/bkf-weiterbildung" },
-  { name: "Sprachkurse für BKF", href: "/fuehrerschein/sprachkurse" },
+  { name: "Auslieferungsfahrer", href: "/fuehrerschein/auslieferungsfahrer" },
+  { name: "Citylogistiker", href: "/fuehrerschein/citylogistiker" },
 ];
 
 const seoLinks = [
@@ -145,8 +147,8 @@ export function Footer() {
                 <Phone className="h-5 w-5 text-primary-foreground/80 mt-0.5" />
                 <div>
                   <p className="font-medium">Telefon</p>
-                  <a href="tel:+4951164250568" className="text-primary-foreground/80 hover:text-primary-foreground">
-                    +49 (0) 511 642 50 68
+                  <a href="tel:+4951164250566" className="text-primary-foreground/80 hover:text-primary-foreground">
+                    0511 – 642 50 66
                   </a>
                 </div>
               </li>

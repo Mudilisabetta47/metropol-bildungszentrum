@@ -223,7 +223,7 @@ export function BKFModuleSchedule({ onSelectModule }: BKFModuleScheduleProps) {
                         <Clock className="h-4 w-4" />
                         <span>08:00 – 16:00 Uhr</span>
                       </div>
-                      <span className="text-primary font-semibold">120 € / Modul</span>
+                      <span className="text-primary font-semibold">95 € / Modul</span>
                     </div>
                   </div>
                 )}
@@ -265,10 +265,10 @@ export function BKFModuleSchedule({ onSelectModule }: BKFModuleScheduleProps) {
               <div className="mt-6 pt-6 border-t border-primary-foreground/20">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-primary-foreground/80">Komplettpreis:</span>
-                  <span className="font-bold text-xl">550 €</span>
+                  <span className="font-bold text-xl">450 €</span>
                 </div>
                 <p className="text-primary-foreground/70 text-xs mt-2">
-                  10% Rabatt bei Buchung aller 5 Module
+                  Sparen Sie bei Buchung aller 5 Module
                 </p>
               </div>
             </div>
