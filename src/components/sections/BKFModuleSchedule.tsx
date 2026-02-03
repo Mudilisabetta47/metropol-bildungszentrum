@@ -110,9 +110,22 @@ export function BKFModuleSchedule({ onSelectModule }: BKFModuleScheduleProps) {
     setExpandedModule(expandedModule === moduleId ? null : moduleId);
   };
 
-  const handleDateClick = (moduleName: string, date: string) => {
+  const handleDateClick = (moduleNumber: number, moduleTitle: string, formattedDate: string) => {
     if (onSelectModule) {
-      onSelectModule(moduleName, date);
+      // Übergebe kurze Beschreibung: "Modul 1 – 25.04.2026"
+      const shortTitle = `Modul ${moduleNumber}`;
+      onSelectModule(shortTitle, formattedDate);
+    }
+    // Scroll to contact form
+    const contactSection = document.getElementById("kontakt");
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const handleCompactWeekClick = (weekTitle: string, dateRange: string) => {
+    if (onSelectModule) {
+      onSelectModule("Kompaktwoche (Module 1-5)", dateRange);
     }
     // Scroll to contact form
     const contactSection = document.getElementById("kontakt");
@@ -187,7 +200,7 @@ export function BKFModuleSchedule({ onSelectModule }: BKFModuleScheduleProps) {
                       {module.dates.map((dateItem) => (
                         <button
                           key={dateItem.date}
-                          onClick={() => handleDateClick(module.title, dateItem.formatted)}
+                          onClick={() => handleDateClick(module.id, module.title, dateItem.formatted)}
                           className="flex items-center justify-between p-4 bg-card border border-border rounded-lg hover:border-primary hover:shadow-md transition-all group"
                         >
                           <div className="flex items-center gap-3">
@@ -233,7 +246,7 @@ export function BKFModuleSchedule({ onSelectModule }: BKFModuleScheduleProps) {
                 {compactWeeks.map((week) => (
                   <button
                     key={week.id}
-                    onClick={() => handleDateClick("Kompaktwoche " + week.modules, week.dateRange)}
+                    onClick={() => handleCompactWeekClick(week.title, week.dateRange)}
                     className="w-full bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-lg p-4 text-left transition-colors group"
                   >
                     <div className="flex items-center justify-between">

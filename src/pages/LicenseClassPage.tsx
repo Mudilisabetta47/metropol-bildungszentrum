@@ -214,6 +214,7 @@ export default function LicenseClassPage() {
   const [selectedModuleInfo, setSelectedModuleInfo] = useState<string | null>(null);
 
   const handleModuleSelect = (moduleName: string, date: string) => {
+    // Zeige nur "Modul X – DD.MM.YYYY" oder "Kompaktwoche – DD.MM. – DD.MM.YYYY"
     setSelectedModuleInfo(`${moduleName} – ${date}`);
   };
 
