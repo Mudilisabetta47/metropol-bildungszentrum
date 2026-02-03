@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import fleetTeam from "@/assets/fleet-team.webp";
 import fleetVehicles from "@/assets/fleet-vehicles.jpg";
 import tqcertLogo from "@/assets/tqcert-logo.webp";
+import agenturLogo from "@/assets/agentur-fuer-arbeit-logo.png";
 
 export default function AboutPage() {
   return (
@@ -185,7 +186,7 @@ export default function AboutPage() {
               <img src={tqcertLogo} alt="TQCert" className="h-12 object-contain" />
             </div>
             <div className="flex items-center gap-3 px-6 py-4 bg-card rounded-xl border border-border">
-              <Shield className="h-8 w-8 text-primary" />
+              <img src={agenturLogo} alt="Agentur für Arbeit" className="h-10 w-10 object-contain" />
               <div>
                 <p className="font-semibold text-foreground">Agentur für Arbeit</p>
                 <p className="text-sm text-muted-foreground">Anerkannter Partner</p>

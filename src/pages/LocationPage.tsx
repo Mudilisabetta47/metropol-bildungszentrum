@@ -10,6 +10,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Contact } from "@/components/sections/Contact";
 import tqcertLogo from "@/assets/tqcert-logo.webp";
+import agenturLogo from "@/assets/agentur-fuer-arbeit-logo.png";
 import trucksImage from "@/assets/trucks-metropol.jpg";
 import busImage from "@/assets/bus-metropol.jpg";
 import fleetTeam from "@/assets/fleet-team.webp";
@@ -539,7 +540,7 @@ export default function LocationPage() {
               </div>
             </div>
             <div className="flex items-center gap-3 px-6 py-3 bg-card rounded-xl border border-border">
-              <CheckCircle className="h-6 w-6 text-primary" />
+              <img src={agenturLogo} alt="Agentur für Arbeit" className="h-8 w-8 object-contain" />
               <div>
                 <p className="font-semibold text-foreground text-sm">Agentur für Arbeit</p>
                 <p className="text-xs text-muted-foreground">100% Förderung möglich</p>
