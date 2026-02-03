@@ -247,6 +247,301 @@ export type Database = {
         }
         Relationships: []
       }
+      invoice_history: {
+        Row: {
+          action: string
+          change_reason: string | null
+          id: string
+          invoice_id: string
+          ip_address: string | null
+          new_data: Json | null
+          old_data: Json | null
+          performed_at: string
+          performed_by: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          change_reason?: string | null
+          id?: string
+          invoice_id: string
+          ip_address?: string | null
+          new_data?: Json | null
+          old_data?: Json | null
+          performed_at?: string
+          performed_by?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          change_reason?: string | null
+          id?: string
+          invoice_id?: string
+          ip_address?: string | null
+          new_data?: Json | null
+          old_data?: Json | null
+          performed_at?: string
+          performed_by?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_history_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "active_invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_history_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoice_items: {
+        Row: {
+          course_date_id: string | null
+          course_id: string | null
+          created_at: string
+          description: string
+          gross_amount: number
+          id: string
+          invoice_id: string
+          net_amount: number
+          position: number
+          quantity: number
+          unit: string | null
+          unit_price: number
+          vat_amount: number
+          vat_rate: number
+        }
+        Insert: {
+          course_date_id?: string | null
+          course_id?: string | null
+          created_at?: string
+          description: string
+          gross_amount: number
+          id?: string
+          invoice_id: string
+          net_amount: number
+          position: number
+          quantity?: number
+          unit?: string | null
+          unit_price: number
+          vat_amount: number
+          vat_rate?: number
+        }
+        Update: {
+          course_date_id?: string | null
+          course_id?: string | null
+          created_at?: string
+          description?: string
+          gross_amount?: number
+          id?: string
+          invoice_id?: string
+          net_amount?: number
+          position?: number
+          quantity?: number
+          unit?: string | null
+          unit_price?: number
+          vat_amount?: number
+          vat_rate?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_items_course_date_id_fkey"
+            columns: ["course_date_id"]
+            isOneToOne: false
+            referencedRelation: "course_dates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_items_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "active_invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          archived_until: string | null
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          cancelled_by: string | null
+          cancelled_invoice_id: string | null
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          deleted_by: string | null
+          due_date: string | null
+          gross_amount: number
+          id: string
+          internal_notes: string | null
+          invoice_date: string
+          invoice_number: string
+          is_deleted: boolean
+          is_locked: boolean
+          locked_at: string | null
+          locked_by: string | null
+          net_amount: number
+          notes: string | null
+          paid_amount: number | null
+          paid_at: string | null
+          participant_id: string | null
+          payment_method: string | null
+          payment_reference: string | null
+          pdf_generated_at: string | null
+          pdf_url: string | null
+          recipient_address: string | null
+          recipient_email: string | null
+          recipient_name: string
+          recipient_zip_city: string | null
+          registration_id: string | null
+          service_date: string | null
+          service_period_end: string | null
+          service_period_start: string | null
+          status: string
+          updated_at: string
+          vat_amount: number
+          vat_rate: number
+          version: number
+        }
+        Insert: {
+          archived_until?: string | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          cancelled_invoice_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          due_date?: string | null
+          gross_amount?: number
+          id?: string
+          internal_notes?: string | null
+          invoice_date?: string
+          invoice_number: string
+          is_deleted?: boolean
+          is_locked?: boolean
+          locked_at?: string | null
+          locked_by?: string | null
+          net_amount?: number
+          notes?: string | null
+          paid_amount?: number | null
+          paid_at?: string | null
+          participant_id?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          pdf_generated_at?: string | null
+          pdf_url?: string | null
+          recipient_address?: string | null
+          recipient_email?: string | null
+          recipient_name: string
+          recipient_zip_city?: string | null
+          registration_id?: string | null
+          service_date?: string | null
+          service_period_end?: string | null
+          service_period_start?: string | null
+          status?: string
+          updated_at?: string
+          vat_amount?: number
+          vat_rate?: number
+          version?: number
+        }
+        Update: {
+          archived_until?: string | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          cancelled_invoice_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          due_date?: string | null
+          gross_amount?: number
+          id?: string
+          internal_notes?: string | null
+          invoice_date?: string
+          invoice_number?: string
+          is_deleted?: boolean
+          is_locked?: boolean
+          locked_at?: string | null
+          locked_by?: string | null
+          net_amount?: number
+          notes?: string | null
+          paid_amount?: number | null
+          paid_at?: string | null
+          participant_id?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          pdf_generated_at?: string | null
+          pdf_url?: string | null
+          recipient_address?: string | null
+          recipient_email?: string | null
+          recipient_name?: string
+          recipient_zip_city?: string | null
+          registration_id?: string | null
+          service_date?: string | null
+          service_period_end?: string | null
+          service_period_start?: string | null
+          status?: string
+          updated_at?: string
+          vat_amount?: number
+          vat_rate?: number
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_cancelled_invoice_id_fkey"
+            columns: ["cancelled_invoice_id"]
+            isOneToOne: false
+            referencedRelation: "active_invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_cancelled_invoice_id_fkey"
+            columns: ["cancelled_invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: false
+            referencedRelation: "registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_sources: {
         Row: {
           created_at: string
@@ -433,10 +728,13 @@ export type Database = {
           created_at: string
           created_by: string | null
           date_of_birth: string | null
+          deleted_at: string | null
+          deleted_by: string | null
           email: string
           first_name: string
           id: string
           internal_notes: string | null
+          is_deleted: boolean
           last_name: string
           phone: string | null
           status: string
@@ -449,10 +747,13 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           date_of_birth?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           email: string
           first_name: string
           id?: string
           internal_notes?: string | null
+          is_deleted?: boolean
           last_name: string
           phone?: string | null
           status?: string
@@ -465,10 +766,13 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           date_of_birth?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           email?: string
           first_name?: string
           id?: string
           internal_notes?: string | null
+          is_deleted?: boolean
           last_name?: string
           phone?: string | null
           status?: string
@@ -482,10 +786,13 @@ export type Database = {
         Row: {
           amount: number
           created_at: string
+          deleted_at: string | null
+          deleted_by: string | null
           due_date: string | null
           id: string
           invoice_number: string | null
           invoice_url: string | null
+          is_deleted: boolean
           notes: string | null
           paid_at: string | null
           participant_id: string | null
@@ -497,10 +804,13 @@ export type Database = {
         Insert: {
           amount: number
           created_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
           due_date?: string | null
           id?: string
           invoice_number?: string | null
           invoice_url?: string | null
+          is_deleted?: boolean
           notes?: string | null
           paid_at?: string | null
           participant_id?: string | null
@@ -512,10 +822,13 @@ export type Database = {
         Update: {
           amount?: number
           created_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
           due_date?: string | null
           id?: string
           invoice_number?: string | null
           invoice_url?: string | null
+          is_deleted?: boolean
           notes?: string | null
           paid_at?: string | null
           participant_id?: string | null
@@ -590,9 +903,12 @@ export type Database = {
           course_date_id: string
           created_at: string
           date_of_birth: string | null
+          deleted_at: string | null
+          deleted_by: string | null
           email: string
           first_name: string
           id: string
+          is_deleted: boolean
           last_name: string
           message: string | null
           phone: string | null
@@ -611,9 +927,12 @@ export type Database = {
           course_date_id: string
           created_at?: string
           date_of_birth?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           email: string
           first_name: string
           id?: string
+          is_deleted?: boolean
           last_name: string
           message?: string | null
           phone?: string | null
@@ -632,9 +951,12 @@ export type Database = {
           course_date_id?: string
           created_at?: string
           date_of_birth?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           email?: string
           first_name?: string
           id?: string
+          is_deleted?: boolean
           last_name?: string
           message?: string | null
           phone?: string | null
@@ -746,9 +1068,212 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      active_invoices: {
+        Row: {
+          archived_until: string | null
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          cancelled_by: string | null
+          cancelled_invoice_id: string | null
+          created_at: string | null
+          created_by: string | null
+          deleted_at: string | null
+          deleted_by: string | null
+          due_date: string | null
+          gross_amount: number | null
+          id: string | null
+          internal_notes: string | null
+          invoice_date: string | null
+          invoice_number: string | null
+          is_deleted: boolean | null
+          is_locked: boolean | null
+          locked_at: string | null
+          locked_by: string | null
+          net_amount: number | null
+          notes: string | null
+          paid_amount: number | null
+          paid_at: string | null
+          participant_id: string | null
+          payment_method: string | null
+          payment_reference: string | null
+          pdf_generated_at: string | null
+          pdf_url: string | null
+          recipient_address: string | null
+          recipient_email: string | null
+          recipient_name: string | null
+          recipient_zip_city: string | null
+          registration_id: string | null
+          service_date: string | null
+          service_period_end: string | null
+          service_period_start: string | null
+          status: string | null
+          updated_at: string | null
+          vat_amount: number | null
+          vat_rate: number | null
+          version: number | null
+        }
+        Insert: {
+          archived_until?: string | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          cancelled_invoice_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          due_date?: string | null
+          gross_amount?: number | null
+          id?: string | null
+          internal_notes?: string | null
+          invoice_date?: string | null
+          invoice_number?: string | null
+          is_deleted?: boolean | null
+          is_locked?: boolean | null
+          locked_at?: string | null
+          locked_by?: string | null
+          net_amount?: number | null
+          notes?: string | null
+          paid_amount?: number | null
+          paid_at?: string | null
+          participant_id?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          pdf_generated_at?: string | null
+          pdf_url?: string | null
+          recipient_address?: string | null
+          recipient_email?: string | null
+          recipient_name?: string | null
+          recipient_zip_city?: string | null
+          registration_id?: string | null
+          service_date?: string | null
+          service_period_end?: string | null
+          service_period_start?: string | null
+          status?: string | null
+          updated_at?: string | null
+          vat_amount?: number | null
+          vat_rate?: number | null
+          version?: number | null
+        }
+        Update: {
+          archived_until?: string | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          cancelled_invoice_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          due_date?: string | null
+          gross_amount?: number | null
+          id?: string | null
+          internal_notes?: string | null
+          invoice_date?: string | null
+          invoice_number?: string | null
+          is_deleted?: boolean | null
+          is_locked?: boolean | null
+          locked_at?: string | null
+          locked_by?: string | null
+          net_amount?: number | null
+          notes?: string | null
+          paid_amount?: number | null
+          paid_at?: string | null
+          participant_id?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          pdf_generated_at?: string | null
+          pdf_url?: string | null
+          recipient_address?: string | null
+          recipient_email?: string | null
+          recipient_name?: string | null
+          recipient_zip_city?: string | null
+          registration_id?: string | null
+          service_date?: string | null
+          service_period_end?: string | null
+          service_period_start?: string | null
+          status?: string | null
+          updated_at?: string | null
+          vat_amount?: number | null
+          vat_rate?: number | null
+          version?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_cancelled_invoice_id_fkey"
+            columns: ["cancelled_invoice_id"]
+            isOneToOne: false
+            referencedRelation: "active_invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_cancelled_invoice_id_fkey"
+            columns: ["cancelled_invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: false
+            referencedRelation: "registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      datev_export: {
+        Row: {
+          Belegdatum: string | null
+          Belegnummer: string | null
+          Buchungstext: string | null
+          Erlöskonto: string | null
+          Gegenkonto: string | null
+          Status: string | null
+          "Umsatz (brutto)": number | null
+          "Umsatz (netto)": number | null
+          "USt-Betrag": number | null
+          "USt-Satz": number | null
+          Zahldatum: string | null
+        }
+        Insert: {
+          Belegdatum?: string | null
+          Belegnummer?: string | null
+          Buchungstext?: string | null
+          Erlöskonto?: never
+          Gegenkonto?: never
+          Status?: never
+          "Umsatz (brutto)"?: number | null
+          "Umsatz (netto)"?: number | null
+          "USt-Betrag"?: number | null
+          "USt-Satz"?: number | null
+          Zahldatum?: string | null
+        }
+        Update: {
+          Belegdatum?: string | null
+          Belegnummer?: string | null
+          Buchungstext?: string | null
+          Erlöskonto?: never
+          Gegenkonto?: never
+          Status?: never
+          "Umsatz (brutto)"?: number | null
+          "Umsatz (netto)"?: number | null
+          "USt-Betrag"?: number | null
+          "USt-Satz"?: number | null
+          Zahldatum?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      generate_invoice_number: { Args: never; Returns: string }
       has_any_role: {
         Args: {
           _roles: Database["public"]["Enums"]["app_role"][]
