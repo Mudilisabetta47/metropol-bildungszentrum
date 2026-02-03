@@ -1,7 +1,9 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export default function ImpressumPage() {
+  const { data: settings } = useSiteSettings();
   return (
     <div className="min-h-screen">
       <Header />
@@ -19,10 +21,9 @@ export default function ImpressumPage() {
                   Angaben gemäß § 5 TMG
                 </h2>
                 <p className="text-muted-foreground">
-                  METROPOL Bildungszentrum GmbH<br />
-                  Inhaber Vedat Özel<br />
-                  Vahrenwalder Str. 213<br />
-                  30165 Hannover
+                  {settings?.company_name}<br />
+                  {settings?.company_address}<br />
+                  {settings?.company_zip_city}
                 </p>
               </section>
 
@@ -31,7 +32,7 @@ export default function ImpressumPage() {
                   Vertreten durch
                 </h2>
                 <p className="text-muted-foreground">
-                  Geschäftsführer Vedat Özel
+                  Geschäftsführer {settings?.company_ceo}
                 </p>
               </section>
 
@@ -40,8 +41,8 @@ export default function ImpressumPage() {
                   Kontakt
                 </h2>
                 <p className="text-muted-foreground">
-                  Telefon: 0511 – 642 50 68<br />
-                  E-Mail: info@metropol-bz.de
+                  Telefon: {settings?.central_phone}<br />
+                  E-Mail: {settings?.central_email}
                 </p>
               </section>
 
@@ -51,8 +52,7 @@ export default function ImpressumPage() {
                 </h2>
                 <p className="text-muted-foreground">
                   Eintragung im Handelsregister<br />
-                  Registergericht: Amtsgericht Hannover<br />
-                  Registernummer: HRB 216735
+                  {settings?.company_register}
                 </p>
               </section>
 
@@ -62,7 +62,7 @@ export default function ImpressumPage() {
                 </h2>
                 <p className="text-muted-foreground">
                   Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz:<br />
-                  DE [Nummer]
+                  {settings?.company_vat_id}
                 </p>
               </section>
 

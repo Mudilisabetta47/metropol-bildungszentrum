@@ -14,6 +14,7 @@ import { de } from "date-fns/locale";
 import trucksImage from "@/assets/trucks-metropol.jpg";
 import busImage from "@/assets/bus-metropol.jpg";
 import fleetTeam from "@/assets/fleet-team.webp";
+import { useSiteSettings, formatPhoneLink } from "@/hooks/useSiteSettings";
 
 // Map category to hero image
 const categoryImages: Record<string, string> = {
@@ -109,6 +110,7 @@ export default function LicenseClassPage() {
   const { data: courseDates = [] } = useCourseDates(course?.id);
   const { data: allLocations = [] } = useLocations();
   const [selectedModuleInfo, setSelectedModuleInfo] = useState<string | null>(null);
+  const { data: settings } = useSiteSettings();
 
   const handleModuleSelect = (moduleName: string, date: string) => {
     setSelectedModuleInfo(`${moduleName} – ${date}`);
@@ -234,9 +236,9 @@ export default function LicenseClassPage() {
                   </a>
                 </Button>
                 <Button variant="heroOutline" size="lg" className="w-full" asChild>
-                  <a href="tel:+4951164250568">
+                  <a href={formatPhoneLink(settings?.central_phone || "")}>
                     <Phone className="mr-2 h-4 w-4" />
-                    0511 – 642 50 68
+                    {settings?.central_phone}
                   </a>
                 </Button>
               </div>
