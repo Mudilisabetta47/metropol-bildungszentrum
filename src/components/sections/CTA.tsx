@@ -1,8 +1,9 @@
 import { ArrowRight, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import busImage from "@/assets/bus-metropol.jpg";
-
+import { useSiteSettings, formatPhoneLink } from "@/hooks/useSiteSettings";
 export function CTA() {
+  const { data: settings } = useSiteSettings();
   return (
     <section className="py-20 relative overflow-hidden">
       {/* Background - Green gradient */}
@@ -34,9 +35,9 @@ export function CTA() {
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
               <Button variant="heroOutline" size="xl" asChild>
-                <a href="tel:+4951164250568">
+                <a href={formatPhoneLink(settings?.central_phone || "")}>
                   <Phone className="mr-2 h-5 w-5" />
-                  0511 – 642 50 68
+                  {settings?.central_phone}
                 </a>
               </Button>
             </div>

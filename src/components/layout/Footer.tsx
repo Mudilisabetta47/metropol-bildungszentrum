@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Phone, Mail, Clock, Facebook, Instagram, Linkedin, Star } from "lucide-react";
 import logoMetropol from "@/assets/logo-metropol.webp";
 import { useLocations } from "@/hooks/useLocations";
-
+import { useSiteSettings, formatPhoneLink } from "@/hooks/useSiteSettings";
 const courses = [
   { name: "Berufskraftfahrer C/CE", href: "/fuehrerschein/c-ce" },
   { name: "Führerschein C1/C1E", href: "/fuehrerschein/c1-c1e" },
@@ -34,7 +34,7 @@ const legal = [
 
 export function Footer() {
   const { data: locations = [] } = useLocations();
-
+  const { data: settings } = useSiteSettings();
   return (
     <footer className="bg-primary text-primary-foreground">
       {/* Main footer content */}
@@ -134,8 +134,8 @@ export function Footer() {
                 <Phone className="h-5 w-5 text-primary-foreground/80 mt-0.5" />
                 <div>
                   <p className="font-medium">Telefon</p>
-                  <a href="tel:+4951164250568" className="text-primary-foreground/80 hover:text-primary-foreground">
-                    0511 – 642 50 68
+                  <a href={formatPhoneLink(settings?.central_phone || "")} className="text-primary-foreground/80 hover:text-primary-foreground">
+                    {settings?.central_phone}
                   </a>
                 </div>
               </li>
@@ -143,8 +143,8 @@ export function Footer() {
                 <Mail className="h-5 w-5 text-primary-foreground/80 mt-0.5" />
                 <div>
                   <p className="font-medium">E-Mail</p>
-                  <a href="mailto:info@metropol-bz.de" className="text-primary-foreground/80 hover:text-primary-foreground">
-                    info@metropol-bz.de
+                  <a href={`mailto:${settings?.central_email}`} className="text-primary-foreground/80 hover:text-primary-foreground">
+                    {settings?.central_email}
                   </a>
                 </div>
               </li>
@@ -190,7 +190,7 @@ export function Footer() {
       <div className="border-t border-primary-foreground/10">
         <div className="section-container py-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-primary-foreground/60">
-            © {new Date().getFullYear()} METROPOL Bildungszentrum GmbH. Alle Rechte vorbehalten.
+            © {new Date().getFullYear()} {settings?.company_name}. Alle Rechte vorbehalten.
           </p>
           <div className="flex gap-6">
             {legal.map((item) => (

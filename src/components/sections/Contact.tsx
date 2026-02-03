@@ -17,6 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import tqcertLogo from "@/assets/tqcert-logo.webp";
 import agenturLogo from "@/assets/agentur-fuer-arbeit-logo.png";
 import reginaMartin from "@/assets/regina-martin.png";
+import { useSiteSettings, formatPhoneLink } from "@/hooks/useSiteSettings";
 
 const courses = [
   { value: "c-ce", label: "Führerschein C/CE (LKW)", slug: "c-ce" },
@@ -59,6 +60,7 @@ export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
   const [selectedCourse, setSelectedCourse] = useState<string>("");
   const [selectedLocation, setSelectedLocation] = useState<string>("");
   const { toast } = useToast();
+  const { data: settings } = useSiteSettings();
 
   // Detect course from URL path
   useEffect(() => {
@@ -225,15 +227,15 @@ export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
               <div className="flex items-start gap-4 p-4 rounded-xl bg-card border border-border hover:border-primary/30 transition-colors">
                 <img 
                   src={reginaMartin} 
-                  alt="Regina Martin - Ihre Ansprechpartnerin" 
+                  alt={settings?.contact_person_name || "Ansprechpartnerin"} 
                   className="w-16 h-16 rounded-full object-cover border-2 border-primary/20"
                 />
                 <div className="flex-1">
                   <p className="font-semibold text-foreground mb-0.5">Ihre Ansprechpartnerin</p>
-                  <p className="text-primary font-medium">Regina Martin</p>
-                <a href="tel:+4951164250568" className="text-primary hover:underline text-sm flex items-center gap-1 mt-1">
+                  <p className="text-primary font-medium">{settings?.contact_person_name}</p>
+                  <a href={formatPhoneLink(settings?.contact_person_phone || "")} className="text-primary hover:underline text-sm flex items-center gap-1 mt-1">
                     <Phone className="h-3.5 w-3.5" />
-                    0511 – 642 50 68
+                    {settings?.contact_person_phone}
                   </a>
                 </div>
               </div>
@@ -244,8 +246,8 @@ export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
                 </div>
                 <div>
                   <p className="font-semibold text-foreground mb-1">E-Mail Kontakt</p>
-                  <a href="mailto:info@metropol-bz.de" className="text-primary hover:underline font-medium">
-                    info@metropol-bz.de
+                  <a href={`mailto:${settings?.central_email}`} className="text-primary hover:underline font-medium">
+                    {settings?.central_email}
                   </a>
                   <p className="text-sm text-muted-foreground mt-1">Antwort innerhalb von 24 Stunden</p>
                 </div>

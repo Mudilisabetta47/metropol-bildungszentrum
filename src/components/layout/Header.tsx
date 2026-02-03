@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Menu, X, Phone, MapPin, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logoMetropol from "@/assets/logo-metropol.webp";
+import { useSiteSettings, formatPhoneLink } from "@/hooks/useSiteSettings";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,16 +30,16 @@ const navigation = [
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+  const { data: settings } = useSiteSettings();
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-lg border-b border-border">
       {/* Top bar */}
       <div className="bg-primary text-primary-foreground py-2">
         <div className="section-container flex justify-between items-center text-sm">
           <div className="flex items-center gap-6">
-            <a href="tel:+4951164250568" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <a href={formatPhoneLink(settings?.central_phone || "")} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <Phone className="h-4 w-4" />
-              <span className="hidden sm:inline">0511 – 642 50 68</span>
+              <span className="hidden sm:inline">{settings?.central_phone}</span>
             </a>
             <div className="hidden md:flex items-center gap-2">
               <MapPin className="h-4 w-4" />
