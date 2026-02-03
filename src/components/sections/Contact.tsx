@@ -16,13 +16,16 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import tqcertLogo from "@/assets/tqcert-logo.webp";
 import agenturLogo from "@/assets/agentur-fuer-arbeit-logo.png";
+import reginaMartin from "@/assets/regina-martin.png";
 
 const courses = [
   { value: "c-ce", label: "Führerschein C/CE (LKW)", slug: "c-ce" },
+  { value: "c1-c1e", label: "Führerschein C1/C1E (7,5t)", slug: "c1-c1e" },
   { value: "d-de", label: "Führerschein D/DE (Bus)", slug: "d-de" },
   { value: "fahrlehrer", label: "Fahrlehrer*innen-Ausbildung", slug: "fahrlehrer" },
   { value: "bkf-weiterbildung", label: "BKF-Weiterbildung (Module 1-5)", slug: "bkf-weiterbildung" },
-  { value: "sprachkurse", label: "Sprachkurs für Berufskraftfahrer", slug: "sprachkurse" },
+  { value: "auslieferungsfahrer", label: "Auslieferungsfahrer (Klasse B)", slug: "auslieferungsfahrer" },
+  { value: "citylogistiker", label: "Citylogistiker (Klasse B/BE)", slug: "citylogistiker" },
   { value: "sonstiges", label: "Sonstiges / Allgemeine Beratung", slug: null },
 ];
 
@@ -36,10 +39,12 @@ const locations = [
 // Map URL slugs to course values
 const slugToCourseValue: Record<string, string> = {
   "c-ce": "c-ce",
+  "c1-c1e": "c1-c1e",
   "d-de": "d-de",
   "fahrlehrer": "fahrlehrer",
   "bkf-weiterbildung": "bkf-weiterbildung",
-  "sprachkurse": "sprachkurse",
+  "auslieferungsfahrer": "auslieferungsfahrer",
+  "citylogistiker": "citylogistiker",
 };
 
 interface ContactProps {
@@ -215,18 +220,21 @@ export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
               </div>
             </div>
 
-            {/* Contact options */}
+            {/* Contact options - with Regina Martin */}
             <div className="space-y-4 mb-8">
               <div className="flex items-start gap-4 p-4 rounded-xl bg-card border border-border hover:border-primary/30 transition-colors">
-                <div className="p-3 rounded-lg bg-primary text-primary-foreground">
-                  <Phone className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="font-semibold text-foreground mb-1">Telefonische Beratung</p>
-                  <a href="tel:+49511123456" className="text-primary hover:underline font-medium text-lg">
-                    0511 123 456
+                <img 
+                  src={reginaMartin} 
+                  alt="Regina Martin - Ihre Ansprechpartnerin" 
+                  className="w-16 h-16 rounded-full object-cover border-2 border-primary/20"
+                />
+                <div className="flex-1">
+                  <p className="font-semibold text-foreground mb-0.5">Ihre Ansprechpartnerin</p>
+                  <p className="text-primary font-medium">Regina Martin</p>
+                  <a href="tel:+4951164250566" className="text-primary hover:underline text-sm flex items-center gap-1 mt-1">
+                    <Phone className="h-3.5 w-3.5" />
+                    0511 – 642 50 66
                   </a>
-                  <p className="text-sm text-muted-foreground mt-1">Mo-Fr: 08:00 - 12:00, 12:30 - 16:30 Uhr</p>
                 </div>
               </div>
 
@@ -236,8 +244,8 @@ export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
                 </div>
                 <div>
                   <p className="font-semibold text-foreground mb-1">E-Mail Kontakt</p>
-                  <a href="mailto:info@mep-agentur.de" className="text-primary hover:underline font-medium">
-                    info@mep-agentur.de
+                  <a href="mailto:info@metropol-bz.de" className="text-primary hover:underline font-medium">
+                    info@metropol-bz.de
                   </a>
                   <p className="text-sm text-muted-foreground mt-1">Antwort innerhalb von 24 Stunden</p>
                 </div>

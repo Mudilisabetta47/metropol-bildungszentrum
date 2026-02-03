@@ -25,10 +25,22 @@ const courses = [
     spots: 12,
     icon: Truck,
     featured: true,
-    price: "ab 3.500 €",
   },
   {
     id: 2,
+    title: "Führerschein C1/C1E",
+    category: "lkw",
+    slug: "c1-c1e",
+    description: "LKW bis 7,5t – ideal für Rettungsdienst, Feuerwehr oder leichte Nutzfahrzeuge.",
+    duration: "3-4 Wochen",
+    locations: ["Hannover", "Bremen", "Garbsen"],
+    nextStart: "10.03.2026",
+    spots: 10,
+    icon: Truck,
+    featured: false,
+  },
+  {
+    id: 3,
     title: "Busführerschein D/DE",
     category: "bus",
     slug: "d-de",
@@ -39,24 +51,21 @@ const courses = [
     spots: 8,
     icon: Bus,
     featured: true,
-    price: "ab 4.200 €",
   },
   {
-    id: 3,
+    id: 4,
     title: "Fahrlehrer*innen-Ausbildung",
     category: "fahrlehrer",
     slug: "fahrlehrer",
     description: "Umfassende Ausbildung zum staatlich anerkannten Fahrlehrer.",
-    duration: "12 Monate",
     locations: ["Hannover"],
     nextStart: "01.04.2026",
     spots: 15,
     icon: GraduationCap,
     featured: false,
-    price: "ab 12.000 €",
   },
   {
-    id: 4,
+    id: 5,
     title: "BKF-Weiterbildung Module 1-5",
     category: "weiterbildung",
     slug: "bkf-weiterbildung",
@@ -67,21 +76,33 @@ const courses = [
     spots: 20,
     icon: BookOpen,
     featured: false,
-    price: "120 € / Modul",
+    price: "95 € / Modul",
   },
   {
-    id: 5,
-    title: "Sprachkurs für Berufskraftfahrer",
+    id: 6,
+    title: "Auslieferungsfahrer",
     category: "weiterbildung",
-    slug: "sprachkurse",
-    description: "Deutsch für den Berufsalltag als Kraftfahrer.",
+    slug: "auslieferungsfahrer",
+    description: "Qualifizierung für Auslieferungsfahrer mit Klasse B – anerkannt beim Bildungsgutschein.",
     duration: "4 Wochen",
-    locations: ["Hannover", "Bremen"],
+    locations: ["Hannover", "Bremen", "Garbsen"],
     nextStart: "24.02.2026",
     spots: 15,
-    icon: Languages,
+    icon: Truck,
     featured: false,
-    price: "ab 800 €",
+  },
+  {
+    id: 7,
+    title: "Citylogistiker",
+    category: "weiterbildung",
+    slug: "citylogistiker",
+    description: "Qualifizierung zum Citylogistiker mit Klasse B/BE – anerkannt beim Bildungsgutschein.",
+    duration: "6 Wochen",
+    locations: ["Hannover", "Bremen"],
+    nextStart: "03.03.2026",
+    spots: 12,
+    icon: Truck,
+    featured: false,
   },
 ];
 
@@ -150,7 +171,7 @@ export function Courses() {
                   <h3 className="font-display font-bold text-lg text-foreground mb-1">
                     {course.title}
                   </h3>
-                  <p className="text-primary font-semibold">{course.price}</p>
+                  {course.price && <p className="text-primary font-semibold">{course.price}</p>}
                 </div>
               </div>
 
@@ -159,22 +180,28 @@ export function Courses() {
               </p>
 
               <div className="grid grid-cols-2 gap-3 mb-6 text-sm">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Clock className="h-4 w-4" />
-                  <span>{course.duration}</span>
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Calendar className="h-4 w-4" />
-                  <span>{course.nextStart}</span>
-                </div>
+                {course.duration && (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Clock className="h-4 w-4" />
+                    <span>{course.duration}</span>
+                  </div>
+                )}
+                {course.nextStart && (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Calendar className="h-4 w-4" />
+                    <span>{course.nextStart}</span>
+                  </div>
+                )}
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <MapPin className="h-4 w-4" />
                   <span>{course.locations.length} Standort{course.locations.length > 1 ? "e" : ""}</span>
                 </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Users className="h-4 w-4" />
-                  <span>{course.spots} Plätze frei</span>
-                </div>
+                {course.spots && (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Users className="h-4 w-4" />
+                    <span>{course.spots} Plätze frei</span>
+                  </div>
+                )}
               </div>
 
               <Button variant="default" className="w-full group" asChild>

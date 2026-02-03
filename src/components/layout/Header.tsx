@@ -12,10 +12,12 @@ import {
 
 const licenseClasses = [
   { name: "Führerschein C/CE", href: "/fuehrerschein/c-ce", description: "LKW-Führerschein" },
+  { name: "Führerschein C1/C1E", href: "/fuehrerschein/c1-c1e", description: "LKW bis 7,5t" },
   { name: "Führerschein D/DE", href: "/fuehrerschein/d-de", description: "Bus-Führerschein" },
   { name: "Fahrlehrer-Ausbildung", href: "/fuehrerschein/fahrlehrer", description: "Werden Sie Fahrlehrer" },
   { name: "BKF-Weiterbildung", href: "/fuehrerschein/bkf-weiterbildung", description: "Module 1-5" },
-  { name: "Sprachkurse", href: "/fuehrerschein/sprachkurse", description: "Für Berufskraftfahrer" },
+  { name: "Auslieferungsfahrer", href: "/fuehrerschein/auslieferungsfahrer", description: "Klasse B" },
+  { name: "Citylogistiker", href: "/fuehrerschein/citylogistiker", description: "Klasse B/BE" },
 ];
 
 const navigation = [
@@ -34,9 +36,9 @@ export function Header() {
       <div className="bg-primary text-primary-foreground py-2">
         <div className="section-container flex justify-between items-center text-sm">
           <div className="flex items-center gap-6">
-            <a href="tel:+4951164250568" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <a href="tel:+4951164250566" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <Phone className="h-4 w-4" />
-              <span className="hidden sm:inline">+49 (0) 511 642 50 68</span>
+              <span className="hidden sm:inline">0511 – 642 50 66</span>
             </a>
             <div className="hidden md:flex items-center gap-2">
               <MapPin className="h-4 w-4" />
