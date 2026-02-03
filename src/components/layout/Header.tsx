@@ -22,7 +22,7 @@ const licenseClasses = [
 
 const navigation = [
   { name: "Startseite", href: "/" },
-  { name: "Standorte", href: "/#standorte" },
+  { name: "Standorte", href: "/kontakt" },
   { name: "Über uns", href: "/ueber-uns" },
   { name: "Kontakt", href: "/kontakt" },
 ];
