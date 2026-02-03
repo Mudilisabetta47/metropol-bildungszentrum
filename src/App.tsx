@@ -28,6 +28,7 @@ import Settings from "./pages/admin/Settings";
 import Team from "./pages/admin/Team";
 import Participants from "./pages/admin/Participants";
 import Payments from "./pages/admin/Payments";
+import Invoices from "./pages/admin/Invoices";
 import InvitePage from "./pages/InvitePage";
 const queryClient = new QueryClient();
 
@@ -56,6 +57,7 @@ const App = () => (
                 <Route path="courses" element={<Courses />} />
                 <Route path="schedule" element={<Schedule />} />
                 <Route path="registrations" element={<Registrations />} />
+                <Route path="invoices" element={<Invoices />} />
                 <Route path="payments" element={<Payments />} />
                 <Route path="contacts" element={<Contacts />} />
                 <Route path="statistics" element={<Statistics />} />

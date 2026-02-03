@@ -14,6 +14,8 @@ import {
   LogOut,
   Loader2,
   Menu,
+  Receipt,
+  CreditCard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -25,7 +27,8 @@ const navigation = [
   { name: "Kurse", href: "/admin/courses", icon: GraduationCap },
   { name: "Termine", href: "/admin/schedule", icon: Calendar },
   { name: "Anmeldungen", href: "/admin/registrations", icon: Users },
-  { name: "Zahlungen", href: "/admin/payments", icon: Settings },
+  { name: "Rechnungen", href: "/admin/invoices", icon: Receipt },
+  { name: "Zahlungen", href: "/admin/payments", icon: CreditCard },
   { name: "Kontaktanfragen", href: "/admin/contacts", icon: MessageSquare },
   { name: "Statistiken", href: "/admin/statistics", icon: BarChart3 },
   { name: "Standorte", href: "/admin/locations", icon: MapPin },
