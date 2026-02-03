@@ -2,12 +2,17 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
+type AppRole = "super_admin" | "admin" | "employee" | "instructor" | "support" | "user";
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   isLoading: boolean;
   isStaff: boolean;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
+  roles: AppRole[];
+  hasRole: (role: AppRole) => boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -21,22 +26,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isStaff, setIsStaff] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [roles, setRoles] = useState<AppRole[]>([]);
 
   const checkUserRoles = async (userId: string) => {
     try {
-      const { data: roles } = await supabase
+      const { data: rolesData } = await supabase
         .from("user_roles")
         .select("role")
         .eq("user_id", userId);
 
-      if (roles) {
-        const roleList = roles.map((r) => r.role);
-        setIsAdmin(roleList.includes("admin"));
-        setIsStaff(roleList.includes("admin") || roleList.includes("employee"));
+      if (rolesData) {
+        const roleList = rolesData.map((r) => r.role as AppRole);
+        setRoles(roleList);
+        setIsSuperAdmin(roleList.includes("super_admin"));
+        setIsAdmin(roleList.includes("admin") || roleList.includes("super_admin"));
+        setIsStaff(
+          roleList.includes("admin") || 
+          roleList.includes("super_admin") || 
+          roleList.includes("employee") ||
+          roleList.includes("instructor") ||
+          roleList.includes("support")
+        );
       }
     } catch (error) {
       console.error("Error checking user roles:", error);
     }
+  };
+
+  const hasRole = (role: AppRole): boolean => {
+    if (roles.includes("super_admin")) return true;
+    return roles.includes(role);
   };
 
   useEffect(() => {
@@ -55,6 +75,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } else {
           setIsStaff(false);
           setIsAdmin(false);
+          setIsSuperAdmin(false);
+          setRoles([]);
         }
       }
     );
@@ -97,6 +119,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
     setIsStaff(false);
     setIsAdmin(false);
+    setIsSuperAdmin(false);
+    setRoles([]);
   };
 
   return (
@@ -107,6 +131,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading,
         isStaff,
         isAdmin,
+        isSuperAdmin,
+        roles,
+        hasRole,
         signIn,
         signUp,
         signOut,

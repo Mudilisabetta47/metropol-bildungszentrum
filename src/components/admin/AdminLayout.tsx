@@ -21,12 +21,15 @@ import { cn } from "@/lib/utils";
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { name: "Teilnehmer", href: "/admin/participants", icon: Users },
   { name: "Kurse", href: "/admin/courses", icon: GraduationCap },
   { name: "Termine", href: "/admin/schedule", icon: Calendar },
   { name: "Anmeldungen", href: "/admin/registrations", icon: Users },
+  { name: "Zahlungen", href: "/admin/payments", icon: Settings },
   { name: "Kontaktanfragen", href: "/admin/contacts", icon: MessageSquare },
   { name: "Statistiken", href: "/admin/statistics", icon: BarChart3 },
   { name: "Standorte", href: "/admin/locations", icon: MapPin },
+  { name: "Team", href: "/admin/team", icon: Users },
   { name: "Einstellungen", href: "/admin/settings", icon: Settings },
 ];
 
