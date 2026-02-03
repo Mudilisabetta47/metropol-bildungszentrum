@@ -234,9 +234,9 @@ export default function LicenseClassPage() {
                   </a>
                 </Button>
                 <Button variant="heroOutline" size="lg" className="w-full" asChild>
-                  <a href="tel:+49511123456">
+                  <a href="tel:+4951164250568">
                     <Phone className="mr-2 h-4 w-4" />
-                    0511 123 456
+                    0511 – 642 50 68
                   </a>
                 </Button>
               </div>
