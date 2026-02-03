@@ -1,24 +1,7 @@
 import { Link } from "react-router-dom";
 import { Phone, Mail, Clock, Facebook, Instagram, Linkedin, Star } from "lucide-react";
 import logoMetropol from "@/assets/logo-metropol.webp";
-
-const locations = [
-  {
-    city: "Hannover",
-    address: "Vahrenwalder Str. 213, 30165 Hannover",
-    phone: "0511 123 456",
-  },
-  {
-    city: "Garbsen",
-    address: "Planetenring 25 – 27, 30823 Garbsen",
-    phone: "05131 345 678",
-  },
-  {
-    city: "Bremen",
-    address: "Bahnhofsplatz 41, 28195 Bremen",
-    phone: "0421 789 012",
-  },
-];
+import { useLocations } from "@/hooks/useLocations";
 
 const courses = [
   { name: "Berufskraftfahrer C/CE", href: "/fuehrerschein/c-ce" },
@@ -50,6 +33,8 @@ const legal = [
 ];
 
 export function Footer() {
+  const { data: locations = [] } = useLocations();
+
   return (
     <footer className="bg-primary text-primary-foreground">
       {/* Main footer content */}
@@ -126,14 +111,16 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Locations */}
+          {/* Locations - Now from Database */}
           <div>
             <h3 className="font-display font-semibold text-lg mb-6">Standorte</h3>
             <ul className="space-y-4">
               {locations.map((location) => (
-                <li key={location.city} className="text-sm">
-                  <p className="font-medium mb-1">{location.city}</p>
-                  <p className="text-primary-foreground/70">{location.address}</p>
+                <li key={location.id} className="text-sm">
+                  <Link to={`/standort/${location.slug}`} className="hover:text-primary-foreground/100 transition-colors">
+                    <p className="font-medium mb-1">{location.name}</p>
+                    <p className="text-primary-foreground/70">{location.address}, {location.zip_city}</p>
+                  </Link>
                 </li>
               ))}
             </ul>
