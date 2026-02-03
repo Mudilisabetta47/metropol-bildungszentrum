@@ -16,6 +16,7 @@ import {
   Menu,
   Receipt,
   CreditCard,
+  Award,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -28,6 +29,7 @@ const navigation = [
   { name: "Termine", href: "/admin/schedule", icon: Calendar },
   { name: "Anmeldungen", href: "/admin/registrations", icon: Users },
   { name: "Rechnungen", href: "/admin/invoices", icon: Receipt },
+  { name: "Zertifikate", href: "/admin/certificates", icon: Award },
   { name: "Zahlungen", href: "/admin/payments", icon: CreditCard },
   { name: "Kontaktanfragen", href: "/admin/contacts", icon: MessageSquare },
   { name: "Statistiken", href: "/admin/statistics", icon: BarChart3 },
