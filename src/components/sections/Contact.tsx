@@ -15,6 +15,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import tqcertLogo from "@/assets/tqcert-logo.webp";
+import agenturLogo from "@/assets/agentur-fuer-arbeit-logo.png";
 
 const courses = [
   { value: "c-ce", label: "Führerschein C/CE (LKW)", slug: "c-ce" },
@@ -252,7 +253,7 @@ export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
                   <span className="text-sm font-medium text-foreground">AZAV zertifiziert</span>
                 </div>
                 <div className="flex items-center gap-2 px-4 py-2 bg-card rounded-lg border border-border">
-                  <Shield className="h-4 w-4 text-primary" />
+                  <img src={agenturLogo} alt="Agentur für Arbeit" className="h-6 w-6 object-contain" />
                   <span className="text-sm font-medium text-foreground">Agentur für Arbeit</span>
                 </div>
                 <img 
