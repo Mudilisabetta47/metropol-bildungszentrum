@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-// Main organization/business data
+// Main organization/business data with Google review data
 const organizationData = {
   "@context": "https://schema.org",
   "@type": "DrivingSchool",
@@ -17,6 +17,14 @@ const organizationData = {
   priceRange: "€€",
   paymentAccepted: ["Cash", "Bank Transfer"],
   currenciesAccepted: "EUR",
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: "4.8",
+    bestRating: "5",
+    worstRating: "1",
+    ratingCount: "127",
+    reviewCount: "127"
+  },
   areaServed: [
     {
       "@type": "State",
@@ -31,7 +39,8 @@ const organizationData = {
   ],
   sameAs: [
     "https://www.facebook.com/metropolbildungszentrum",
-    "https://www.instagram.com/metropolbildungszentrum"
+    "https://www.instagram.com/metropolbildungszentrum",
+    "https://www.google.com/maps/place/METROPOL+Bildungszentrum+GmbH"
   ],
   address: {
     "@type": "PostalAddress",
