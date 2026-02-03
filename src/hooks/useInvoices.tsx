@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 export interface Invoice {
   id: string;
@@ -398,6 +399,50 @@ export function useInvoiceStats() {
       });
 
       return stats;
+    },
+  });
+}
+
+export function useSendInvoiceEmail() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async ({
+      invoiceId,
+      recipientEmail,
+      subject,
+      message,
+    }: {
+      invoiceId: string;
+      recipientEmail: string;
+      subject?: string;
+      message?: string;
+    }) => {
+      const { data, error } = await supabase.functions.invoke("send-invoice-email", {
+        body: { invoiceId, recipientEmail, subject, message },
+      });
+
+      if (error) throw error;
+      if (!data.success) throw new Error(data.error || "E-Mail konnte nicht gesendet werden");
+
+      return data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["invoices"] });
+      queryClient.invalidateQueries({ queryKey: ["invoice"] });
+      queryClient.invalidateQueries({ queryKey: ["invoice-history"] });
+      toast({
+        title: "E-Mail gesendet",
+        description: `Rechnung wurde an ${variables.recipientEmail} gesendet.`,
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        variant: "destructive",
+        title: "Fehler beim Senden",
+        description: error.message,
+      });
     },
   });
 }
