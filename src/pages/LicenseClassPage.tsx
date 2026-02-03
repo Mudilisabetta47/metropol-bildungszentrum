@@ -1,235 +1,170 @@
 import { useParams, Link } from "react-router-dom";
 import { useState } from "react";
-import { ArrowRight, Clock, MapPin, Calendar, CheckCircle, Phone, Euro, Award, Users, FileText } from "lucide-react";
+import { ArrowRight, Clock, MapPin, Calendar, CheckCircle, Phone, Euro, Award, Users, FileText, Loader2 } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Contact } from "@/components/sections/Contact";
 import { BKFModuleSchedule } from "@/components/sections/BKFModuleSchedule";
+import { useCourse } from "@/hooks/useCourses";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
+import { de } from "date-fns/locale";
 import trucksImage from "@/assets/trucks-metropol.jpg";
 import busImage from "@/assets/bus-metropol.jpg";
 import fleetTeam from "@/assets/fleet-team.webp";
 
-interface LicenseClassData {
-  slug: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  duration: string;
-  price: string;
-  locations: string[];
-  nextDates: string[];
-  requirements: string[];
-  curriculum: string[];
-  benefits: string[];
-  funding: string;
-  heroImage: string;
+// Map category to hero image
+const categoryImages: Record<string, string> = {
+  lkw: trucksImage,
+  bus: busImage,
+  fahrlehrer: fleetTeam,
+  bkf: trucksImage,
+  sprache: fleetTeam,
+  sonstige: fleetTeam,
+};
+
+// Default funding text per category
+const categoryFunding: Record<string, string> = {
+  lkw: "100% Förderung durch Bildungsgutschein der Agentur für Arbeit oder des Jobcenters möglich.",
+  bus: "100% Förderung durch Bildungsgutschein der Agentur für Arbeit oder des Jobcenters möglich.",
+  fahrlehrer: "Förderung durch Aufstiegs-BAföG oder Bildungsgutschein möglich.",
+  bkf: "Bei Arbeitslosigkeit oder drohender Arbeitslosigkeit kann die Weiterbildung gefördert werden.",
+  sprache: "Förderung über Integrationskurse oder BAMF möglich.",
+  sonstige: "Fragen Sie uns nach Fördermöglichkeiten.",
+};
+
+// Subtitles per category
+const categorySubtitles: Record<string, string> = {
+  lkw: "LKW-Führerschein für Berufskraftfahrer",
+  bus: "Busführerschein für Personenbeförderung",
+  fahrlehrer: "Werden Sie staatlich anerkannter Fahrlehrer",
+  bkf: "Module 1-5 für Berufskraftfahrer",
+  sprache: "Deutsch für den Berufsalltag",
+  sonstige: "Qualifizierung für den Beruf",
+};
+
+interface CourseDate {
+  id: string;
+  start_date: string;
+  end_date: string | null;
+  start_time: string | null;
+  end_time: string | null;
+  max_participants: number;
+  current_participants: number;
+  locations: { name: string } | null;
 }
 
-const licenseClassesData: Record<string, LicenseClassData> = {
-  "c-ce": {
-    slug: "c-ce",
-    title: "Führerschein C/CE",
-    subtitle: "LKW-Führerschein für Berufskraftfahrer",
-    description: "Mit dem Führerschein der Klasse C/CE eröffnen sich Ihnen vielfältige Karrieremöglichkeiten im Transportwesen. Als einer der gefragtesten Berufe auf dem Arbeitsmarkt bietet die LKW-Branche sichere Arbeitsplätze und attraktive Verdienstmöglichkeiten.",
-    duration: "8-10 Wochen Vollzeit",
-    price: "ab 3.500 €",
-    locations: ["Hannover", "Bremen", "Garbsen"],
-    nextDates: ["03.03.2026", "14.04.2026", "02.06.2026"],
-    requirements: [
-      "Mindestalter 21 Jahre (18 Jahre mit Berufskraftfahrer-Grundqualifikation)",
-      "Führerschein Klasse B",
-      "Ärztliches Gutachten (Sehtest + Gesundheitsuntersuchung)",
-      "Biometrisches Passfoto",
-      "Erste-Hilfe-Kurs (9 UE)"
-    ],
-    curriculum: [
-      "Theoretischer Unterricht (mindestens 10 Doppelstunden Zusatzstoff)",
-      "Praktische Ausbildung nach Ausbildungsstand",
-      "Sonderfahrten: Überland, Autobahn, Nachtfahrt",
-      "Fahrzeugkunde und Ladungssicherung",
-      "Prüfungsvorbereitung Theorie und Praxis"
-    ],
-    benefits: [
-      "Kleine Gruppen für optimalen Lernerfolg",
-      "Modernste LKW-Flotte",
-      "Erfahrene Fahrlehrer mit Praxisbezug",
-      "Hohe Erstbestehensquote",
-      "Unterstützung bei Förderanträgen",
-      "Jobvermittlung nach erfolgreichem Abschluss"
-    ],
-    funding: "100% Förderung durch Bildungsgutschein der Agentur für Arbeit oder des Jobcenters möglich.",
-    heroImage: "trucks"
-  },
-  "d-de": {
-    slug: "d-de",
-    title: "Führerschein D/DE",
-    subtitle: "Busführerschein für Personenbeförderung",
-    description: "Der Busführerschein Klasse D/DE qualifiziert Sie für die gewerbliche Personenbeförderung. Als Busfahrer übernehmen Sie Verantwortung für Ihre Fahrgäste und genießen einen abwechslungsreichen Arbeitsalltag im öffentlichen Nahverkehr oder Reiseverkehr.",
-    duration: "6-8 Wochen Vollzeit",
-    price: "ab 4.200 €",
-    locations: ["Hannover", "Bremen"],
-    nextDates: ["17.03.2026", "05.05.2026", "23.06.2026"],
-    requirements: [
-      "Mindestalter 24 Jahre (21/23 Jahre mit Berufskraftfahrer-Grundqualifikation)",
-      "Führerschein Klasse B",
-      "Ärztliches Gutachten (Sehtest + Gesundheitsuntersuchung)",
-      "Biometrisches Passfoto",
-      "Erste-Hilfe-Kurs (9 UE)",
-      "Führungszeugnis ohne relevante Einträge"
-    ],
-    curriculum: [
-      "Theoretischer Unterricht (mindestens 18 Doppelstunden Zusatzstoff)",
-      "Umfangreiche praktische Ausbildung",
-      "Sonderfahrten auf verschiedenen Streckentypen",
-      "Umgang mit Fahrgästen und Konfliktmanagement",
-      "Fahrerassistenzsysteme und moderne Bustechnik",
-      "Prüfungsvorbereitung Theorie und Praxis"
-    ],
-    benefits: [
-      "Ausbildung an modernen Reise- und Linienbussen",
-      "Praxisnahe Schulung im echten Verkehr",
-      "Kleine Lerngruppen",
-      "Erfahrene Ausbilder aus dem Busgewerbe",
-      "Kontakte zu regionalen Busunternehmen",
-      "Unterstützung bei der Jobsuche"
-    ],
-    funding: "100% Förderung durch Bildungsgutschein der Agentur für Arbeit oder des Jobcenters möglich.",
-    heroImage: "bus"
-  },
-  "fahrlehrer": {
-    slug: "fahrlehrer",
-    title: "Fahrlehrer-Ausbildung",
-    subtitle: "Werden Sie staatlich anerkannter Fahrlehrer",
-    description: "Die Fahrlehrerausbildung eröffnet Ihnen den Weg in einen abwechslungsreichen und sinnstiftenden Beruf. Als Fahrlehrer begleiten Sie Menschen auf dem Weg zum Führerschein und tragen aktiv zur Verkehrssicherheit bei.",
-    duration: "12 Monate",
-    price: "ab 12.000 €",
-    locations: ["Hannover"],
-    nextDates: ["01.04.2026", "01.09.2026"],
-    requirements: [
-      "Mindestalter 21 Jahre",
-      "Führerschein Klasse B seit mindestens 3 Jahren",
-      "Geistige und körperliche Eignung",
-      "Abgeschlossene Berufsausbildung oder gleichwertiger Abschluss",
-      "Keine relevanten Einträge im Führungszeugnis"
-    ],
-    curriculum: [
-      "Fahrpädagogik und Verkehrsverhalten",
-      "Ausbildungsplanung und -durchführung",
-      "Recht und Straßenverkehrsrecht",
-      "Technik und Umweltschutz",
-      "Praktische Ausbildung (Lehrproben)",
-      "Hospitationspraktikum in einer Fahrschule"
-    ],
-    benefits: [
-      "Staatlich anerkannte Ausbildungsstätte",
-      "Erfahrene Ausbildungsfahrlehrer",
-      "Moderne Unterrichtsräume und Fahrzeuge",
-      "Hohe Prüfungserfolgsquote",
-      "Karrieremöglichkeiten in der Fahrschulbranche",
-      "Flexibler Beruf mit guten Verdienstmöglichkeiten"
-    ],
-    funding: "Förderung durch Aufstiegs-BAföG oder Bildungsgutschein möglich. Wir beraten Sie gerne zu Ihren Möglichkeiten.",
-    heroImage: "team"
-  },
-  "bkf-weiterbildung": {
-    slug: "bkf-weiterbildung",
-    title: "BKF-Weiterbildung",
-    subtitle: "Module 1-5 für Berufskraftfahrer",
-    description: "Die gesetzlich vorgeschriebene Weiterbildung für Berufskraftfahrer umfasst 35 Stunden, aufgeteilt in 5 Module. Alle 5 Jahre müssen Inhaber einer Fahrerlaubnis der Klassen C1, C1E, C, CE, D1, D1E, D oder DE diese Weiterbildung absolvieren.",
-    duration: "5 Tage (je 7 Stunden pro Modul)",
-    price: "120 € pro Modul",
-    locations: ["Hannover", "Bremen", "Garbsen"],
-    nextDates: ["10.02.2026", "24.02.2026", "10.03.2026"],
-    requirements: [
-      "Gültige Fahrerlaubnis Klasse C1, C, D1 oder D",
-      "Grundqualifikation oder beschleunigte Grundqualifikation",
-      "Eintrag der Schlüsselzahl 95 im Führerschein"
-    ],
-    curriculum: [
-      "Modul 1: Eco-Training und Fahrsicherheit",
-      "Modul 2: Sozialvorschriften im Straßenverkehr",
-      "Modul 3: Sicherheitstechnik und Fahrsicherheit",
-      "Modul 4: Fahrgastsicherheit und Gesundheit",
-      "Modul 5: Ladungssicherung (LKW) / Kundenorientierung (Bus)"
-    ],
-    benefits: [
-      "Flexible Terminwahl",
-      "Module einzeln oder als Kompaktkurs buchbar",
-      "Bescheinigung zur Verlängerung der Schlüsselzahl 95",
-      "Praxisnahe Inhalte von erfahrenen Dozenten",
-      "Moderne Schulungsräume",
-      "Kostenlose Getränke und Snacks"
-    ],
-    funding: "Bei Arbeitslosigkeit oder drohender Arbeitslosigkeit kann die Weiterbildung gefördert werden.",
-    heroImage: "trucks"
-  },
-  "sprachkurse": {
-    slug: "sprachkurse",
-    title: "Sprachkurse für Berufskraftfahrer",
-    subtitle: "Deutsch für den Berufsalltag",
-    description: "Unsere Sprachkurse bereiten Sie gezielt auf die Kommunikation im Berufsalltag als Kraftfahrer vor. Sie lernen wichtiges Fachvokabular, verstehen Arbeitsanweisungen und können sich sicher mit Kollegen, Kunden und Behörden verständigen.",
-    duration: "4 Wochen Vollzeit",
-    price: "ab 800 €",
-    locations: ["Hannover", "Bremen"],
-    nextDates: ["24.02.2026", "07.04.2026", "19.05.2026"],
-    requirements: [
-      "Grundkenntnisse der deutschen Sprache (A1-A2 empfohlen)",
-      "Interesse an einer Tätigkeit als Berufskraftfahrer",
-      "Motivation zum Sprachenlernen"
-    ],
-    curriculum: [
-      "Grundwortschatz für den Transportbereich",
-      "Kommunikation bei Be- und Entladung",
-      "Verkehrsregeln und Beschilderung",
-      "Lenk- und Ruhezeiten verstehen",
-      "Umgang mit Frachtdokumenten",
-      "Kommunikation bei Kontrollen und Unfällen"
-    ],
-    benefits: [
-      "Kleine Gruppen für intensives Lernen",
-      "Muttersprachliche und mehrsprachige Dozenten",
-      "Praxisbezogenes Fachvokabular",
-      "Übungen mit echten Dokumenten und Situationen",
-      "Vorbereitung auf Führerscheinprüfung",
-      "Kulturelle Integration"
-    ],
-    funding: "Förderung über Integrationskurse oder BAMF möglich. Wir unterstützen Sie bei der Antragstellung.",
-    heroImage: "team"
-  }
-};
+// Hook to fetch course dates
+function useCourseDates(courseId: string | undefined) {
+  return useQuery({
+    queryKey: ["course-dates", courseId],
+    queryFn: async () => {
+      if (!courseId) return [];
+      const today = new Date().toISOString().split("T")[0];
+      const { data, error } = await supabase
+        .from("course_dates")
+        .select(`
+          id,
+          start_date,
+          end_date,
+          start_time,
+          end_time,
+          max_participants,
+          current_participants,
+          locations (name)
+        `)
+        .eq("course_id", courseId)
+        .eq("is_active", true)
+        .gte("start_date", today)
+        .order("start_date", { ascending: true })
+        .limit(5);
 
-const getHeroImage = (type: string) => {
-  switch(type) {
-    case "trucks": return trucksImage;
-    case "bus": return busImage;
-    case "team": return fleetTeam;
-    default: return fleetTeam;
-  }
-};
+      if (error) throw error;
+      return (data || []) as CourseDate[];
+    },
+    enabled: !!courseId,
+  });
+}
+
+// Hook to fetch all active locations
+function useLocations() {
+  return useQuery({
+    queryKey: ["active-locations"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("locations")
+        .select("name")
+        .eq("is_active", true);
+      if (error) throw error;
+      return data?.map(l => l.name) || [];
+    },
+  });
+}
 
 export default function LicenseClassPage() {
   const { classType } = useParams<{ classType: string }>();
-  const data = classType ? licenseClassesData[classType] : null;
+  const { data: course, isLoading, error } = useCourse(classType || "");
+  const { data: courseDates = [] } = useCourseDates(course?.id);
+  const { data: allLocations = [] } = useLocations();
   const [selectedModuleInfo, setSelectedModuleInfo] = useState<string | null>(null);
 
   const handleModuleSelect = (moduleName: string, date: string) => {
-    // Zeige nur "Modul X – DD.MM.YYYY" oder "Kompaktwoche – DD.MM. – DD.MM.YYYY"
     setSelectedModuleInfo(`${moduleName} – ${date}`);
   };
 
-  const isBKFWeiterbildung = classType === "bkf-weiterbildung";
-
-  if (!data) {
+  // Loading state
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Seite nicht gefunden</h1>
-          <Link to="/" className="text-primary hover:underline">Zurück zur Startseite</Link>
+      <div className="min-h-screen">
+        <Header />
+        <div className="flex items-center justify-center py-32">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <span className="ml-3 text-muted-foreground">Kurs wird geladen...</span>
         </div>
+        <Footer />
       </div>
     );
   }
+
+  // Error or not found
+  if (error || !course) {
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <div className="flex items-center justify-center py-32">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Kurs nicht gefunden</h1>
+            <p className="text-muted-foreground mb-6">
+              Der gesuchte Kurs existiert nicht oder ist nicht mehr verfügbar.
+            </p>
+            <Button asChild>
+              <Link to="/">Zurück zur Startseite</Link>
+            </Button>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  const isBKFWeiterbildung = course.slug === "bkf-weiterbildung";
+  const heroImage = categoryImages[course.category] || fleetTeam;
+  const subtitle = categorySubtitles[course.category] || "Professionelle Ausbildung";
+  const funding = categoryFunding[course.category] || "Fragen Sie uns nach Fördermöglichkeiten.";
+  const benefits = course.benefits || [];
+  const requirements = course.requirements ? course.requirements.split("\n").filter(Boolean) : [];
+
+  // Format dates for display
+  const nextDates = courseDates.slice(0, 3).map(cd => 
+    format(new Date(cd.start_date), "dd.MM.yyyy", { locale: de })
+  );
+
+  // Get unique locations from course dates, fallback to all locations
+  const courseLocations = courseDates.length > 0
+    ? [...new Set(courseDates.map(cd => cd.locations?.name).filter(Boolean))]
+    : allLocations;
 
   return (
     <div className="min-h-screen">
@@ -239,8 +174,8 @@ export default function LicenseClassPage() {
       <section className="pt-28 sm:pt-32">
         <div className="relative w-full h-[300px] sm:h-[400px] overflow-hidden">
           <img 
-            src={getHeroImage(data.heroImage)}
-            alt={data.title}
+            src={heroImage}
+            alt={course.title}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
@@ -249,9 +184,9 @@ export default function LicenseClassPage() {
               <Link to="/" className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-4 transition-colors text-sm">
                 ← Zurück zur Startseite
               </Link>
-              <p className="text-white/80 font-medium mb-2">{data.subtitle}</p>
+              <p className="text-white/80 font-medium mb-2">{subtitle}</p>
               <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">
-                {data.title}
+                {course.title}
               </h1>
             </div>
           </div>
@@ -264,22 +199,28 @@ export default function LicenseClassPage() {
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
               <p className="text-lg text-muted-foreground leading-relaxed mb-8">
-                {data.description}
+                {course.description || `Informieren Sie sich über unseren Kurs "${course.title}" und starten Sie Ihre Karriere.`}
               </p>
               
               <div className="flex flex-wrap gap-6">
-                <div className="flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-primary" />
-                  <span className="font-medium">{data.duration}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Euro className="h-5 w-5 text-primary" />
-                  <span className="font-medium">{data.price}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-primary" />
-                  <span className="font-medium">{data.locations.join(", ")}</span>
-                </div>
+                {course.duration_info && (
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-5 w-5 text-primary" />
+                    <span className="font-medium">{course.duration_info}</span>
+                  </div>
+                )}
+                {course.price_info && (
+                  <div className="flex items-center gap-2">
+                    <Euro className="h-5 w-5 text-primary" />
+                    <span className="font-medium">{course.price_info}</span>
+                  </div>
+                )}
+                {courseLocations.length > 0 && (
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-5 w-5 text-primary" />
+                    <span className="font-medium">{courseLocations.slice(0, 3).join(", ")}</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -299,7 +240,7 @@ export default function LicenseClassPage() {
                   </a>
                 </Button>
               </div>
-              <p className="text-sm text-primary-foreground/80">{data.funding}</p>
+              <p className="text-sm text-primary-foreground/80">{funding}</p>
             </div>
           </div>
         </div>
@@ -312,106 +253,157 @@ export default function LicenseClassPage() {
             <div className="bg-card rounded-xl p-6 border border-border shadow-sm">
               <Calendar className="h-8 w-8 text-primary mb-4" />
               <h3 className="font-display font-bold text-lg mb-3">Nächste Starttermine</h3>
-              <ul className="space-y-2">
-                {data.nextDates.map((date) => (
-                  <li key={date} className="flex items-center gap-2 text-muted-foreground">
-                    <span className="w-2 h-2 rounded-full bg-primary" />
-                    {date}
-                  </li>
-                ))}
-              </ul>
+              {nextDates.length > 0 ? (
+                <ul className="space-y-2">
+                  {nextDates.map((date) => (
+                    <li key={date} className="flex items-center gap-2 text-muted-foreground">
+                      <span className="w-2 h-2 rounded-full bg-primary" />
+                      {date}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-muted-foreground text-sm">Termine auf Anfrage</p>
+              )}
             </div>
             
             <div className="bg-card rounded-xl p-6 border border-border shadow-sm">
               <Award className="h-8 w-8 text-primary mb-4" />
               <h3 className="font-display font-bold text-lg mb-3">Förderung</h3>
-              <p className="text-muted-foreground text-sm">{data.funding}</p>
+              <p className="text-muted-foreground text-sm">{funding}</p>
             </div>
             
             <div className="bg-card rounded-xl p-6 border border-border shadow-sm">
               <Users className="h-8 w-8 text-primary mb-4" />
               <h3 className="font-display font-bold text-lg mb-3">Standorte</h3>
-              <ul className="space-y-2">
-                {data.locations.map((location) => (
-                  <li key={location} className="flex items-center gap-2 text-muted-foreground">
-                    <MapPin className="h-4 w-4 text-primary" />
-                    {location}
-                  </li>
-                ))}
-              </ul>
+              {courseLocations.length > 0 ? (
+                <ul className="space-y-2">
+                  {courseLocations.map((location) => (
+                    <li key={location} className="flex items-center gap-2 text-muted-foreground">
+                      <MapPin className="h-4 w-4 text-primary" />
+                      {location}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-muted-foreground text-sm">Standorte auf Anfrage</p>
+              )}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Requirements & Curriculum */}
-      <section className="py-20 bg-background">
-        <div className="section-container">
-          <div className="grid lg:grid-cols-2 gap-12">
-            {/* Requirements */}
-            <div>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <FileText className="h-6 w-6 text-primary" />
+      {/* Requirements & Curriculum - only show if data exists */}
+      {(requirements.length > 0 || benefits.length > 0) && (
+        <section className="py-20 bg-background">
+          <div className="section-container">
+            <div className="grid lg:grid-cols-2 gap-12">
+              {/* Requirements */}
+              {requirements.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 rounded-lg bg-primary/10">
+                      <FileText className="h-6 w-6 text-primary" />
+                    </div>
+                    <h2 className="font-display text-2xl font-bold">Voraussetzungen</h2>
+                  </div>
+                  <ul className="space-y-4">
+                    {requirements.map((req, index) => (
+                      <li key={index} className="flex items-start gap-3">
+                        <CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                        <span className="text-muted-foreground">{req}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <h2 className="font-display text-2xl font-bold">Voraussetzungen</h2>
-              </div>
-              <ul className="space-y-4">
-                {data.requirements.map((req, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-muted-foreground">{req}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+              )}
 
-            {/* Curriculum */}
-            <div>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <Award className="h-6 w-6 text-primary" />
+              {/* Benefits as Curriculum */}
+              {benefits.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 rounded-lg bg-primary/10">
+                      <Award className="h-6 w-6 text-primary" />
+                    </div>
+                    <h2 className="font-display text-2xl font-bold">Ihre Vorteile</h2>
+                  </div>
+                  <ul className="space-y-4">
+                    {benefits.map((item, index) => (
+                      <li key={index} className="flex items-start gap-3">
+                        <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-sm font-medium shrink-0">
+                          {index + 1}
+                        </span>
+                        <span className="text-muted-foreground">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <h2 className="font-display text-2xl font-bold">Ausbildungsinhalte</h2>
-              </div>
-              <ul className="space-y-4">
-                {data.curriculum.map((item, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-sm font-medium shrink-0">
-                      {index + 1}
-                    </span>
-                    <span className="text-muted-foreground">{item}</span>
-                  </li>
-                ))}
-              </ul>
+              )}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* Benefits */}
-      <section className="py-20 bg-secondary">
-        <div className="section-container">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <p className="text-primary font-semibold text-sm uppercase tracking-wider mb-4">Ihre Vorteile</p>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold mb-4">
-              Warum bei Metropol?
-            </h2>
+      {/* Capacity & Dates Section */}
+      {courseDates.length > 0 && (
+        <section className="py-20 bg-secondary">
+          <div className="section-container">
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <p className="text-primary font-semibold text-sm uppercase tracking-wider mb-4">Verfügbare Termine</p>
+              <h2 className="font-display text-3xl sm:text-4xl font-bold mb-4">
+                Jetzt Platz sichern
+              </h2>
+            </div>
+            
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {courseDates.map((cd) => {
+                const spotsLeft = cd.max_participants - cd.current_participants;
+                const isAlmostFull = spotsLeft <= 3;
+                
+                return (
+                  <div 
+                    key={cd.id}
+                    className={`bg-card rounded-xl p-6 border transition-all ${
+                      isAlmostFull ? "border-destructive/50 ring-1 ring-destructive/20" : "border-border"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <Calendar className="h-6 w-6 text-primary" />
+                      {isAlmostFull && (
+                        <span className="text-xs font-bold text-destructive bg-destructive/10 px-2 py-1 rounded-full">
+                          Fast ausgebucht!
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="font-bold text-lg mb-2">
+                      {format(new Date(cd.start_date), "dd. MMMM yyyy", { locale: de })}
+                    </h3>
+                    {cd.end_date && cd.end_date !== cd.start_date && (
+                      <p className="text-sm text-muted-foreground mb-2">
+                        bis {format(new Date(cd.end_date), "dd. MMMM yyyy", { locale: de })}
+                      </p>
+                    )}
+                    {cd.locations?.name && (
+                      <p className="text-sm text-muted-foreground flex items-center gap-1 mb-4">
+                        <MapPin className="h-4 w-4" />
+                        {cd.locations.name}
+                      </p>
+                    )}
+                    <div className="flex items-center justify-between">
+                      <span className={`text-sm font-medium ${isAlmostFull ? "text-destructive" : "text-muted-foreground"}`}>
+                        {spotsLeft > 0 ? `Noch ${spotsLeft} Plätze` : "Ausgebucht"}
+                      </span>
+                      <Button size="sm" variant={spotsLeft > 0 ? "default" : "outline"} disabled={spotsLeft === 0} asChild>
+                        <a href="#kontakt">Anfragen</a>
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-          
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.benefits.map((benefit, index) => (
-              <div 
-                key={index}
-                className="bg-card rounded-xl p-6 border border-border hover:border-primary/30 hover:shadow-lg transition-all"
-              >
-                <CheckCircle className="h-8 w-8 text-primary mb-4" />
-                <p className="font-medium text-foreground">{benefit}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* BKF Module Schedule - only for bkf-weiterbildung */}
       {isBKFWeiterbildung && (
@@ -420,7 +412,7 @@ export default function LicenseClassPage() {
 
       {/* Contact Section with preselected course and optional module info */}
       <Contact 
-        preselectedCourse={data.slug} 
+        preselectedCourse={course.slug} 
         additionalInfo={selectedModuleInfo || undefined}
       />
       
