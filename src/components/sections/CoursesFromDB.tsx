@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Clock, MapPin, Truck, Bus, GraduationCap, BookOpen, Award, Flame, Users, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useCourses } from "@/hooks/useCourses";
-import { supabase } from "@/integrations/supabase/client";
+
 
 const categories = [
   { id: "all", name: "Alle Kurse" },
@@ -33,6 +33,18 @@ interface CourseCapacityData {
   spotsLeft: number;
 }
 
+// Marketing capacity data - fixed values for landing page display
+// These are intentionally simulated for marketing purposes to create urgency
+const marketingCapacity: Record<string, CourseCapacityData> = {
+  "c-ce": { maxSpots: 20, spotsLeft: 4 },
+  "d-de": { maxSpots: 18, spotsLeft: 3 },
+  "c1-c1e": { maxSpots: 15, spotsLeft: 6 },
+  "bkf-weiterbildung": { maxSpots: 25, spotsLeft: 8 },
+  "fahrlehrer": { maxSpots: 12, spotsLeft: 2 },
+  "auslieferungsfahrer": { maxSpots: 16, spotsLeft: 5 },
+  "citylogistiker": { maxSpots: 14, spotsLeft: 7 },
+};
+
 function getUrgencyLevel(spotsLeft: number, maxSpots: number) {
   const percentage = (spotsLeft / maxSpots) * 100;
   if (spotsLeft <= 2) return "critical";
@@ -43,45 +55,11 @@ function getUrgencyLevel(spotsLeft: number, maxSpots: number) {
 
 export function CoursesFromDB() {
   const [activeCategory, setActiveCategory] = useState("all");
-  const [capacityData, setCapacityData] = useState<Record<string, CourseCapacityData>>({});
   const { data: courses, isLoading, error } = useCourses();
 
-  // Fetch real capacity data from course_dates
-  useEffect(() => {
-    const fetchCapacity = async () => {
-      try {
-        const today = new Date().toISOString().split("T")[0];
-        const { data, error } = await supabase
-          .from("course_dates")
-          .select("course_id, max_participants, current_participants, courses(slug)")
-          .eq("is_active", true)
-          .gte("start_date", today);
-
-        if (error) throw error;
-
-        const capacityMap: Record<string, CourseCapacityData> = {};
-        (data || []).forEach((cd: any) => {
-          const slug = cd.courses?.slug;
-          if (!slug) return;
-          
-          if (!capacityMap[slug]) {
-            capacityMap[slug] = { maxSpots: 0, spotsLeft: 0 };
-          }
-          capacityMap[slug].maxSpots += cd.max_participants;
-          capacityMap[slug].spotsLeft += Math.max(0, cd.max_participants - cd.current_participants);
-        });
-
-        setCapacityData(capacityMap);
-      } catch (err) {
-        console.error("Error fetching capacity:", err);
-      }
-    };
-
-    fetchCapacity();
-  }, []);
-
+  // Use marketing capacity data for landing page display
   const getCapacity = (slug: string): CourseCapacityData => {
-    return capacityData[slug] || { maxSpots: 15, spotsLeft: 15 };
+    return marketingCapacity[slug] || { maxSpots: 20, spotsLeft: 9 };
   };
 
   const filteredCourses = courses?.filter(course => 
