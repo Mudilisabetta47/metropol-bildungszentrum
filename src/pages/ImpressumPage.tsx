@@ -40,7 +40,7 @@ export default function ImpressumPage() {
                   Kontakt
                 </h2>
                 <p className="text-muted-foreground">
-                  Telefon: 0511 – 642 50 66<br />
+                  Telefon: 0511 – 642 50 68<br />
                   E-Mail: info@metropol-bz.de
                 </p>
               </section>

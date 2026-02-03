@@ -231,9 +231,9 @@ export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
                 <div className="flex-1">
                   <p className="font-semibold text-foreground mb-0.5">Ihre Ansprechpartnerin</p>
                   <p className="text-primary font-medium">Regina Martin</p>
-                  <a href="tel:+4951164250566" className="text-primary hover:underline text-sm flex items-center gap-1 mt-1">
+                <a href="tel:+4951164250568" className="text-primary hover:underline text-sm flex items-center gap-1 mt-1">
                     <Phone className="h-3.5 w-3.5" />
-                    0511 – 642 50 66
+                    0511 – 642 50 68
                   </a>
                 </div>
               </div>

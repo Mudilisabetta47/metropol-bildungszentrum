@@ -33,9 +33,11 @@ export function CTA() {
                 Jetzt Beratungstermin buchen
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
-              <Button variant="heroOutline" size="xl">
-                <Phone className="mr-2 h-5 w-5" />
-                0511 123 456
+              <Button variant="heroOutline" size="xl" asChild>
+                <a href="tel:+4951164250568">
+                  <Phone className="mr-2 h-5 w-5" />
+                  0511 – 642 50 68
+                </a>
               </Button>
             </div>
           </div>
