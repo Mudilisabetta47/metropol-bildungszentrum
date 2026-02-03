@@ -471,8 +471,8 @@ export default function Courses() {
                         <span
                           className={`px-2 py-1 rounded-full text-xs font-medium ${
                             course.is_active
-                              ? "bg-green-100 text-green-800"
-                              : "bg-gray-100 text-gray-800"
+                              ? "bg-accent/20 text-accent-foreground"
+                              : "bg-muted text-muted-foreground"
                           }`}
                         >
                           {course.is_active ? "Aktiv" : "Inaktiv"}

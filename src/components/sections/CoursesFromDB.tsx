@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Clock, MapPin, Truck, Bus, GraduationCap, BookOpen, Award, Flame, Users, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useCourses, Course } from "@/hooks/useCourses";
+import { useCourses } from "@/hooks/useCourses";
+import { supabase } from "@/integrations/supabase/client";
 
 const categories = [
   { id: "all", name: "Alle Kurse" },
@@ -27,19 +28,10 @@ const categoryIcons: Record<string, typeof Truck> = {
 // Featured courses (slugs)
 const featuredSlugs = ["c-ce", "d-de"];
 
-// Simulated capacity data (this would come from course_dates in a real implementation)
-const getCapacityData = (slug: string) => {
-  const capacityMap: Record<string, { maxSpots: number; spotsLeft: number }> = {
-    "c-ce": { maxSpots: 12, spotsLeft: 3 },
-    "c1-c1e": { maxSpots: 12, spotsLeft: 5 },
-    "d-de": { maxSpots: 12, spotsLeft: 2 },
-    "fahrlehrer": { maxSpots: 12, spotsLeft: 4 },
-    "bkf-weiterbildung": { maxSpots: 15, spotsLeft: 3 },
-    "auslieferungsfahrer": { maxSpots: 15, spotsLeft: 6 },
-    "citylogistiker": { maxSpots: 15, spotsLeft: 4 },
-  };
-  return capacityMap[slug] || { maxSpots: 15, spotsLeft: 10 };
-};
+interface CourseCapacityData {
+  maxSpots: number;
+  spotsLeft: number;
+}
 
 function getUrgencyLevel(spotsLeft: number, maxSpots: number) {
   const percentage = (spotsLeft / maxSpots) * 100;
@@ -51,7 +43,46 @@ function getUrgencyLevel(spotsLeft: number, maxSpots: number) {
 
 export function CoursesFromDB() {
   const [activeCategory, setActiveCategory] = useState("all");
+  const [capacityData, setCapacityData] = useState<Record<string, CourseCapacityData>>({});
   const { data: courses, isLoading, error } = useCourses();
+
+  // Fetch real capacity data from course_dates
+  useEffect(() => {
+    const fetchCapacity = async () => {
+      try {
+        const today = new Date().toISOString().split("T")[0];
+        const { data, error } = await supabase
+          .from("course_dates")
+          .select("course_id, max_participants, current_participants, courses(slug)")
+          .eq("is_active", true)
+          .gte("start_date", today);
+
+        if (error) throw error;
+
+        const capacityMap: Record<string, CourseCapacityData> = {};
+        (data || []).forEach((cd: any) => {
+          const slug = cd.courses?.slug;
+          if (!slug) return;
+          
+          if (!capacityMap[slug]) {
+            capacityMap[slug] = { maxSpots: 0, spotsLeft: 0 };
+          }
+          capacityMap[slug].maxSpots += cd.max_participants;
+          capacityMap[slug].spotsLeft += Math.max(0, cd.max_participants - cd.current_participants);
+        });
+
+        setCapacityData(capacityMap);
+      } catch (err) {
+        console.error("Error fetching capacity:", err);
+      }
+    };
+
+    fetchCapacity();
+  }, []);
+
+  const getCapacity = (slug: string): CourseCapacityData => {
+    return capacityData[slug] || { maxSpots: 15, spotsLeft: 15 };
+  };
 
   const filteredCourses = courses?.filter(course => 
     activeCategory === "all" || course.category === activeCategory
@@ -119,7 +150,7 @@ export function CoursesFromDB() {
           {filteredCourses.map((course, index) => {
             const Icon = categoryIcons[course.category] || Truck;
             const isFeatured = featuredSlugs.includes(course.slug);
-            const capacity = getCapacityData(course.slug);
+            const capacity = getCapacity(course.slug);
             const urgency = getUrgencyLevel(capacity.spotsLeft, capacity.maxSpots);
             const isUrgent = urgency === "critical" || urgency === "warning";
             
