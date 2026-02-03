@@ -224,18 +224,52 @@ export default function Courses() {
           description: "Kurs wurde aktualisiert.",
         });
       } else {
-        const { error } = await supabase.from("courses").insert(courseData);
+        // Create the course
+        const { data: newCourse, error } = await supabase
+          .from("courses")
+          .insert(courseData)
+          .select()
+          .single();
 
         if (error) throw error;
 
+        // Automatically create a sample course date for the new course
+        // Get the first active location
+        const { data: locations } = await supabase
+          .from("locations")
+          .select("id")
+          .eq("is_active", true)
+          .limit(1);
+
+        if (locations && locations.length > 0 && newCourse) {
+          // Create a course date starting 2 weeks from now
+          const startDate = new Date();
+          startDate.setDate(startDate.getDate() + 14);
+          const endDate = new Date(startDate);
+          endDate.setDate(endDate.getDate() + 21); // 3 weeks duration
+
+          await supabase.from("course_dates").insert({
+            course_id: newCourse.id,
+            location_id: locations[0].id,
+            start_date: startDate.toISOString().split("T")[0],
+            end_date: endDate.toISOString().split("T")[0],
+            start_time: "08:00",
+            end_time: "16:00",
+            max_participants: 20,
+            is_active: true,
+            notes: "Automatisch erstellter Termin - bitte anpassen",
+          });
+        }
+
         toast({
           title: "Erfolg",
-          description: "Kurs wurde erstellt.",
+          description: "Kurs und Beispieltermin wurden erstellt.",
         });
       }
 
       setIsDialogOpen(false);
       fetchCourses();
+      fetchCourseCapacity();
     } catch (error: any) {
       console.error("Error saving course:", error);
       toast({
