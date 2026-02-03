@@ -25,7 +25,10 @@ import Contacts from "./pages/admin/Contacts";
 import Statistics from "./pages/admin/Statistics";
 import Locations from "./pages/admin/Locations";
 import Settings from "./pages/admin/Settings";
-
+import Team from "./pages/admin/Team";
+import Participants from "./pages/admin/Participants";
+import Payments from "./pages/admin/Payments";
+import InvitePage from "./pages/InvitePage";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -49,14 +52,20 @@ const App = () => (
               {/* Admin routes */}
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<Dashboard />} />
+                <Route path="participants" element={<Participants />} />
                 <Route path="courses" element={<Courses />} />
                 <Route path="schedule" element={<Schedule />} />
                 <Route path="registrations" element={<Registrations />} />
+                <Route path="payments" element={<Payments />} />
                 <Route path="contacts" element={<Contacts />} />
                 <Route path="statistics" element={<Statistics />} />
                 <Route path="locations" element={<Locations />} />
+                <Route path="team" element={<Team />} />
                 <Route path="settings" element={<Settings />} />
               </Route>
+              
+              {/* Invite route */}
+              <Route path="/invite/:token" element={<InvitePage />} />
               
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

@@ -21,9 +21,8 @@ const authSchema = z.object({
 type AuthFormData = z.infer<typeof authSchema>;
 
 export default function Auth() {
-  const [isLogin, setIsLogin] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user, signIn, signUp } = useAuth();
+  const { user, signIn } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -46,58 +45,33 @@ export default function Auth() {
     setIsSubmitting(true);
 
     try {
-      if (isLogin) {
-        const { error } = await signIn(data.email, data.password);
-        if (error) {
-          if (error.message.includes("Invalid login credentials")) {
-            toast({
-              variant: "destructive",
-              title: "Anmeldung fehlgeschlagen",
-              description: "E-Mail oder Passwort ist falsch.",
-            });
-          } else if (error.message.includes("Email not confirmed")) {
-            toast({
-              variant: "destructive",
-              title: "E-Mail nicht bestätigt",
-              description: "Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse.",
-            });
-          } else {
-            toast({
-              variant: "destructive",
-              title: "Fehler",
-              description: error.message,
-            });
-          }
+      const { error } = await signIn(data.email, data.password);
+      if (error) {
+        if (error.message.includes("Invalid login credentials")) {
+          toast({
+            variant: "destructive",
+            title: "Anmeldung fehlgeschlagen",
+            description: "E-Mail oder Passwort ist falsch.",
+          });
+        } else if (error.message.includes("Email not confirmed")) {
+          toast({
+            variant: "destructive",
+            title: "E-Mail nicht bestätigt",
+            description: "Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse.",
+          });
         } else {
           toast({
-            title: "Willkommen zurück!",
-            description: "Sie wurden erfolgreich angemeldet.",
+            variant: "destructive",
+            title: "Fehler",
+            description: error.message,
           });
-          navigate("/admin");
         }
       } else {
-        const { error } = await signUp(data.email, data.password);
-        if (error) {
-          if (error.message.includes("User already registered")) {
-            toast({
-              variant: "destructive",
-              title: "Konto existiert bereits",
-              description: "Mit dieser E-Mail existiert bereits ein Konto. Bitte melden Sie sich an.",
-            });
-          } else {
-            toast({
-              variant: "destructive",
-              title: "Registrierung fehlgeschlagen",
-              description: error.message,
-            });
-          }
-        } else {
-          toast({
-            title: "Registrierung erfolgreich!",
-            description: "Bitte überprüfen Sie Ihre E-Mails zur Bestätigung.",
-          });
-          reset();
-        }
+        toast({
+          title: "Willkommen zurück!",
+          description: "Sie wurden erfolgreich angemeldet.",
+        });
+        navigate("/admin");
       }
     } catch (error) {
       toast({
@@ -116,19 +90,20 @@ export default function Auth() {
       <main className="flex-1 flex items-center justify-center py-24 pt-40 bg-muted/30">
         <div className="w-full max-w-md mx-auto px-4">
           <div className="bg-card rounded-2xl shadow-xl p-8 border border-border">
-            <div className="text-center mb-8">
+          <div className="text-center mb-8">
               <img
                 src={logoMetropol}
                 alt="Metropol Bildungszentrum"
                 className="h-12 mx-auto mb-4"
               />
               <h1 className="text-2xl font-bold text-foreground">
-                {isLogin ? "Mitarbeiter-Login" : "Konto erstellen"}
+                Mitarbeiter-Login
               </h1>
               <p className="text-muted-foreground mt-2">
-                {isLogin
-                  ? "Melden Sie sich in Ihrem Konto an"
-                  : "Erstellen Sie ein neues Konto"}
+                Melden Sie sich in Ihrem Konto an
+              </p>
+              <p className="text-xs text-muted-foreground mt-4">
+                Neue Mitarbeiter werden per Einladung hinzugefügt.
               </p>
             </div>
 
@@ -177,28 +152,16 @@ export default function Auth() {
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {isLogin ? "Anmelden..." : "Registrieren..."}
+                    Anmelden...
                   </>
                 ) : (
                   <>
-                    {isLogin ? "Anmelden" : "Registrieren"}
+                    Anmelden
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </>
                 )}
               </Button>
             </form>
-
-            <div className="mt-6 text-center">
-              <button
-                type="button"
-                onClick={() => setIsLogin(!isLogin)}
-                className="text-sm text-primary hover:underline"
-              >
-                {isLogin
-                  ? "Noch kein Konto? Jetzt registrieren"
-                  : "Bereits ein Konto? Jetzt anmelden"}
-              </button>
-            </div>
           </div>
         </div>
       </main>
