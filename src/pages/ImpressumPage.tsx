@@ -52,7 +52,7 @@ export default function ImpressumPage() {
                 <p className="text-muted-foreground">
                   Eintragung im Handelsregister<br />
                   Registergericht: Amtsgericht Hannover<br />
-                  Registernummer: HRB [Nummer]
+                  Registernummer: HRB 216735
                 </p>
               </section>
 
