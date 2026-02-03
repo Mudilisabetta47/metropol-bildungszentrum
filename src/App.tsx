@@ -29,7 +29,16 @@ import Team from "./pages/admin/Team";
 import Participants from "./pages/admin/Participants";
 import Payments from "./pages/admin/Payments";
 import Invoices from "./pages/admin/Invoices";
+import Certificates from "./pages/admin/Certificates";
 import InvitePage from "./pages/InvitePage";
+// Portal imports
+import PortalLogin from "./pages/portal/PortalLogin";
+import PortalDashboard from "./pages/portal/PortalDashboard";
+import PortalCourses from "./pages/portal/PortalCourses";
+import PortalCertificates from "./pages/portal/PortalCertificates";
+import PortalInvoices from "./pages/portal/PortalInvoices";
+import PortalProfile from "./pages/portal/PortalProfile";
+import AcceptInvitation from "./pages/portal/AcceptInvitation";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -58,6 +67,7 @@ const App = () => (
                 <Route path="schedule" element={<Schedule />} />
                 <Route path="registrations" element={<Registrations />} />
                 <Route path="invoices" element={<Invoices />} />
+                <Route path="certificates" element={<Certificates />} />
                 <Route path="payments" element={<Payments />} />
                 <Route path="contacts" element={<Contacts />} />
                 <Route path="statistics" element={<Statistics />} />
@@ -68,6 +78,15 @@ const App = () => (
               
               {/* Invite route */}
               <Route path="/invite/:token" element={<InvitePage />} />
+              
+              {/* Portal routes */}
+              <Route path="/portal/login" element={<PortalLogin />} />
+              <Route path="/portal" element={<PortalDashboard />} />
+              <Route path="/portal/kurse" element={<PortalCourses />} />
+              <Route path="/portal/zertifikate" element={<PortalCertificates />} />
+              <Route path="/portal/rechnungen" element={<PortalInvoices />} />
+              <Route path="/portal/profil" element={<PortalProfile />} />
+              <Route path="/portal/einladung/:token" element={<AcceptInvitation />} />
               
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

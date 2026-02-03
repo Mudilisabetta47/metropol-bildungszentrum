@@ -50,6 +50,89 @@ export type Database = {
         }
         Relationships: []
       }
+      certificates: {
+        Row: {
+          certificate_number: string
+          course_date_id: string | null
+          course_id: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          issued_at: string
+          notes: string | null
+          participant_id: string
+          pdf_url: string | null
+          registration_id: string | null
+          status: string
+          title: string
+          updated_at: string
+          valid_until: string | null
+        }
+        Insert: {
+          certificate_number: string
+          course_date_id?: string | null
+          course_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          issued_at?: string
+          notes?: string | null
+          participant_id: string
+          pdf_url?: string | null
+          registration_id?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Update: {
+          certificate_number?: string
+          course_date_id?: string | null
+          course_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          issued_at?: string
+          notes?: string | null
+          participant_id?: string
+          pdf_url?: string | null
+          registration_id?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "certificates_course_date_id_fkey"
+            columns: ["course_date_id"]
+            isOneToOne: false
+            referencedRelation: "course_dates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "certificates_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "certificates_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "certificates_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: false
+            referencedRelation: "registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_requests: {
         Row: {
           course_interest: string | null
@@ -722,6 +805,47 @@ export type Database = {
           },
         ]
       }
+      participant_portal_invitations: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          created_by: string | null
+          email: string
+          expires_at: string
+          id: string
+          participant_id: string
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          email: string
+          expires_at?: string
+          id?: string
+          participant_id: string
+          token: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string
+          expires_at?: string
+          id?: string
+          participant_id?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "participant_portal_invitations_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       participants: {
         Row: {
           address: string | null
@@ -740,6 +864,7 @@ export type Database = {
           status: string
           tags: string[] | null
           updated_at: string
+          user_id: string | null
           zip_city: string | null
         }
         Insert: {
@@ -759,6 +884,7 @@ export type Database = {
           status?: string
           tags?: string[] | null
           updated_at?: string
+          user_id?: string | null
           zip_city?: string | null
         }
         Update: {
@@ -778,6 +904,7 @@ export type Database = {
           status?: string
           tags?: string[] | null
           updated_at?: string
+          user_id?: string | null
           zip_city?: string | null
         }
         Relationships: []
@@ -1273,6 +1400,7 @@ export type Database = {
       }
     }
     Functions: {
+      generate_certificate_number: { Args: never; Returns: string }
       generate_invoice_number: { Args: never; Returns: string }
       has_any_role: {
         Args: {

@@ -44,6 +44,8 @@ import {
   Calendar,
   Tag,
   StickyNote,
+  UserCheck,
+  Send,
 } from "lucide-react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
@@ -60,6 +62,7 @@ interface Participant {
   status: string;
   internal_notes: string | null;
   tags: string[];
+  user_id: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -110,6 +113,7 @@ export default function Participants() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [isSavingNotes, setIsSavingNotes] = useState(false);
+  const [isSendingInvitation, setIsSendingInvitation] = useState(false);
   const [editedNotes, setEditedNotes] = useState("");
   const { toast } = useToast();
 
@@ -142,7 +146,8 @@ export default function Participants() {
     try {
       const { data, error } = await supabase
         .from("participants")
-        .select("*")
+        .select("*, user_id")
+        .eq("is_deleted", false)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -295,6 +300,34 @@ export default function Participants() {
         title: "Fehler",
         description: "Status konnte nicht aktualisiert werden.",
       });
+    }
+  };
+
+  const sendPortalInvitation = async () => {
+    if (!selectedParticipant) return;
+
+    setIsSendingInvitation(true);
+    try {
+      const { error } = await supabase.functions.invoke("send-portal-invitation", {
+        body: { participantId: selectedParticipant.id },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Einladung gesendet",
+        description: `Die Einladung wurde an ${selectedParticipant.email} gesendet.`,
+      });
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Einladung konnte nicht gesendet werden.";
+      console.error("Error sending invitation:", error);
+      toast({
+        variant: "destructive",
+        title: "Fehler",
+        description: errorMessage,
+      });
+    } finally {
+      setIsSendingInvitation(false);
     }
   };
 
@@ -686,6 +719,35 @@ export default function Participants() {
                     </div>
                   </div>
                 )}
+
+                {/* Portal-Zugang Bereich */}
+                <div className="border-t pt-4">
+                  <Label className="mb-2 block">Portal-Zugang</Label>
+                  {selectedParticipant.user_id ? (
+                    <div className="flex items-center gap-2 text-green-600">
+                      <UserCheck className="h-4 w-4" />
+                      <span className="text-sm">Teilnehmer hat Portal-Zugang</span>
+                    </div>
+                  ) : (
+                    <Button 
+                      variant="outline" 
+                      onClick={sendPortalInvitation}
+                      disabled={isSendingInvitation}
+                    >
+                      {isSendingInvitation ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Wird gesendet...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="mr-2 h-4 w-4" />
+                          Einladung zum Portal senden
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </div>
               </TabsContent>
 
               <TabsContent value="notes" className="pt-4">
