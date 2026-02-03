@@ -2,7 +2,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Hero } from "@/components/sections/Hero";
 import { VideoPromo } from "@/components/sections/VideoPromo";
-import { Courses } from "@/components/sections/Courses";
+import { CoursesFromDB } from "@/components/sections/CoursesFromDB";
 import { Features } from "@/components/sections/Features";
 import { Locations } from "@/components/sections/Locations";
 import { Contact } from "@/components/sections/Contact";
@@ -17,7 +17,7 @@ const Index = () => {
       <main>
         <Hero />
         <VideoPromo />
-        <Courses />
+        <CoursesFromDB />
         <Features />
         <Locations />
         <CTA />
