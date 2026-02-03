@@ -29,6 +29,13 @@ import {
 } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
+import { CapacityBadge } from "@/components/ui/capacity-badge";
+
+interface CourseCapacityInfo {
+  totalMax: number;
+  totalCurrent: number;
+  upcomingDates: number;
+}
 
 interface Course {
   id: string;
@@ -56,6 +63,7 @@ const categories = [
 
 export default function Courses() {
   const [courses, setCourses] = useState<Course[]>([]);
+  const [courseCapacity, setCourseCapacity] = useState<Record<string, CourseCapacityInfo>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
@@ -76,7 +84,35 @@ export default function Courses() {
 
   useEffect(() => {
     fetchCourses();
+    fetchCourseCapacity();
   }, []);
+
+  const fetchCourseCapacity = async () => {
+    try {
+      const today = new Date().toISOString().split("T")[0];
+      const { data, error } = await supabase
+        .from("course_dates")
+        .select("course_id, max_participants, current_participants")
+        .eq("is_active", true)
+        .gte("start_date", today);
+
+      if (error) throw error;
+
+      const capacityMap: Record<string, CourseCapacityInfo> = {};
+      (data || []).forEach((cd) => {
+        if (!capacityMap[cd.course_id]) {
+          capacityMap[cd.course_id] = { totalMax: 0, totalCurrent: 0, upcomingDates: 0 };
+        }
+        capacityMap[cd.course_id].totalMax += cd.max_participants;
+        capacityMap[cd.course_id].totalCurrent += cd.current_participants;
+        capacityMap[cd.course_id].upcomingDates += 1;
+      });
+
+      setCourseCapacity(capacityMap);
+    } catch (error) {
+      console.error("Error fetching course capacity:", error);
+    }
+  };
 
   const fetchCourses = async () => {
     try {
@@ -395,6 +431,7 @@ export default function Courses() {
                 <TableHead>Titel</TableHead>
                 <TableHead>Kategorie</TableHead>
                 <TableHead>Dauer</TableHead>
+                <TableHead>Auslastung</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Aktionen</TableHead>
               </TableRow>
@@ -402,48 +439,67 @@ export default function Courses() {
             <TableBody>
               {courses.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                     Noch keine Kurse vorhanden
                   </TableCell>
                 </TableRow>
               ) : (
-                courses.map((course) => (
-                  <TableRow key={course.id}>
-                    <TableCell className="font-medium">{course.title}</TableCell>
-                    <TableCell>{getCategoryLabel(course.category)}</TableCell>
-                    <TableCell>{course.duration_info || "-"}</TableCell>
-                    <TableCell>
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          course.is_active
-                            ? "bg-green-100 text-green-800"
-                            : "bg-gray-100 text-gray-800"
-                        }`}
-                      >
-                        {course.is_active ? "Aktiv" : "Inaktiv"}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleOpenDialog(course)}
+                courses.map((course) => {
+                  const capacity = courseCapacity[course.id];
+                  return (
+                    <TableRow key={course.id}>
+                      <TableCell className="font-medium">{course.title}</TableCell>
+                      <TableCell>{getCategoryLabel(course.category)}</TableCell>
+                      <TableCell>{course.duration_info || "-"}</TableCell>
+                      <TableCell>
+                        {capacity ? (
+                          <div className="flex flex-col gap-1">
+                            <CapacityBadge 
+                              current={capacity.totalCurrent} 
+                              max={capacity.totalMax} 
+                              size="sm"
+                            />
+                            <span className="text-xs text-muted-foreground">
+                              {capacity.upcomingDates} Termin{capacity.upcomingDates !== 1 ? 'e' : ''}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">Keine Termine</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            course.is_active
+                              ? "bg-green-100 text-green-800"
+                              : "bg-gray-100 text-gray-800"
+                          }`}
                         >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDelete(course.id)}
-                          className="text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
+                          {course.is_active ? "Aktiv" : "Inaktiv"}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleOpenDialog(course)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDelete(course.id)}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
               )}
             </TableBody>
           </Table>
