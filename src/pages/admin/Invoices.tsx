@@ -133,7 +133,7 @@ export default function Invoices() {
     );
   });
 
-  const handleDownloadPDF = (invoice: InvoiceWithItems) => {
+  const handleDownloadPDF = async (invoice: InvoiceWithItems) => {
     if (!settings) {
       toast({
         variant: "destructive",
@@ -142,11 +142,20 @@ export default function Invoices() {
       });
       return;
     }
-    downloadInvoicePDF(invoice, settings);
-    toast({
-      title: "PDF erstellt",
-      description: `Rechnung ${invoice.invoice_number} wurde heruntergeladen.`,
-    });
+    try {
+      await downloadInvoicePDF(invoice, settings);
+      toast({
+        title: "PDF erstellt",
+        description: `Rechnung ${invoice.invoice_number} wurde heruntergeladen.`,
+      });
+    } catch (error) {
+      console.error("PDF generation error:", error);
+      toast({
+        variant: "destructive",
+        title: "Fehler",
+        description: "PDF konnte nicht erstellt werden.",
+      });
+    }
   };
 
   const handleStatusChange = async (invoiceId: string, newStatus: string) => {

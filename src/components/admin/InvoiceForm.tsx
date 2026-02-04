@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,7 +14,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Trash2, Loader2 } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ParticipantSearch, type ParticipantSearchResult } from "./ParticipantSearch";
+import { Plus, Trash2, Loader2, User, X, Mail, Send } from "lucide-react";
 import { format, addDays } from "date-fns";
 
 interface InvoiceFormProps {
@@ -43,6 +47,10 @@ export function InvoiceForm({
   const { data: settings } = useSiteSettings();
   const createInvoice = useCreateInvoice();
 
+  // Selected participant
+  const [selectedParticipant, setSelectedParticipant] = useState<ParticipantSearchResult | null>(null);
+
+  // Form fields
   const [recipientName, setRecipientName] = useState("");
   const [recipientAddress, setRecipientAddress] = useState("");
   const [recipientZipCity, setRecipientZipCity] = useState("");
@@ -54,6 +62,7 @@ export function InvoiceForm({
   );
   const [notes, setNotes] = useState("");
   const [internalNotes, setInternalNotes] = useState("");
+  const [sendEmailNotification, setSendEmailNotification] = useState(true);
   
   const [items, setItems] = useState<InvoiceItemInput[]>([
     {
@@ -66,69 +75,55 @@ export function InvoiceForm({
     },
   ]);
 
-  const [registrations, setRegistrations] = useState<Array<{
-    id: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-    address: string | null;
-    zip_city: string | null;
-    course_dates: {
-      courses: { title: string; price: number | null } | null;
-    } | null;
-  }>>([]);
-  const [selectedRegistration, setSelectedRegistration] = useState<string>("");
-  const [isLoadingRegistrations, setIsLoadingRegistrations] = useState(false);
+  // Update due date when settings change
+  useEffect(() => {
+    if (settings?.invoice_payment_terms) {
+      setDueDate(format(addDays(new Date(), parseInt(settings.invoice_payment_terms)), "yyyy-MM-dd"));
+    }
+  }, [settings?.invoice_payment_terms]);
 
-  // Load registrations for selection
-  const loadRegistrations = async () => {
-    setIsLoadingRegistrations(true);
-    try {
-      const { data, error } = await supabase
-        .from("registrations")
-        .select(`
-          id, first_name, last_name, email, address, zip_city,
-          course_dates (
-            courses (title, price)
-          )
-        `)
-        .eq("status", "confirmed")
-        .eq("is_deleted", false)
-        .order("created_at", { ascending: false })
-        .limit(100);
+  // Handle participant selection from search
+  const handleParticipantSelect = async (participant: ParticipantSearchResult) => {
+    setSelectedParticipant(participant);
+    setRecipientName(`${participant.first_name} ${participant.last_name}`);
+    setRecipientAddress(participant.address || "");
+    setRecipientZipCity(participant.zip_city || "");
+    setRecipientEmail(participant.email);
 
-      if (error) throw error;
-      setRegistrations(data || []);
-    } catch (error) {
-      console.error("Error loading registrations:", error);
-    } finally {
-      setIsLoadingRegistrations(false);
+    // Try to load latest course for this participant
+    const { data: regData } = await supabase
+      .from("registrations")
+      .select(`
+        course_dates (
+          courses (title, price)
+        )
+      `)
+      .eq("email", participant.email)
+      .eq("is_deleted", false)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (regData?.course_dates?.courses) {
+      setItems([
+        {
+          id: crypto.randomUUID(),
+          description: regData.course_dates.courses.title,
+          quantity: 1,
+          unit: "Teilnahme",
+          unit_price: regData.course_dates.courses.price || 0,
+          vat_rate: parseInt(settings?.default_vat_rate || "19"),
+        },
+      ]);
     }
   };
 
-  const handleRegistrationSelect = (regId: string) => {
-    const reg = registrations.find((r) => r.id === regId);
-    if (reg) {
-      setSelectedRegistration(regId);
-      setRecipientName(`${reg.first_name} ${reg.last_name}`);
-      setRecipientAddress(reg.address || "");
-      setRecipientZipCity(reg.zip_city || "");
-      setRecipientEmail(reg.email);
-
-      // Add course as item if available
-      if (reg.course_dates?.courses) {
-        setItems([
-          {
-            id: crypto.randomUUID(),
-            description: reg.course_dates.courses.title,
-            quantity: 1,
-            unit: "Teilnahme",
-            unit_price: reg.course_dates.courses.price || 0,
-            vat_rate: parseInt(settings?.default_vat_rate || "19"),
-          },
-        ]);
-      }
-    }
+  const clearParticipant = () => {
+    setSelectedParticipant(null);
+    setRecipientName("");
+    setRecipientAddress("");
+    setRecipientZipCity("");
+    setRecipientEmail("");
   };
 
   const addItem = () => {
@@ -199,9 +194,9 @@ export function InvoiceForm({
     }
 
     try {
-      await createInvoice.mutateAsync({
-        registration_id: selectedRegistration || registrationId,
-        participant_id: participantId,
+      const result = await createInvoice.mutateAsync({
+        registration_id: registrationId,
+        participant_id: selectedParticipant?.id || participantId,
         recipient_name: recipientName,
         recipient_address: recipientAddress,
         recipient_zip_city: recipientZipCity,
@@ -220,10 +215,30 @@ export function InvoiceForm({
         })),
       });
 
-      toast({
-        title: "Rechnung erstellt",
-        description: "Die Rechnung wurde erfolgreich erstellt.",
-      });
+      // Send email notification if enabled and email exists
+      if (sendEmailNotification && recipientEmail && result?.id) {
+        try {
+          await supabase.functions.invoke("send-invoice-notification", {
+            body: { invoiceId: result.id },
+          });
+          toast({
+            title: "Rechnung erstellt & E-Mail gesendet",
+            description: `Die Rechnung wurde erstellt und eine Benachrichtigung an ${recipientEmail} gesendet.`,
+          });
+        } catch (emailError) {
+          console.error("Email notification failed:", emailError);
+          toast({
+            title: "Rechnung erstellt",
+            description: "Die Rechnung wurde erstellt. E-Mail-Benachrichtigung konnte nicht gesendet werden.",
+          });
+        }
+      } else {
+        toast({
+          title: "Rechnung erstellt",
+          description: "Die Rechnung wurde erfolgreich erstellt.",
+        });
+      }
+
       onSuccess();
     } catch (error) {
       console.error("Error creating invoice:", error);
@@ -241,36 +256,61 @@ export function InvoiceForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Registration Selection */}
-      <div className="space-y-2">
-        <Label>Aus Anmeldung erstellen (optional)</Label>
-        <div className="flex gap-2">
-          <Select
-            value={selectedRegistration}
-            onValueChange={handleRegistrationSelect}
-            onOpenChange={(open) => open && loadRegistrations()}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Anmeldung auswählen..." />
-            </SelectTrigger>
-            <SelectContent>
-              {isLoadingRegistrations ? (
-                <div className="flex items-center justify-center p-4">
-                  <Loader2 className="h-4 w-4 animate-spin" />
+      {/* Smart Participant Search */}
+      <div className="space-y-3">
+        <Label className="text-base font-semibold">Teilnehmer auswählen</Label>
+        
+        {selectedParticipant ? (
+          <Card className="bg-muted/50">
+            <CardContent className="p-4">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start gap-3">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <User className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <div className="font-medium">
+                      {selectedParticipant.first_name} {selectedParticipant.last_name}
+                    </div>
+                    <div className="text-sm text-muted-foreground flex items-center gap-1">
+                      <Mail className="h-3 w-3" />
+                      {selectedParticipant.email}
+                    </div>
+                    {selectedParticipant.user_id && (
+                      <Badge variant="outline" className="mt-1 text-xs">
+                        Portal-Zugang aktiv
+                      </Badge>
+                    )}
+                  </div>
                 </div>
-              ) : (
-                registrations.map((reg) => (
-                  <SelectItem key={reg.id} value={reg.id}>
-                    {reg.first_name} {reg.last_name} - {reg.course_dates?.courses?.title || "Kurs"}
-                  </SelectItem>
-                ))
-              )}
-            </SelectContent>
-          </Select>
-        </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearParticipant}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <ParticipantSearch
+            onSelect={handleParticipantSelect}
+            placeholder="Name oder E-Mail eingeben..."
+          />
+        )}
+
+        {selectedParticipant?.user_id && (
+          <p className="text-sm text-muted-foreground flex items-center gap-2">
+            <span className="inline-flex h-2 w-2 rounded-full bg-green-500" />
+            Diese Rechnung wird im Teilnehmer-Portal sichtbar sein.
+          </p>
+        )}
       </div>
 
-      {/* Recipient Info */}
+      {/* Recipient Info - Always visible for manual editing */}
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="recipientName">Empfänger *</Label>
@@ -441,7 +481,7 @@ export function InvoiceForm({
           </div>
           <div className="flex justify-between font-bold text-lg">
             <span>Gesamtbetrag:</span>
-            <span>{formatCurrency(totals.gross)}</span>
+            <span className="text-primary">{formatCurrency(totals.gross)}</span>
           </div>
         </div>
       </div>
@@ -469,6 +509,21 @@ export function InvoiceForm({
           />
         </div>
       </div>
+
+      {/* Email notification option */}
+      {recipientEmail && (
+        <div className="flex items-center space-x-2 p-4 bg-muted/50 rounded-lg">
+          <Checkbox
+            id="sendEmail"
+            checked={sendEmailNotification}
+            onCheckedChange={(checked) => setSendEmailNotification(checked === true)}
+          />
+          <Label htmlFor="sendEmail" className="flex items-center gap-2 cursor-pointer">
+            <Send className="h-4 w-4" />
+            E-Mail-Benachrichtigung an {recipientEmail} senden
+          </Label>
+        </div>
+      )}
 
       {/* Actions */}
       <div className="flex justify-end gap-2 pt-4 border-t">
