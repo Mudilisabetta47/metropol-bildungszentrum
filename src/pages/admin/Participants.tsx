@@ -46,6 +46,8 @@ import {
   StickyNote,
   UserCheck,
   Send,
+  Copy,
+  Link as LinkIcon,
 } from "lucide-react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
@@ -71,6 +73,14 @@ interface ParticipantHistory {
   id: string;
   action: string;
   details: unknown;
+  created_at: string;
+}
+
+interface PortalInvitation {
+  id: string;
+  token: string;
+  expires_at: string;
+  accepted_at: string | null;
   created_at: string;
 }
 
@@ -109,11 +119,13 @@ export default function Participants() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedParticipant, setSelectedParticipant] = useState<Participant | null>(null);
   const [participantHistory, setParticipantHistory] = useState<ParticipantHistory[]>([]);
+  const [participantInvitations, setParticipantInvitations] = useState<PortalInvitation[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [isSavingNotes, setIsSavingNotes] = useState(false);
   const [isSendingInvitation, setIsSendingInvitation] = useState(false);
+  const [isCreatingInvitation, setIsCreatingInvitation] = useState(false);
   const [editedNotes, setEditedNotes] = useState("");
   const { toast } = useToast();
 
@@ -139,6 +151,7 @@ export default function Participants() {
     if (selectedParticipant) {
       setEditedNotes(selectedParticipant.internal_notes || "");
       fetchParticipantHistory(selectedParticipant.id);
+      fetchParticipantInvitations(selectedParticipant.id);
     }
   }, [selectedParticipant]);
 
@@ -318,6 +331,8 @@ export default function Participants() {
         title: "Einladung gesendet",
         description: `Die Einladung wurde an ${selectedParticipant.email} gesendet.`,
       });
+      // Refresh invitations
+      fetchParticipantInvitations(selectedParticipant.id);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "Einladung konnte nicht gesendet werden.";
       console.error("Error sending invitation:", error);
@@ -328,6 +343,74 @@ export default function Participants() {
       });
     } finally {
       setIsSendingInvitation(false);
+    }
+  };
+
+  const createInvitationLink = async () => {
+    if (!selectedParticipant) return;
+
+    setIsCreatingInvitation(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      // Generate a token
+      const token = crypto.randomUUID();
+      
+      // Create invitation in database
+      const { error } = await supabase.from("participant_portal_invitations").insert({
+        participant_id: selectedParticipant.id,
+        email: selectedParticipant.email,
+        token,
+        created_by: user?.id,
+      });
+
+      if (error) throw error;
+
+      // Copy link to clipboard
+      const invitationLink = `${window.location.origin}/portal/einladung/${token}`;
+      await navigator.clipboard.writeText(invitationLink);
+
+      toast({
+        title: "Einladungslink erstellt",
+        description: "Der Link wurde in die Zwischenablage kopiert.",
+      });
+
+      // Refresh invitations
+      fetchParticipantInvitations(selectedParticipant.id);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Link konnte nicht erstellt werden.";
+      console.error("Error creating invitation link:", error);
+      toast({
+        variant: "destructive",
+        title: "Fehler",
+        description: errorMessage,
+      });
+    } finally {
+      setIsCreatingInvitation(false);
+    }
+  };
+
+  const copyInvitationLink = async (token: string) => {
+    const invitationLink = `${window.location.origin}/portal/einladung/${token}`;
+    await navigator.clipboard.writeText(invitationLink);
+    toast({
+      title: "Link kopiert",
+      description: "Der Einladungslink wurde in die Zwischenablage kopiert.",
+    });
+  };
+
+  const fetchParticipantInvitations = async (participantId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("participant_portal_invitations")
+        .select("*")
+        .eq("participant_id", participantId)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setParticipantInvitations(data || []);
+    } catch (error) {
+      console.error("Error fetching invitations:", error);
     }
   };
 
@@ -724,28 +807,88 @@ export default function Participants() {
                 <div className="border-t pt-4">
                   <Label className="mb-2 block">Portal-Zugang</Label>
                   {selectedParticipant.user_id ? (
-                    <div className="flex items-center gap-2 text-green-600">
+                    <div className="flex items-center gap-2 text-accent">
                       <UserCheck className="h-4 w-4" />
                       <span className="text-sm">Teilnehmer hat Portal-Zugang</span>
                     </div>
                   ) : (
-                    <Button 
-                      variant="outline" 
-                      onClick={sendPortalInvitation}
-                      disabled={isSendingInvitation}
-                    >
-                      {isSendingInvitation ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Wird gesendet...
-                        </>
-                      ) : (
-                        <>
-                          <Send className="mr-2 h-4 w-4" />
-                          Einladung zum Portal senden
-                        </>
+                    <div className="space-y-4">
+                      <div className="flex flex-wrap gap-2">
+                        <Button 
+                          variant="outline" 
+                          onClick={sendPortalInvitation}
+                          disabled={isSendingInvitation}
+                        >
+                          {isSendingInvitation ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Wird gesendet...
+                            </>
+                          ) : (
+                            <>
+                              <Send className="mr-2 h-4 w-4" />
+                              Einladung per E-Mail senden
+                            </>
+                          )}
+                        </Button>
+                        <Button 
+                          variant="secondary" 
+                          onClick={createInvitationLink}
+                          disabled={isCreatingInvitation}
+                        >
+                          {isCreatingInvitation ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Erstellen...
+                            </>
+                          ) : (
+                            <>
+                              <LinkIcon className="mr-2 h-4 w-4" />
+                              Link erstellen & kopieren
+                            </>
+                          )}
+                        </Button>
+                      </div>
+
+                      {/* Existing invitations */}
+                      {participantInvitations.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-sm text-muted-foreground">Bestehende Einladungen:</p>
+                          {participantInvitations.map((inv) => {
+                            const isExpired = new Date(inv.expires_at) < new Date();
+                            const isAccepted = !!inv.accepted_at;
+                            return (
+                              <div
+                                key={inv.id}
+                                className="flex items-center justify-between p-2 rounded-lg bg-muted/50 text-sm"
+                              >
+                                <div className="flex items-center gap-2">
+                                  {isAccepted ? (
+                                    <Badge variant="default" className="bg-accent text-accent-foreground">Angenommen</Badge>
+                                  ) : isExpired ? (
+                                    <Badge variant="secondary">Abgelaufen</Badge>
+                                  ) : (
+                                    <Badge variant="outline">Offen</Badge>
+                                  )}
+                                  <span className="text-muted-foreground">
+                                    {format(new Date(inv.created_at), "dd.MM.yyyy HH:mm", { locale: de })}
+                                  </span>
+                                </div>
+                                {!isAccepted && !isExpired && (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => copyInvitationLink(inv.token)}
+                                  >
+                                    <Copy className="h-4 w-4" />
+                                  </Button>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
                       )}
-                    </Button>
+                    </div>
                   )}
                 </div>
               </TabsContent>
