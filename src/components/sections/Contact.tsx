@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { Send, Phone, Mail, CheckCircle, Shield, Clock, Award } from "lucide-react";
+import { Send, Phone, Mail, CheckCircle, Shield, Clock, Award, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -18,17 +18,7 @@ import tqcertLogo from "@/assets/tqcert-logo.webp";
 import agenturLogo from "@/assets/agentur-fuer-arbeit-logo.png";
 import reginaMartin from "@/assets/regina-martin.png";
 import { useSiteSettings, formatPhoneLink } from "@/hooks/useSiteSettings";
-
-const courses = [
-  { value: "c-ce", label: "Führerschein C/CE (LKW)", slug: "c-ce" },
-  { value: "c1-c1e", label: "Führerschein C1/C1E (7,5t)", slug: "c1-c1e" },
-  { value: "d-de", label: "Führerschein D/DE (Bus)", slug: "d-de" },
-  { value: "fahrlehrer", label: "Fahrlehrer*innen-Ausbildung", slug: "fahrlehrer" },
-  { value: "bkf-weiterbildung", label: "BKF-Weiterbildung (Module 1-5)", slug: "bkf-weiterbildung" },
-  { value: "auslieferungsfahrer", label: "Auslieferungsfahrer (Klasse B)", slug: "auslieferungsfahrer" },
-  { value: "citylogistiker", label: "Citylogistiker (Klasse B/BE)", slug: "citylogistiker" },
-  { value: "sonstiges", label: "Sonstiges / Allgemeine Beratung", slug: null },
-];
+import { useCourses } from "@/hooks/useCourses";
 
 const locations = [
   { value: "hannover", label: "Hannover" },
@@ -36,17 +26,6 @@ const locations = [
   { value: "garbsen", label: "Garbsen" },
   { value: "flexible", label: "Flexibel / Alle Standorte" },
 ];
-
-// Map URL slugs to course values
-const slugToCourseValue: Record<string, string> = {
-  "c-ce": "c-ce",
-  "c1-c1e": "c1-c1e",
-  "d-de": "d-de",
-  "fahrlehrer": "fahrlehrer",
-  "bkf-weiterbildung": "bkf-weiterbildung",
-  "auslieferungsfahrer": "auslieferungsfahrer",
-  "citylogistiker": "citylogistiker",
-};
 
 interface ContactProps {
   preselectedCourse?: string;
@@ -61,6 +40,23 @@ export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
   const [selectedLocation, setSelectedLocation] = useState<string>("");
   const { toast } = useToast();
   const { data: settings } = useSiteSettings();
+  const { data: coursesFromDB = [], isLoading: isLoadingCourses } = useCourses();
+
+  // Build courses list from database
+  const courses = [
+    ...coursesFromDB.map((course) => ({
+      value: course.slug,
+      label: course.title,
+      slug: course.slug,
+    })),
+    { value: "sonstiges", label: "Sonstiges / Allgemeine Beratung", slug: null },
+  ];
+
+  // Build slug to course value map from database
+  const slugToCourseValue: Record<string, string> = {};
+  coursesFromDB.forEach((course) => {
+    slugToCourseValue[course.slug] = course.slug;
+  });
 
   // Detect course from URL path
   useEffect(() => {
@@ -76,7 +72,7 @@ export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
     if (courseSlug && slugToCourseValue[courseSlug]) {
       setSelectedCourse(slugToCourseValue[courseSlug]);
     }
-  }, [location.pathname, preselectedCourse]);
+  }, [location.pathname, preselectedCourse, slugToCourseValue]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -363,9 +359,17 @@ export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
                   value={selectedCourse} 
                   onValueChange={setSelectedCourse}
                   required
+                  disabled={isLoadingCourses}
                 >
                   <SelectTrigger className="h-12">
-                    <SelectValue placeholder="Kurs auswählen..." />
+                    {isLoadingCourses ? (
+                      <span className="flex items-center gap-2 text-muted-foreground">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Kurse laden...
+                      </span>
+                    ) : (
+                      <SelectValue placeholder="Kurs auswählen..." />
+                    )}
                   </SelectTrigger>
                   <SelectContent>
                     {courses.map((course) => (
