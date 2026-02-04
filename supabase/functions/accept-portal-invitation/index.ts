@@ -24,9 +24,13 @@ const handler = async (req: Request): Promise<Response> => {
     
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { token, userId }: AcceptInvitationRequest = await req.json();
+    const body = await req.json();
+    console.log("Received request body:", JSON.stringify(body));
+    
+    const { token, userId }: AcceptInvitationRequest = body;
 
     if (!token || !userId) {
+      console.error("Missing token or userId:", { token: !!token, userId: !!userId });
       throw new Error("Token und User ID sind erforderlich");
     }
 

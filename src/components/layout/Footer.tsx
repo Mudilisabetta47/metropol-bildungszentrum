@@ -192,7 +192,7 @@ export function Footer() {
           <p className="text-sm text-primary-foreground/60">
             © {new Date().getFullYear()} {settings?.company_name}. Alle Rechte vorbehalten.
           </p>
-          <div className="flex gap-6">
+          <div className="flex flex-wrap justify-center gap-6">
             {legal.map((item) => (
               <Link
                 key={item.name}
@@ -202,6 +202,19 @@ export function Footer() {
                 {item.name}
               </Link>
             ))}
+            <span className="text-primary-foreground/30">|</span>
+            <Link
+              to="/portal/login"
+              className="text-sm text-primary-foreground/60 hover:text-primary-foreground transition-colors"
+            >
+              Teilnehmer-Login
+            </Link>
+            <Link
+              to="/auth"
+              className="text-sm text-primary-foreground/60 hover:text-primary-foreground transition-colors"
+            >
+              Mitarbeiter-Login
+            </Link>
           </div>
         </div>
       </div>

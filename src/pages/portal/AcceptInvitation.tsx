@@ -93,6 +93,8 @@ export default function AcceptInvitation() {
     setIsSubmitting(true);
 
     try {
+      console.log("Starting account creation for:", invitation.participants.email);
+      
       // 1. Create user account
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: invitation.participants.email,
@@ -106,10 +108,13 @@ export default function AcceptInvitation() {
         },
       });
 
+      console.log("Auth signup result:", { userId: authData?.user?.id, error: authError?.message });
+
       if (authError) {
         if (authError.message.includes("already registered")) {
           setError("Diese E-Mail-Adresse ist bereits registriert. Bitte melden Sie sich an.");
         } else {
+          console.error("Auth error:", authError);
           setError(authError.message);
         }
         setIsSubmitting(false);
@@ -117,18 +122,25 @@ export default function AcceptInvitation() {
       }
 
       if (!authData.user) {
+        console.error("No user returned from signup");
         setError("Benutzer konnte nicht erstellt werden.");
         setIsSubmitting(false);
         return;
       }
 
+      console.log("User created successfully:", authData.user.id);
+
       // 2. Call edge function to link participant and mark invitation as accepted
-      const { error: linkError } = await supabase.functions.invoke("accept-portal-invitation", {
+      console.log("Calling accept-portal-invitation with:", { token: token?.substring(0, 8) + "...", userId: authData.user.id });
+      
+      const { data: linkData, error: linkError } = await supabase.functions.invoke("accept-portal-invitation", {
         body: { token, userId: authData.user.id },
       });
 
+      console.log("Edge function response:", { data: linkData, error: linkError });
+
       if (linkError) {
-        console.error("Link error:", linkError);
+        console.error("Link error details:", linkError);
         // Continue anyway, the user is created
       }
 
