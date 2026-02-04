@@ -12,12 +12,12 @@ import logoMetropol from "@/assets/logo-metropol.webp";
 interface Invitation {
   id: string;
   email: string;
+  participant_id: string;
   expires_at: string;
   accepted_at: string | null;
   participants: {
     first_name: string;
     last_name: string;
-    email: string;
   } | null;
 }
 
@@ -42,7 +42,9 @@ export default function AcceptInvitation() {
 
       const { data, error } = await supabase
         .from("participant_portal_invitations")
-        .select("*, participants(first_name, last_name, email)")
+        // Wichtig: Wir verwenden invitation.email (steht direkt in der Einladung).
+        // Der Join auf participants kann in einem anderen Browser (ohne Login) wegen RLS null sein.
+        .select("id, email, participant_id, expires_at, accepted_at, participants(first_name, last_name)")
         .eq("token", token)
         .maybeSingle();
 
@@ -85,26 +87,29 @@ export default function AcceptInvitation() {
       return;
     }
 
-    if (!invitation?.participants) {
-      setError("Teilnehmerdaten nicht gefunden.");
-      return;
-    }
-
     setIsSubmitting(true);
 
     try {
-      console.log("Starting account creation for:", invitation.participants.email);
+      console.log("Starting account creation for:", invitation?.email);
       
       // 1. Create user account
+      const options: Parameters<typeof supabase.auth.signUp>[0]["options"] = {
+        emailRedirectTo: `${window.location.origin}/portal`,
+      };
+
+      // Optional: Namen nur mitschicken, wenn sie vorhanden sind
+      if (invitation?.participants?.first_name || invitation?.participants?.last_name) {
+        options.data = {
+          first_name: invitation?.participants?.first_name,
+          last_name: invitation?.participants?.last_name,
+        };
+      }
+
       const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: invitation.participants.email,
+        email: invitation!.email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/portal`,
-          data: {
-            first_name: invitation.participants.first_name,
-            last_name: invitation.participants.last_name,
-          },
+          ...options,
         },
       });
 
@@ -145,7 +150,8 @@ export default function AcceptInvitation() {
       }
 
       setSuccess(true);
-    } catch (err) {
+    } catch (error) {
+      console.error("AcceptInvitation submit error:", error);
       setError("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
     } finally {
       setIsSubmitting(false);
@@ -178,7 +184,9 @@ export default function AcceptInvitation() {
               ) : success ? (
                 "Ihr Zugang wurde erfolgreich eingerichtet"
               ) : (
-                `Willkommen, ${invitation?.participants?.first_name}! Legen Sie jetzt Ihr Passwort fest.`
+                invitation?.participants?.first_name
+                  ? `Willkommen, ${invitation.participants.first_name}! Legen Sie jetzt Ihr Passwort fest.`
+                  : "Willkommen! Legen Sie jetzt Ihr Passwort fest."
               )}
             </CardDescription>
           </CardHeader>
@@ -220,7 +228,7 @@ export default function AcceptInvitation() {
                   <Input
                     id="email"
                     type="email"
-                    value={invitation.participants?.email || ""}
+                    value={invitation.email || ""}
                     disabled
                     className="bg-muted"
                   />
