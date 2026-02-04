@@ -28,26 +28,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { useParticipantInvoiceSummaries } from "@/hooks/useParticipantInvoices";
+import { ParticipantDetailDialog } from "@/components/admin/ParticipantDetailDialog";
+import { InvoiceForm } from "@/components/admin/InvoiceForm";
 import {
   Loader2,
   Search,
   UserPlus,
   Download,
   Eye,
-  FileText,
-  History,
-  Mail,
-  Phone,
-  MapPin,
-  Calendar,
-  Tag,
-  StickyNote,
-  UserCheck,
-  Send,
-  Copy,
-  Link as LinkIcon,
+  Euro,
+  AlertCircle,
 } from "lucide-react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
@@ -67,21 +59,6 @@ interface Participant {
   user_id: string | null;
   created_at: string;
   updated_at: string;
-}
-
-interface ParticipantHistory {
-  id: string;
-  action: string;
-  details: unknown;
-  created_at: string;
-}
-
-interface PortalInvitation {
-  id: string;
-  token: string;
-  expires_at: string;
-  accepted_at: string | null;
-  created_at: string;
 }
 
 const statusOptions = [
@@ -118,16 +95,14 @@ export default function Participants() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedParticipant, setSelectedParticipant] = useState<Participant | null>(null);
-  const [participantHistory, setParticipantHistory] = useState<ParticipantHistory[]>([]);
-  const [participantInvitations, setParticipantInvitations] = useState<PortalInvitation[]>([]);
-  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
-  const [isSavingNotes, setIsSavingNotes] = useState(false);
-  const [isSendingInvitation, setIsSendingInvitation] = useState(false);
-  const [isCreatingInvitation, setIsCreatingInvitation] = useState(false);
-  const [editedNotes, setEditedNotes] = useState("");
+  const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
+  const [invoiceParticipantId, setInvoiceParticipantId] = useState<string | null>(null);
   const { toast } = useToast();
+
+  // Fetch invoice summaries for all participants
+  const { data: invoiceSummaries, refetch: refetchInvoices } = useParticipantInvoiceSummaries();
 
   // Form state for new participant
   const [newParticipant, setNewParticipant] = useState({
@@ -146,14 +121,6 @@ export default function Participants() {
   useEffect(() => {
     fetchParticipants();
   }, []);
-
-  useEffect(() => {
-    if (selectedParticipant) {
-      setEditedNotes(selectedParticipant.internal_notes || "");
-      fetchParticipantHistory(selectedParticipant.id);
-      fetchParticipantInvitations(selectedParticipant.id);
-    }
-  }, [selectedParticipant]);
 
   const fetchParticipants = async () => {
     try {
@@ -174,24 +141,6 @@ export default function Participants() {
       });
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const fetchParticipantHistory = async (participantId: string) => {
-    setIsLoadingHistory(true);
-    try {
-      const { data, error } = await supabase
-        .from("participant_history")
-        .select("*")
-        .eq("participant_id", participantId)
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setParticipantHistory(data || []);
-    } catch (error) {
-      console.error("Error fetching history:", error);
-    } finally {
-      setIsLoadingHistory(false);
     }
   };
 
@@ -256,164 +205,6 @@ export default function Participants() {
     }
   };
 
-  const saveNotes = async () => {
-    if (!selectedParticipant) return;
-
-    setIsSavingNotes(true);
-    try {
-      const { error } = await supabase
-        .from("participants")
-        .update({ internal_notes: editedNotes })
-        .eq("id", selectedParticipant.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Erfolg",
-        description: "Notizen wurden gespeichert.",
-      });
-
-      // Update local state
-      setSelectedParticipant({ ...selectedParticipant, internal_notes: editedNotes });
-      fetchParticipants();
-    } catch (error) {
-      console.error("Error saving notes:", error);
-      toast({
-        variant: "destructive",
-        title: "Fehler",
-        description: "Notizen konnten nicht gespeichert werden.",
-      });
-    } finally {
-      setIsSavingNotes(false);
-    }
-  };
-
-  const updateStatus = async (newStatus: string) => {
-    if (!selectedParticipant) return;
-
-    try {
-      const { error } = await supabase
-        .from("participants")
-        .update({ status: newStatus })
-        .eq("id", selectedParticipant.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Erfolg",
-        description: "Status wurde aktualisiert.",
-      });
-
-      setSelectedParticipant({ ...selectedParticipant, status: newStatus });
-      fetchParticipants();
-    } catch (error) {
-      console.error("Error updating status:", error);
-      toast({
-        variant: "destructive",
-        title: "Fehler",
-        description: "Status konnte nicht aktualisiert werden.",
-      });
-    }
-  };
-
-  const sendPortalInvitation = async () => {
-    if (!selectedParticipant) return;
-
-    setIsSendingInvitation(true);
-    try {
-      const { error } = await supabase.functions.invoke("send-portal-invitation", {
-        body: { participantId: selectedParticipant.id },
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: "Einladung gesendet",
-        description: `Die Einladung wurde an ${selectedParticipant.email} gesendet.`,
-      });
-      // Refresh invitations
-      fetchParticipantInvitations(selectedParticipant.id);
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Einladung konnte nicht gesendet werden.";
-      console.error("Error sending invitation:", error);
-      toast({
-        variant: "destructive",
-        title: "Fehler",
-        description: errorMessage,
-      });
-    } finally {
-      setIsSendingInvitation(false);
-    }
-  };
-
-  const createInvitationLink = async () => {
-    if (!selectedParticipant) return;
-
-    setIsCreatingInvitation(true);
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      // Generate a token
-      const token = crypto.randomUUID();
-      
-      // Create invitation in database
-      const { error } = await supabase.from("participant_portal_invitations").insert({
-        participant_id: selectedParticipant.id,
-        email: selectedParticipant.email,
-        token,
-        created_by: user?.id,
-      });
-
-      if (error) throw error;
-
-      // Copy link to clipboard
-      const invitationLink = `${window.location.origin}/portal/einladung/${token}`;
-      await navigator.clipboard.writeText(invitationLink);
-
-      toast({
-        title: "Einladungslink erstellt",
-        description: "Der Link wurde in die Zwischenablage kopiert.",
-      });
-
-      // Refresh invitations
-      fetchParticipantInvitations(selectedParticipant.id);
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Link konnte nicht erstellt werden.";
-      console.error("Error creating invitation link:", error);
-      toast({
-        variant: "destructive",
-        title: "Fehler",
-        description: errorMessage,
-      });
-    } finally {
-      setIsCreatingInvitation(false);
-    }
-  };
-
-  const copyInvitationLink = async (token: string) => {
-    const invitationLink = `${window.location.origin}/portal/einladung/${token}`;
-    await navigator.clipboard.writeText(invitationLink);
-    toast({
-      title: "Link kopiert",
-      description: "Der Einladungslink wurde in die Zwischenablage kopiert.",
-    });
-  };
-
-  const fetchParticipantInvitations = async (participantId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from("participant_portal_invitations")
-        .select("*")
-        .eq("participant_id", participantId)
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setParticipantInvitations(data || []);
-    } catch (error) {
-      console.error("Error fetching invitations:", error);
-    }
-  };
-
   const exportToCSV = () => {
     const headers = [
       "Vorname",
@@ -425,14 +216,16 @@ export default function Participants() {
       "Geburtsdatum",
       "Status",
       "Tags",
+      "Offen (€)",
       "Erstellt am",
     ];
 
     const filteredData = getFilteredParticipants();
     const csvContent = [
       headers.join(";"),
-      ...filteredData.map((p) =>
-        [
+      ...filteredData.map((p) => {
+        const summary = invoiceSummaries?.get(p.id);
+        return [
           p.first_name,
           p.last_name,
           p.email,
@@ -442,9 +235,10 @@ export default function Participants() {
           p.date_of_birth || "",
           statusLabels[p.status] || p.status,
           (p.tags || []).join(", "),
+          summary?.openAmount?.toFixed(2) || "0.00",
           format(new Date(p.created_at), "dd.MM.yyyy"),
-        ].join(";")
-      ),
+        ].join(";");
+      }),
     ].join("\n");
 
     const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
@@ -466,6 +260,15 @@ export default function Participants() {
       return matchesSearch && matchesStatus;
     });
   };
+
+  const handleCreateInvoice = (participantId: string) => {
+    setInvoiceParticipantId(participantId);
+    setSelectedParticipant(null);
+    setInvoiceDialogOpen(true);
+  };
+
+  const formatCurrency = (amount: number) =>
+    new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(amount);
 
   const filteredParticipants = getFilteredParticipants();
 
@@ -658,6 +461,7 @@ export default function Participants() {
                 <TableHead>Name</TableHead>
                 <TableHead>Kontakt</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Rechnungen</TableHead>
                 <TableHead>Tags</TableHead>
                 <TableHead>Erstellt</TableHead>
                 <TableHead className="text-right">Aktionen</TableHead>
@@ -666,297 +470,123 @@ export default function Participants() {
             <TableBody>
               {filteredParticipants.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                     Keine Teilnehmer gefunden
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredParticipants.map((participant) => (
-                  <TableRow key={participant.id}>
-                    <TableCell>
-                      <div className="font-medium">
-                        {participant.first_name} {participant.last_name}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        <div>{participant.email}</div>
-                        {participant.phone && (
-                          <div className="text-muted-foreground">{participant.phone}</div>
+                filteredParticipants.map((participant) => {
+                  const summary = invoiceSummaries?.get(participant.id);
+                  const hasOpenInvoices = (summary?.openAmount || 0) > 0;
+                  const hasOverdue = (summary?.overdueCount || 0) > 0;
+
+                  return (
+                    <TableRow key={participant.id}>
+                      <TableCell>
+                        <div className="font-medium">
+                          {participant.first_name} {participant.last_name}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm">
+                          <div>{participant.email}</div>
+                          {participant.phone && (
+                            <div className="text-muted-foreground">{participant.phone}</div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={statusColors[participant.status]}>
+                          {statusLabels[participant.status] || participant.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {summary ? (
+                          <div className="flex items-center gap-2">
+                            <div className={`flex items-center gap-1 ${hasOverdue ? "text-destructive" : hasOpenInvoices ? "text-amber-600" : "text-muted-foreground"}`}>
+                              {hasOverdue ? (
+                                <AlertCircle className="h-4 w-4" />
+                              ) : (
+                                <Euro className="h-4 w-4" />
+                              )}
+                              <span className="font-medium text-sm">
+                                {formatCurrency(summary.openAmount)}
+                              </span>
+                            </div>
+                            {summary.totalInvoices > 0 && (
+                              <span className="text-xs text-muted-foreground">
+                                ({summary.totalInvoices} Rg.)
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground text-sm">-</span>
                         )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={statusColors[participant.status]}>
-                        {statusLabels[participant.status] || participant.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1">
-                        {(participant.tags || []).slice(0, 2).map((tag) => (
-                          <Badge key={tag} variant="outline" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                        {(participant.tags || []).length > 2 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{(participant.tags || []).length - 2}
-                          </Badge>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {format(new Date(participant.created_at), "dd.MM.yyyy", { locale: de })}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setSelectedParticipant(participant)}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-wrap gap-1">
+                          {(participant.tags || []).slice(0, 2).map((tag) => (
+                            <Badge key={tag} variant="outline" className="text-xs">
+                              {tag}
+                            </Badge>
+                          ))}
+                          {(participant.tags || []).length > 2 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{(participant.tags || []).length - 2}
+                            </Badge>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {format(new Date(participant.created_at), "dd.MM.yyyy", { locale: de })}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setSelectedParticipant(participant)}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
               )}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
 
-      {/* Detail Dialog */}
-      <Dialog open={!!selectedParticipant} onOpenChange={() => setSelectedParticipant(null)}>
+      {/* Participant Detail Dialog */}
+      <ParticipantDetailDialog
+        participant={selectedParticipant}
+        onClose={() => setSelectedParticipant(null)}
+        onUpdate={() => {
+          fetchParticipants();
+          refetchInvoices();
+        }}
+        onCreateInvoice={handleCreateInvoice}
+      />
+
+      {/* Create Invoice Dialog */}
+      <Dialog open={invoiceDialogOpen} onOpenChange={setInvoiceDialogOpen}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
-              {selectedParticipant?.first_name} {selectedParticipant?.last_name}
-            </DialogTitle>
+            <DialogTitle>Neue Rechnung erstellen</DialogTitle>
           </DialogHeader>
-          {selectedParticipant && (
-            <Tabs defaultValue="info" className="mt-4">
-              <TabsList>
-                <TabsTrigger value="info">Infos</TabsTrigger>
-                <TabsTrigger value="notes">Notizen</TabsTrigger>
-                <TabsTrigger value="documents">Dokumente</TabsTrigger>
-                <TabsTrigger value="history">Historie</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="info" className="space-y-4 pt-4">
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 text-muted-foreground" />
-                    <span>{selectedParticipant.email}</span>
-                  </div>
-                  {selectedParticipant.phone && (
-                    <div className="flex items-center gap-2">
-                      <Phone className="h-4 w-4 text-muted-foreground" />
-                      <span>{selectedParticipant.phone}</span>
-                    </div>
-                  )}
-                  {selectedParticipant.address && (
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-muted-foreground" />
-                      <span>
-                        {selectedParticipant.address}
-                        {selectedParticipant.zip_city && `, ${selectedParticipant.zip_city}`}
-                      </span>
-                    </div>
-                  )}
-                  {selectedParticipant.date_of_birth && (
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-muted-foreground" />
-                      <span>
-                        {format(new Date(selectedParticipant.date_of_birth), "dd.MM.yyyy")}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="border-t pt-4">
-                  <Label className="mb-2 block">Status</Label>
-                  <Select value={selectedParticipant.status} onValueChange={updateStatus}>
-                    <SelectTrigger className="w-48">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {statusOptions.filter((s) => s.value !== "all").map((s) => (
-                        <SelectItem key={s.value} value={s.value}>
-                          {s.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {selectedParticipant.tags && selectedParticipant.tags.length > 0 && (
-                  <div className="border-t pt-4">
-                    <Label className="mb-2 block">Tags</Label>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedParticipant.tags.map((tag) => (
-                        <Badge key={tag} variant="outline">
-                          <Tag className="h-3 w-3 mr-1" />
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Portal-Zugang Bereich */}
-                <div className="border-t pt-4">
-                  <Label className="mb-2 block">Portal-Zugang</Label>
-                  {selectedParticipant.user_id ? (
-                    <div className="flex items-center gap-2 text-accent">
-                      <UserCheck className="h-4 w-4" />
-                      <span className="text-sm">Teilnehmer hat Portal-Zugang</span>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      <div className="flex flex-wrap gap-2">
-                        <Button 
-                          variant="outline" 
-                          onClick={sendPortalInvitation}
-                          disabled={isSendingInvitation}
-                        >
-                          {isSendingInvitation ? (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Wird gesendet...
-                            </>
-                          ) : (
-                            <>
-                              <Send className="mr-2 h-4 w-4" />
-                              Einladung per E-Mail senden
-                            </>
-                          )}
-                        </Button>
-                        <Button 
-                          variant="secondary" 
-                          onClick={createInvitationLink}
-                          disabled={isCreatingInvitation}
-                        >
-                          {isCreatingInvitation ? (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Erstellen...
-                            </>
-                          ) : (
-                            <>
-                              <LinkIcon className="mr-2 h-4 w-4" />
-                              Link erstellen & kopieren
-                            </>
-                          )}
-                        </Button>
-                      </div>
-
-                      {/* Existing invitations */}
-                      {participantInvitations.length > 0 && (
-                        <div className="space-y-2">
-                          <p className="text-sm text-muted-foreground">Bestehende Einladungen:</p>
-                          {participantInvitations.map((inv) => {
-                            const isExpired = new Date(inv.expires_at) < new Date();
-                            const isAccepted = !!inv.accepted_at;
-                            return (
-                              <div
-                                key={inv.id}
-                                className="flex items-center justify-between p-2 rounded-lg bg-muted/50 text-sm"
-                              >
-                                <div className="flex items-center gap-2">
-                                  {isAccepted ? (
-                                    <Badge variant="default" className="bg-accent text-accent-foreground">Angenommen</Badge>
-                                  ) : isExpired ? (
-                                    <Badge variant="secondary">Abgelaufen</Badge>
-                                  ) : (
-                                    <Badge variant="outline">Offen</Badge>
-                                  )}
-                                  <span className="text-muted-foreground">
-                                    {format(new Date(inv.created_at), "dd.MM.yyyy HH:mm", { locale: de })}
-                                  </span>
-                                </div>
-                                {!isAccepted && !isExpired && (
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => copyInvitationLink(inv.token)}
-                                  >
-                                    <Copy className="h-4 w-4" />
-                                  </Button>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </TabsContent>
-
-              <TabsContent value="notes" className="pt-4">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <StickyNote className="h-4 w-4" />
-                    <span className="text-sm">Interne Notizen (nur für Mitarbeiter sichtbar)</span>
-                  </div>
-                  <Textarea
-                    rows={8}
-                    value={editedNotes}
-                    onChange={(e) => setEditedNotes(e.target.value)}
-                    placeholder="Notizen zu diesem Teilnehmer..."
-                  />
-                  <Button onClick={saveNotes} disabled={isSavingNotes}>
-                    {isSavingNotes ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Speichern...
-                      </>
-                    ) : (
-                      "Notizen speichern"
-                    )}
-                  </Button>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="documents" className="pt-4">
-                <div className="text-center py-8 text-muted-foreground">
-                  <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Dokumenten-Upload kommt bald</p>
-                  <p className="text-sm">Hier können Sie Ausweise, Zertifikate etc. hochladen</p>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="history" className="pt-4">
-                {isLoadingHistory ? (
-                  <div className="flex justify-center py-8">
-                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                  </div>
-                ) : participantHistory.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <History className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>Keine Historie vorhanden</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {participantHistory.map((entry) => (
-                      <div
-                        key={entry.id}
-                        className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg"
-                      >
-                        <History className="h-4 w-4 mt-1 text-muted-foreground" />
-                        <div>
-                          <p className="font-medium">{entry.action}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {format(new Date(entry.created_at), "dd.MM.yyyy HH:mm", { locale: de })}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </TabsContent>
-            </Tabs>
-          )}
+          <InvoiceForm
+            participantId={invoiceParticipantId || undefined}
+            onSuccess={() => {
+              setInvoiceDialogOpen(false);
+              setInvoiceParticipantId(null);
+              refetchInvoices();
+            }}
+            onCancel={() => {
+              setInvoiceDialogOpen(false);
+              setInvoiceParticipantId(null);
+            }}
+          />
         </DialogContent>
       </Dialog>
     </div>
