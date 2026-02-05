@@ -291,14 +291,12 @@ export function useUpdateInvoiceStatus() {
       paidAmount,
       paymentMethod,
       paymentReference,
-      cancellationReason,
     }: {
       invoiceId: string;
       status: string;
       paidAmount?: number;
       paymentMethod?: string;
       paymentReference?: string;
-      cancellationReason?: string;
     }) => {
       const updates: Record<string, unknown> = { status };
 
@@ -307,11 +305,6 @@ export function useUpdateInvoiceStatus() {
         if (paidAmount !== undefined) updates.paid_amount = paidAmount;
         if (paymentMethod) updates.payment_method = paymentMethod;
         if (paymentReference) updates.payment_reference = paymentReference;
-      }
-
-      if (status === "cancelled") {
-        updates.cancelled_at = new Date().toISOString();
-        if (cancellationReason) updates.cancellation_reason = cancellationReason;
       }
 
       const { error } = await supabase
@@ -324,6 +317,41 @@ export function useUpdateInvoiceStatus() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["invoices"] });
       queryClient.invalidateQueries({ queryKey: ["invoice"] });
+    },
+  });
+}
+
+export function useCancelInvoice() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      invoiceId,
+      cancellationReason,
+    }: {
+      invoiceId: string;
+      cancellationReason: string;
+    }) => {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      const { error } = await supabase
+        .from("invoices")
+        .update({
+          status: "cancelled",
+          cancelled_at: new Date().toISOString(),
+          cancelled_by: user?.id,
+          cancellation_reason: cancellationReason,
+        })
+        .eq("id", invoiceId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["invoices"] });
+      queryClient.invalidateQueries({ queryKey: ["invoice"] });
+      queryClient.invalidateQueries({ queryKey: ["invoice-history"] });
+      queryClient.invalidateQueries({ queryKey: ["invoice-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["participant-invoices"] });
     },
   });
 }

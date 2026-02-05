@@ -32,12 +32,14 @@ import {
   FileText,
   Loader2,
   Send,
+  Ban,
 } from "lucide-react";
 
 interface InvoiceDetailProps {
   invoice: InvoiceWithItems;
   onStatusChange: (status: string) => void;
   onDownloadPDF: () => void;
+  onCancel?: () => void;
 }
 
 const statusLabels: Record<string, string> = {
@@ -74,6 +76,7 @@ export function InvoiceDetail({
   invoice,
   onStatusChange,
   onDownloadPDF,
+  onCancel,
 }: InvoiceDetailProps) {
   const [showEmailDialog, setShowEmailDialog] = useState(false);
   const [emailTo, setEmailTo] = useState(invoice.recipient_email || "");
@@ -153,6 +156,16 @@ export function InvoiceDetail({
                 <Button size="sm" onClick={() => onStatusChange("paid")}>
                   <CheckCircle className="mr-1 h-4 w-4" />
                   Als bezahlt
+                </Button>
+              )}
+              {invoice.status !== "cancelled" && invoice.status !== "paid" && onCancel && (
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={onCancel}
+                >
+                  <Ban className="mr-1 h-4 w-4" />
+                  Stornieren
                 </Button>
               )}
             </div>
