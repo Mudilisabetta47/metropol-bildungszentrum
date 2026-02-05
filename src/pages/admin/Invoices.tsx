@@ -36,8 +36,10 @@ import {
   useInvoices,
   useInvoiceStats,
   useUpdateInvoiceStatus,
+  useCancelInvoice,
   type InvoiceWithItems,
 } from "@/hooks/useInvoices";
+import { InvoiceCancelDialog } from "@/components/admin/InvoiceCancelDialog";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { downloadInvoicePDF } from "@/lib/invoice-pdf";
 import { exportInvoicesCSV, exportInvoicesDATEV, exportInvoicesDetailed } from "@/lib/invoice-export";
@@ -109,11 +111,14 @@ export default function Invoices() {
   const [selectedInvoice, setSelectedInvoice] = useState<InvoiceWithItems | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showDetailDialog, setShowDetailDialog] = useState(false);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [invoiceToCancel, setInvoiceToCancel] = useState<InvoiceWithItems | null>(null);
   
   const { data: invoices, isLoading, refetch } = useInvoices(statusFilter);
   const { data: stats } = useInvoiceStats();
   const { data: settings } = useSiteSettings();
   const updateStatus = useUpdateInvoiceStatus();
+  const cancelInvoice = useCancelInvoice();
   const { toast } = useToast();
 
   const formatCurrency = (amount: number) => {
@@ -465,8 +470,11 @@ export default function Invoices() {
                             <>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem
-                                className="text-red-600"
-                                onClick={() => handleStatusChange(invoice.id, "cancelled")}
+                                className="text-destructive focus:text-destructive"
+                                onClick={() => {
+                                  setInvoiceToCancel(invoice);
+                                  setShowCancelDialog(true);
+                                }}
                               >
                                 <Ban className="mr-2 h-4 w-4" />
                                 Stornieren
@@ -513,10 +521,46 @@ export default function Invoices() {
               invoice={selectedInvoice}
               onStatusChange={(status) => handleStatusChange(selectedInvoice.id, status)}
               onDownloadPDF={() => handleDownloadPDF(selectedInvoice)}
+              onCancel={() => {
+                setInvoiceToCancel(selectedInvoice);
+                setShowCancelDialog(true);
+              }}
             />
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Cancel Invoice Dialog */}
+      <InvoiceCancelDialog
+        open={showCancelDialog}
+        onOpenChange={(open) => {
+          setShowCancelDialog(open);
+          if (!open) setInvoiceToCancel(null);
+        }}
+        invoiceNumber={invoiceToCancel?.invoice_number || ""}
+        isPending={cancelInvoice.isPending}
+        onConfirm={async (reason) => {
+          if (!invoiceToCancel) return;
+          try {
+            await cancelInvoice.mutateAsync({
+              invoiceId: invoiceToCancel.id,
+              cancellationReason: reason,
+            });
+            toast({
+              title: "Rechnung storniert",
+              description: `Rechnung ${invoiceToCancel.invoice_number} wurde erfolgreich storniert.`,
+            });
+            setShowDetailDialog(false);
+            refetch();
+          } catch {
+            toast({
+              variant: "destructive",
+              title: "Fehler",
+              description: "Die Rechnung konnte nicht storniert werden.",
+            });
+          }
+        }}
+      />
     </div>
   );
 }
