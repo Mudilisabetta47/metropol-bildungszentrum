@@ -63,34 +63,67 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setIsLoading(false);
-
-        // Defer role check with setTimeout
-        if (session?.user) {
-          setTimeout(() => {
-            checkUserRoles(session.user.id);
-          }, 0);
-        } else {
+        // Handle token refresh errors gracefully
+        if (event === "TOKEN_REFRESHED" || event === "SIGNED_IN") {
+          setSession(session);
+          setUser(session?.user ?? null);
+          setIsLoading(false);
+          if (session?.user) {
+            setTimeout(() => checkUserRoles(session.user.id), 0);
+          }
+        } else if (event === "SIGNED_OUT") {
+          setSession(null);
+          setUser(null);
           setIsStaff(false);
           setIsAdmin(false);
           setIsSuperAdmin(false);
           setRoles([]);
+          setIsLoading(false);
+        } else {
+          setSession(session);
+          setUser(session?.user ?? null);
+          setIsLoading(false);
+
+          if (session?.user) {
+            setTimeout(() => checkUserRoles(session.user.id), 0);
+          } else {
+            setIsStaff(false);
+            setIsAdmin(false);
+            setIsSuperAdmin(false);
+            setRoles([]);
+          }
         }
       }
     );
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setIsLoading(false);
+    // THEN check for existing session - with error handling
+    supabase.auth.getSession()
+      .then(({ data: { session }, error }) => {
+        if (error) {
+          // Handle refresh token errors gracefully - clear session
+          console.warn("Session retrieval error:", error.message);
+          setSession(null);
+          setUser(null);
+          setIsLoading(false);
+          // Clear any stale tokens
+          supabase.auth.signOut().catch(() => {});
+          return;
+        }
+        
+        setSession(session);
+        setUser(session?.user ?? null);
+        setIsLoading(false);
 
-      if (session?.user) {
-        checkUserRoles(session.user.id);
-      }
-    });
+        if (session?.user) {
+          checkUserRoles(session.user.id);
+        }
+      })
+      .catch((error) => {
+        console.warn("Auth initialization error:", error);
+        setSession(null);
+        setUser(null);
+        setIsLoading(false);
+      });
 
     return () => subscription.unsubscribe();
   }, []);
