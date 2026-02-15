@@ -33,89 +33,81 @@ export function DashboardKPICards({ stats, isLoading }: DashboardKPICardsProps) 
       value: formatCurrency(stats.totalRevenue),
       subtitle: `${formatCurrency(stats.paidThisMonth)} diesen Monat`,
       icon: Euro,
-      iconColor: "text-emerald-500",
-      bgColor: "bg-emerald-500/10",
+      alert: false,
     },
     {
       title: "Offene Rechnungen",
       value: formatCurrency(stats.openInvoicesAmount),
       subtitle: `${stats.openInvoicesCount} Rechnungen`,
       icon: Clock,
-      iconColor: stats.openInvoicesAmount > 0 ? "text-amber-500" : "text-muted-foreground",
-      bgColor: stats.openInvoicesAmount > 0 ? "bg-amber-500/10" : "bg-muted/50",
-      alert: stats.overdueInvoicesCount > 0 ? `${stats.overdueInvoicesCount} überfällig` : undefined,
+      alert: stats.overdueInvoicesCount > 0,
+      alertText: `${stats.overdueInvoicesCount} überfällig`,
     },
     {
       title: "Anmeldungen",
-      value: stats.registrationsThisMonth,
+      value: String(stats.registrationsThisMonth),
       subtitle: (
         <span className="flex items-center gap-1">
           {growthPercentage >= 0 ? (
-            <TrendingUp className="h-3 w-3 text-emerald-500" />
+            <TrendingUp className="h-3 w-3 text-primary" />
           ) : (
-            <TrendingDown className="h-3 w-3 text-red-500" />
+            <TrendingDown className="h-3 w-3 text-destructive" />
           )}
-          <span className={growthPercentage >= 0 ? "text-emerald-500" : "text-red-500"}>
+          <span className={growthPercentage >= 0 ? "text-primary" : "text-destructive"}>
             {growthPercentage >= 0 ? "+" : ""}{growthPercentage}%
           </span>
           {" "}vs. Vormonat
         </span>
       ),
       icon: Users,
-      iconColor: "text-blue-500",
-      bgColor: "bg-blue-500/10",
+      alert: false,
     },
     {
       title: "Ausstehend",
-      value: stats.pendingRegistrations,
+      value: String(stats.pendingRegistrations),
       subtitle: "Warten auf Bestätigung",
       icon: AlertTriangle,
-      iconColor: stats.pendingRegistrations > 0 ? "text-amber-500" : "text-muted-foreground",
-      bgColor: stats.pendingRegistrations > 0 ? "bg-amber-500/10" : "bg-muted/50",
+      alert: stats.pendingRegistrations > 0,
     },
     {
       title: "Teilnehmer",
-      value: stats.totalParticipants,
+      value: String(stats.totalParticipants),
       subtitle: `${stats.activeParticipants} aktiv`,
       icon: GraduationCap,
-      iconColor: "text-violet-500",
-      bgColor: "bg-violet-500/10",
+      alert: false,
     },
     {
       title: "Kurstermine",
-      value: stats.upcomingCourseDates,
+      value: String(stats.upcomingCourseDates),
       subtitle: `${stats.totalCourses} aktive Kurse`,
       icon: Calendar,
-      iconColor: "text-indigo-500",
-      bgColor: "bg-indigo-500/10",
+      alert: false,
     },
     {
       title: "Auslastung",
       value: `${stats.averageCapacity}%`,
-      subtitle: "Durchschn. Kursauslastung",
+      subtitle: "Ø Kursauslastung",
       icon: Target,
-      iconColor: stats.averageCapacity >= 70 ? "text-emerald-500" : "text-amber-500",
-      bgColor: stats.averageCapacity >= 70 ? "bg-emerald-500/10" : "bg-amber-500/10",
+      alert: false,
     },
     {
       title: "Anfragen",
-      value: stats.unreadContacts,
+      value: String(stats.unreadContacts),
       subtitle: "Ungelesen",
       icon: MessageSquare,
-      iconColor: stats.unreadContacts > 0 ? "text-rose-500" : "text-muted-foreground",
-      bgColor: stats.unreadContacts > 0 ? "bg-rose-500/10" : "bg-muted/50",
+      alert: stats.unreadContacts > 0,
     },
   ];
 
   if (isLoading) {
     return (
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[...Array(8)].map((_, i) => (
           <Card key={i} className="animate-pulse">
-            <CardContent className="p-5">
-              <div className="h-4 bg-muted rounded w-24 mb-3" />
-              <div className="h-8 bg-muted rounded w-20 mb-2" />
-              <div className="h-3 bg-muted rounded w-32" />
+            <CardContent className="p-4">
+              <div className="h-3 bg-muted rounded w-20 mb-2" />
+              <div className="h-6 bg-muted rounded w-16 mb-1" />
+              <div className="h-3 bg-muted rounded w-28" />
             </CardContent>
           </Card>
         ))}
@@ -124,34 +116,31 @@ export function DashboardKPICards({ stats, isLoading }: DashboardKPICardsProps) 
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {kpis.map((kpi, index) => (
-        <Card 
-          key={index} 
-          className="relative overflow-hidden border-border/50 hover:border-border hover:shadow-md transition-all duration-200"
+        <Card
+          key={index}
+          className={cn(
+            "border transition-colors",
+            kpi.alert ? "border-destructive/30" : "border-border"
+          )}
         >
-          <CardContent className="p-5">
-            <div className="flex items-start justify-between">
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">
-                  {kpi.title}
-                </p>
-                <p className="text-2xl font-bold tracking-tight">{kpi.value}</p>
-                <div className="text-xs text-muted-foreground">
-                  {kpi.subtitle}
-                </div>
-              </div>
-              <div className={cn("p-2.5 rounded-xl", kpi.bgColor)}>
-                <kpi.icon className={cn("h-5 w-5", kpi.iconColor)} />
-              </div>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-1">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                {kpi.title}
+              </p>
+              <kpi.icon className="h-4 w-4 text-muted-foreground/60" />
             </div>
-            {kpi.alert && (
-              <div className="absolute bottom-0 left-0 right-0 bg-red-500/10 border-t border-red-500/20 px-4 py-1.5">
-                <span className="text-xs font-medium text-red-600 flex items-center gap-1">
-                  <AlertTriangle className="h-3 w-3" />
-                  {kpi.alert}
-                </span>
-              </div>
+            <p className="text-xl font-semibold tracking-tight text-foreground">{kpi.value}</p>
+            <div className="text-xs text-muted-foreground mt-0.5">
+              {kpi.subtitle}
+            </div>
+            {kpi.alert && kpi.alertText && (
+              <p className="text-xs font-medium text-destructive mt-1 flex items-center gap-1">
+                <AlertTriangle className="h-3 w-3" />
+                {kpi.alertText}
+              </p>
             )}
           </CardContent>
         </Card>

@@ -17,6 +17,8 @@ import {
   Receipt,
   CreditCard,
   Award,
+  ChevronRight,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -42,7 +44,6 @@ const navigation = [
   { name: "Einstellungen", href: "/admin/settings", icon: Settings },
 ];
 
-// Mobile bottom nav - most important items
 const mobileNavItems = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Teilnehmer", href: "/admin/participants", icon: Users },
@@ -58,31 +59,18 @@ export function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    if (!isLoading && !user) {
-      navigate("/auth");
-    }
+    if (!isLoading && !user) navigate("/auth");
   }, [isLoading, user, navigate]);
-
-  useEffect(() => {
-    if (!isLoading && user && !isStaff) {
-      // User is logged in but not staff
-    }
-  }, [isLoading, user, isStaff]);
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
-          <p className="text-muted-foreground">Laden...</p>
-        </div>
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
       </div>
     );
   }
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   const handleSignOut = async () => {
     await signOut();
@@ -98,11 +86,11 @@ export function AdminLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-muted/30">
+    <div className="min-h-screen bg-background">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/40 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -110,20 +98,26 @@ export function AdminLayout() {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 left-0 z-50 h-full w-64 bg-card border-r border-border transform transition-transform duration-200 ease-in-out lg:translate-x-0",
+          "fixed top-0 left-0 z-50 h-full w-60 bg-card border-r border-border transform transition-transform duration-200 ease-in-out lg:translate-x-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         <div className="flex flex-col h-full">
-          {/* Logo */}
-          <div className="p-4 border-b border-border">
-            <Link to="/" className="flex items-center gap-2">
-              <img src={logoMetropol} alt="Metropol" className="h-10" />
+          {/* Logo + close */}
+          <div className="h-12 px-4 flex items-center justify-between border-b border-border">
+            <Link to="/" className="flex items-center">
+              <img src={logoMetropol} alt="Metropol" className="h-7" />
             </Link>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="lg:hidden p-1 rounded hover:bg-muted"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+          <nav className="flex-1 py-2 px-2 space-y-0.5 overflow-y-auto">
             {navigation.map((item) => {
               const isActive = location.pathname === item.href;
               return (
@@ -132,13 +126,13 @@ export function AdminLayout() {
                   to={item.href}
                   onClick={() => setSidebarOpen(false)}
                   className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                    "flex items-center gap-2.5 px-3 py-2 rounded-md text-[13px] font-medium transition-colors",
                     isActive
-                      ? "bg-primary text-primary-foreground"
+                      ? "bg-primary/10 text-primary"
                       : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   )}
                 >
-                  <item.icon className="h-5 w-5" />
+                  <item.icon className="h-4 w-4 flex-shrink-0" />
                   {item.name}
                 </Link>
               );
@@ -146,28 +140,29 @@ export function AdminLayout() {
           </nav>
 
           {/* User section */}
-          <div className="p-4 border-t border-border">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <span className="text-sm font-semibold text-primary">
+          <div className="p-3 border-t border-border">
+            <div className="flex items-center gap-2.5 mb-2">
+              <div className="h-8 w-8 rounded-md bg-muted flex items-center justify-center">
+                <span className="text-xs font-semibold text-muted-foreground">
                   {user.email?.charAt(0).toUpperCase()}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground truncate">
+                <p className="text-xs font-medium text-foreground truncate">
                   {user.email}
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-[10px] text-muted-foreground">
                   {isStaff ? "Mitarbeiter" : "Benutzer"}
                 </p>
               </div>
             </div>
             <Button
-              variant="outline"
-              className="w-full justify-start"
+              variant="ghost"
+              size="sm"
+              className="w-full justify-start text-xs text-muted-foreground h-8"
               onClick={handleSignOut}
             >
-              <LogOut className="mr-2 h-4 w-4" />
+              <LogOut className="mr-2 h-3.5 w-3.5" />
               Abmelden
             </Button>
           </div>
@@ -175,29 +170,28 @@ export function AdminLayout() {
       </aside>
 
       {/* Main content */}
-      <div className="lg:pl-64 pb-16 lg:pb-0">
+      <div className="lg:pl-60 pb-14 lg:pb-0">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 bg-background/95 backdrop-blur-sm border-b border-border">
-          <div className="flex items-center justify-between px-4 py-3">
+        <header className="sticky top-0 z-30 h-12 bg-background/95 backdrop-blur-sm border-b border-border">
+          <div className="flex items-center justify-between h-full px-4">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 rounded-lg hover:bg-muted"
+              className="lg:hidden p-1.5 rounded-md hover:bg-muted"
             >
-              <Menu className="h-5 w-5" />
+              <Menu className="h-4 w-4" />
             </button>
 
-            {/* Global Search */}
-            <div className="flex-1 flex justify-center lg:justify-start lg:ml-4">
+            <div className="flex-1 flex justify-center lg:justify-start lg:ml-2">
               <AdminCommandSearch />
             </div>
 
-            {/* Right side actions */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-0.5">
               <AdminThemeToggle />
               <AdminNotifications />
-              <Link to="/" className="hidden sm:block">
-                <Button variant="outline" size="sm">
-                  Zur Website
+              <Link to="/" className="hidden sm:block ml-1">
+                <Button variant="ghost" size="sm" className="h-8 text-xs text-muted-foreground">
+                  Website
+                  <ChevronRight className="ml-0.5 h-3 w-3" />
                 </Button>
               </Link>
             </div>
@@ -213,7 +207,7 @@ export function AdminLayout() {
 
       {/* Mobile Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 z-40 bg-background border-t border-border lg:hidden">
-        <div className="flex items-center justify-around py-1.5">
+        <div className="flex items-center justify-around py-1">
           {mobileNavItems.map((item) => {
             const isActive = item.href !== "#menu" && location.pathname === item.href;
             return (
@@ -221,13 +215,11 @@ export function AdminLayout() {
                 key={item.name}
                 onClick={() => handleMobileNavClick(item.href)}
                 className={cn(
-                  "flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-colors min-w-[56px]",
-                  isActive
-                    ? "text-primary"
-                    : "text-muted-foreground"
+                  "flex flex-col items-center gap-0.5 px-3 py-1.5 transition-colors",
+                  isActive ? "text-primary" : "text-muted-foreground"
                 )}
               >
-                <item.icon className={cn("h-5 w-5", isActive && "stroke-[2.5px]")} />
+                <item.icon className="h-4.5 w-4.5" style={{ width: 18, height: 18 }} />
                 <span className="text-[10px] font-medium">{item.name}</span>
               </button>
             );
