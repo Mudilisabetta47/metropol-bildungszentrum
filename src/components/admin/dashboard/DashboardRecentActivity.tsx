@@ -5,9 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import {
-  Users,
-  Receipt,
-  Calendar,
   ArrowRight,
   MapPin,
   Clock,
@@ -36,17 +33,22 @@ const statusLabels: Record<string, string> = {
   overdue: "Überfällig",
 };
 
-const statusColors: Record<string, string> = {
-  pending: "bg-amber-100 text-amber-700 border-amber-200",
-  confirmed: "bg-emerald-100 text-emerald-700 border-emerald-200",
-  cancelled: "bg-red-100 text-red-700 border-red-200",
-  completed: "bg-slate-100 text-slate-700 border-slate-200",
-  waitlist: "bg-blue-100 text-blue-700 border-blue-200",
-  draft: "bg-slate-100 text-slate-600 border-slate-200",
-  sent: "bg-blue-100 text-blue-700 border-blue-200",
-  paid: "bg-emerald-100 text-emerald-700 border-emerald-200",
-  partial: "bg-amber-100 text-amber-700 border-amber-200",
-  overdue: "bg-red-100 text-red-700 border-red-200",
+const statusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
+  switch (status) {
+    case "confirmed":
+    case "paid":
+    case "completed":
+      return "default";
+    case "overdue":
+    case "cancelled":
+      return "destructive";
+    case "pending":
+    case "draft":
+    case "partial":
+      return "secondary";
+    default:
+      return "outline";
+  }
 };
 
 const formatCurrency = (amount: number) =>
@@ -60,16 +62,12 @@ export function DashboardRecentActivity({
 }: DashboardRecentActivityProps) {
   if (isLoading) {
     return (
-      <div className="grid gap-6 lg:grid-cols-3">
-        {[...Array(3)].map((_, i) => (
+      <div className="grid gap-4 lg:grid-cols-3">
+        {[0, 1, 2].map((i) => (
           <Card key={i}>
-            <CardHeader>
-              <Skeleton className="h-5 w-40" />
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {[...Array(4)].map((_, j) => (
-                <Skeleton key={j} className="h-16 w-full" />
-              ))}
+            <CardHeader className="pb-2"><Skeleton className="h-4 w-32" /></CardHeader>
+            <CardContent className="space-y-3">
+              {[0, 1, 2].map((j) => <Skeleton key={j} className="h-14 w-full" />)}
             </CardContent>
           </Card>
         ))}
@@ -78,149 +76,137 @@ export function DashboardRecentActivity({
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-3">
-      {/* Recent Registrations */}
-      <Card className="border-border/50">
-        <CardHeader className="pb-3 flex flex-row items-center justify-between">
-          <CardTitle className="text-base font-semibold flex items-center gap-2">
-            <Users className="h-4 w-4 text-blue-500" />
+    <div className="grid gap-4 lg:grid-cols-3">
+      {/* Registrations */}
+      <Card>
+        <CardHeader className="pb-2 flex flex-row items-center justify-between">
+          <CardTitle className="text-sm font-medium text-muted-foreground">
             Neueste Anmeldungen
           </CardTitle>
           <Link to="/admin/registrations">
-            <Button variant="ghost" size="sm" className="text-xs">
+            <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground">
               Alle <ArrowRight className="ml-1 h-3 w-3" />
             </Button>
           </Link>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent>
           {registrations.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-4">
+            <p className="text-sm text-muted-foreground text-center py-6">
               Keine Anmeldungen
             </p>
           ) : (
-            registrations.map((reg) => (
-              <div
-                key={reg.id}
-                className="flex items-start justify-between p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
-              >
-                <div className="space-y-1 min-w-0 flex-1">
-                  <p className="font-medium text-sm truncate">
-                    {reg.first_name} {reg.last_name}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {reg.course_dates?.courses?.title || "Kurs"}
-                  </p>
-                  <p className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
-                    {format(new Date(reg.created_at), "dd. MMM, HH:mm", { locale: de })}
-                  </p>
+            <div className="divide-y divide-border">
+              {registrations.map((reg) => (
+                <div key={reg.id} className="flex items-center justify-between py-2.5 first:pt-0 last:pb-0">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium truncate">
+                      {reg.first_name} {reg.last_name}
+                    </p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {reg.course_dates?.courses?.title || "–"}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 ml-2">
+                    <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                      {format(new Date(reg.created_at), "dd.MM.", { locale: de })}
+                    </span>
+                    <Badge variant={statusVariant(reg.status)} className="text-[10px] px-1.5 py-0">
+                      {statusLabels[reg.status] || reg.status}
+                    </Badge>
+                  </div>
                 </div>
-                <Badge className={`ml-2 flex-shrink-0 border ${statusColors[reg.status]}`}>
-                  {statusLabels[reg.status] || reg.status}
-                </Badge>
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Recent Invoices */}
-      <Card className="border-border/50">
-        <CardHeader className="pb-3 flex flex-row items-center justify-between">
-          <CardTitle className="text-base font-semibold flex items-center gap-2">
-            <Receipt className="h-4 w-4 text-emerald-500" />
+      {/* Invoices */}
+      <Card>
+        <CardHeader className="pb-2 flex flex-row items-center justify-between">
+          <CardTitle className="text-sm font-medium text-muted-foreground">
             Letzte Rechnungen
           </CardTitle>
           <Link to="/admin/invoices">
-            <Button variant="ghost" size="sm" className="text-xs">
+            <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground">
               Alle <ArrowRight className="ml-1 h-3 w-3" />
             </Button>
           </Link>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent>
           {invoices.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-4">
+            <p className="text-sm text-muted-foreground text-center py-6">
               Keine Rechnungen
             </p>
           ) : (
-            invoices.map((inv) => (
-              <div
-                key={inv.id}
-                className="flex items-start justify-between p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
-              >
-                <div className="space-y-1 min-w-0 flex-1">
-                  <p className="font-medium text-sm">{inv.invoice_number}</p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {inv.recipient_name}
-                  </p>
-                  <p className="text-sm font-semibold text-foreground">
-                    {formatCurrency(inv.gross_amount)}
-                  </p>
+            <div className="divide-y divide-border">
+              {invoices.map((inv) => (
+                <div key={inv.id} className="flex items-center justify-between py-2.5 first:pt-0 last:pb-0">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium">{inv.invoice_number}</p>
+                    <p className="text-xs text-muted-foreground truncate">{inv.recipient_name}</p>
+                  </div>
+                  <div className="flex items-center gap-2 ml-2">
+                    <span className="text-sm font-medium tabular-nums">
+                      {formatCurrency(inv.gross_amount)}
+                    </span>
+                    <Badge variant={statusVariant(inv.status)} className="text-[10px] px-1.5 py-0">
+                      {statusLabels[inv.status] || inv.status}
+                    </Badge>
+                  </div>
                 </div>
-                <Badge className={`ml-2 flex-shrink-0 border ${statusColors[inv.status]}`}>
-                  {statusLabels[inv.status] || inv.status}
-                </Badge>
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Upcoming Courses */}
-      <Card className="border-border/50">
-        <CardHeader className="pb-3 flex flex-row items-center justify-between">
-          <CardTitle className="text-base font-semibold flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-violet-500" />
+      {/* Courses */}
+      <Card>
+        <CardHeader className="pb-2 flex flex-row items-center justify-between">
+          <CardTitle className="text-sm font-medium text-muted-foreground">
             Nächste Kurse
           </CardTitle>
           <Link to="/admin/schedule">
-            <Button variant="ghost" size="sm" className="text-xs">
+            <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground">
               Alle <ArrowRight className="ml-1 h-3 w-3" />
             </Button>
           </Link>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent>
           {courseDates.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-4">
+            <p className="text-sm text-muted-foreground text-center py-6">
               Keine Termine
             </p>
           ) : (
-            courseDates.map((course) => {
-              const capacity = Math.round((course.current_participants / course.max_participants) * 100);
-              return (
-                <div
-                  key={course.id}
-                  className="p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors space-y-2"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1 min-w-0 flex-1">
-                      <p className="font-medium text-sm truncate">
-                        {course.courses?.title || "Kurs"}
+            <div className="divide-y divide-border">
+              {courseDates.map((course) => {
+                const capacity = Math.round((course.current_participants / course.max_participants) * 100);
+                return (
+                  <div key={course.id} className="py-2.5 first:pt-0 last:pb-0 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-medium truncate flex-1">
+                        {course.courses?.title || "–"}
                       </p>
-                      <p className="text-xs text-muted-foreground flex items-center gap-1">
-                        <MapPin className="h-3 w-3" />
-                        {course.locations?.name || "Standort"}
-                      </p>
+                      <span className="text-xs text-muted-foreground ml-2">
+                        {format(new Date(course.start_date), "dd.MM.", { locale: de })}
+                      </span>
                     </div>
-                    <p className="text-xs font-medium text-muted-foreground">
-                      {format(new Date(course.start_date), "dd. MMM", { locale: de })}
-                    </p>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">Auslastung</span>
-                      <span className="font-medium">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                        <MapPin className="h-2.5 w-2.5" />
+                        {course.locations?.name || "–"}
+                      </span>
+                      <div className="flex-1" />
+                      <span className="text-[10px] tabular-nums text-muted-foreground">
                         {course.current_participants}/{course.max_participants}
                       </span>
                     </div>
-                    <Progress 
-                      value={capacity} 
-                      className="h-1.5"
-                    />
+                    <Progress value={capacity} className="h-1" />
                   </div>
-                </div>
-              );
-            })
+                );
+              })}
+            </div>
           )}
         </CardContent>
       </Card>

@@ -12,7 +12,6 @@ import {
   useMonthlyTrend,
 } from "@/hooks/useDashboardData";
 import { DashboardKPICards } from "@/components/admin/dashboard/DashboardKPICards";
-import { DashboardQuickActions } from "@/components/admin/dashboard/DashboardQuickActions";
 import { DashboardCharts } from "@/components/admin/dashboard/DashboardCharts";
 import { DashboardRecentActivity } from "@/components/admin/dashboard/DashboardRecentActivity";
 
@@ -28,14 +27,6 @@ export default function Dashboard() {
 
   const handleRefresh = () => {
     refetchStats();
-  };
-
-  // Get greeting based on time
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Guten Morgen";
-    if (hour < 18) return "Guten Tag";
-    return "Guten Abend";
   };
 
   const defaultStats = {
@@ -58,40 +49,34 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-            {getGreeting()}! 👋
+          <h1 className="text-lg font-semibold text-foreground">
+            Übersicht
           </h1>
-          <p className="text-muted-foreground mt-1">
-            {isInitialLoading ? (
-              <Skeleton className="h-4 w-64 mt-1" />
-            ) : (
-              <>
-                Hier ist dein Überblick für {format(new Date(), "EEEE, dd. MMMM yyyy", { locale: de })}
-              </>
-            )}
-          </p>
+          {isInitialLoading ? (
+            <Skeleton className="h-4 w-48 mt-1" />
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              {format(new Date(), "EEEE, dd. MMMM yyyy", { locale: de })}
+            </p>
+          )}
         </div>
         <Button
           variant="outline"
           size="sm"
           onClick={handleRefresh}
           disabled={statsLoading}
-          className="self-start sm:self-auto"
         >
-          <RefreshCw className={`mr-2 h-4 w-4 ${statsLoading ? "animate-spin" : ""}`} />
+          <RefreshCw className={`mr-2 h-3.5 w-3.5 ${statsLoading ? "animate-spin" : ""}`} />
           Aktualisieren
         </Button>
       </div>
 
       {/* KPI Cards */}
       <DashboardKPICards stats={stats || defaultStats} isLoading={isInitialLoading} />
-
-      {/* Quick Actions */}
-      <DashboardQuickActions />
 
       {/* Charts */}
       <DashboardCharts data={monthlyData} isLoading={trendLoading} />

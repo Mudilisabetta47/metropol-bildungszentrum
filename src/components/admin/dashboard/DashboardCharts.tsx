@@ -11,7 +11,6 @@ import {
   BarChart,
   Bar,
 } from "recharts";
-import { TrendingUp, Euro } from "lucide-react";
 import type { MonthlyData } from "@/hooks/useDashboardData";
 
 interface DashboardChartsProps {
@@ -25,75 +24,66 @@ const formatCurrency = (value: number) =>
 export function DashboardCharts({ data, isLoading }: DashboardChartsProps) {
   if (isLoading) {
     return (
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <Skeleton className="h-5 w-40" />
-          </CardHeader>
-          <CardContent>
-            <Skeleton className="h-64 w-full" />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <Skeleton className="h-5 w-40" />
-          </CardHeader>
-          <CardContent>
-            <Skeleton className="h-64 w-full" />
-          </CardContent>
-        </Card>
+      <div className="grid gap-4 lg:grid-cols-2">
+        {[0, 1].map((i) => (
+          <Card key={i}>
+            <CardHeader className="pb-2"><Skeleton className="h-4 w-32" /></CardHeader>
+            <CardContent><Skeleton className="h-56 w-full" /></CardContent>
+          </Card>
+        ))}
       </div>
     );
   }
 
+  const tooltipStyle = {
+    backgroundColor: "hsl(var(--card))",
+    border: "1px solid hsl(var(--border))",
+    borderRadius: "6px",
+    fontSize: "12px",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+  };
+
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      {/* Registrations Chart */}
-      <Card className="border-border/50">
+    <div className="grid gap-4 lg:grid-cols-2">
+      <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-base font-semibold flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-blue-500" />
-            Anmeldungen Trend
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            Anmeldungen
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-64">
+          <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+              <AreaChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                 <defs>
-                  <linearGradient id="registrationGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                  <linearGradient id="regGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.15} />
                     <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis 
-                  dataKey="month" 
-                  tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                <XAxis
+                  dataKey="month"
+                  tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
                   tickLine={false}
-                  axisLine={{ stroke: "hsl(var(--border))" }}
+                  axisLine={false}
                 />
-                <YAxis 
-                  tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
+                <YAxis
+                  tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
                   tickLine={false}
                   axisLine={false}
                 />
                 <Tooltip
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                  }}
-                  labelStyle={{ color: "hsl(var(--foreground))", fontWeight: 600 }}
-                  formatter={(value: number) => [`${value} Anmeldungen`, "Anzahl"]}
+                  contentStyle={tooltipStyle}
+                  labelStyle={{ color: "hsl(var(--foreground))", fontWeight: 500 }}
+                  formatter={(value: number) => [`${value}`, "Anmeldungen"]}
                 />
                 <Area
                   type="monotone"
                   dataKey="registrations"
                   stroke="hsl(var(--primary))"
-                  strokeWidth={2}
-                  fill="url(#registrationGradient)"
+                  strokeWidth={1.5}
+                  fill="url(#regGrad)"
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -101,51 +91,39 @@ export function DashboardCharts({ data, isLoading }: DashboardChartsProps) {
         </CardContent>
       </Card>
 
-      {/* Revenue Chart */}
-      <Card className="border-border/50">
+      <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-base font-semibold flex items-center gap-2">
-            <Euro className="h-4 w-4 text-emerald-500" />
-            Umsatz Entwicklung
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            Umsatz
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-64">
+          <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={1} />
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0.6} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis 
-                  dataKey="month" 
-                  tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
-                  tickLine={false}
-                  axisLine={{ stroke: "hsl(var(--border))" }}
-                />
-                <YAxis 
-                  tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
+              <BarChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                <XAxis
+                  dataKey="month"
+                  tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
                   tickLine={false}
                   axisLine={false}
-                  tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
+                />
+                <YAxis
+                  tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
                 />
                 <Tooltip
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                  }}
-                  labelStyle={{ color: "hsl(var(--foreground))", fontWeight: 600 }}
+                  contentStyle={tooltipStyle}
+                  labelStyle={{ color: "hsl(var(--foreground))", fontWeight: 500 }}
                   formatter={(value: number) => [formatCurrency(value), "Umsatz"]}
                 />
                 <Bar
                   dataKey="revenue"
-                  fill="url(#revenueGradient)"
-                  radius={[4, 4, 0, 0]}
+                  fill="hsl(var(--primary))"
+                  radius={[3, 3, 0, 0]}
+                  opacity={0.85}
                 />
               </BarChart>
             </ResponsiveContainer>
