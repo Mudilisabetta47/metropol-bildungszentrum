@@ -27,6 +27,7 @@ import { AdminCommandSearch } from "./AdminCommandSearch";
 import { AdminNotifications } from "./AdminNotifications";
 import { AdminBreadcrumbs } from "./AdminBreadcrumbs";
 import { AdminThemeToggle } from "./AdminThemeToggle";
+import { BugReportButton } from "./BugReportButton";
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -156,6 +157,7 @@ export function AdminLayout() {
                 </p>
               </div>
             </div>
+            <BugReportButton />
             <Button
               variant="ghost"
               size="sm"
