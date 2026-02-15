@@ -33,13 +33,31 @@ interface CourseCapacityData {
   spotsLeft: number;
 }
 
-// Marketing capacity data - only shown on SELECT courses to appear authentic
-// Not every course shows capacity = more believable
+// Marketing capacity data - varied values for all courses to look authentic
+// Mix of urgent, moderate, and relaxed to appear natural
 const marketingCapacity: Record<string, CourseCapacityData> = {
   "c-ce": { maxSpots: 20, spotsLeft: 4 },
   "d-de": { maxSpots: 18, spotsLeft: 3 },
+  "c1-c1e": { maxSpots: 15, spotsLeft: 9 },
   "fahrlehrer-ausbildung-be": { maxSpots: 12, spotsLeft: 2 },
+  "fahrlehrer-ce": { maxSpots: 10, spotsLeft: 6 },
+  "fahrlehrer-de": { maxSpots: 10, spotsLeft: 8 },
+  "fahrlehrer-a": { maxSpots: 10, spotsLeft: 7 },
+  "fahrlehrer-fortbildungslehrgang-53-abs-1": { maxSpots: 20, spotsLeft: 14 },
+  "fortbildungslehrgang-fuer-ausbildungsfahrlehrer-53-abs-3": { maxSpots: 20, spotsLeft: 16 },
+  "bkf-weiterbildung-module-1-5-nach-bkrfqg": { maxSpots: 25, spotsLeft: 8 },
+  "bkf-weiterbildung-modul-1-eco-training-assistenzsysteme": { maxSpots: 20, spotsLeft: 11 },
+  "bkf-weiterbildung-modul-2-sozialvorschriften-fahrtenschreiber": { maxSpots: 20, spotsLeft: 6 },
+  "bkf-weiterbildung-modul-3-sicher-gesund-unterwegs": { maxSpots: 20, spotsLeft: 13 },
+  "bkf-weiterbildung-modul-4-professionell-kundenorientiert": { maxSpots: 20, spotsLeft: 5 },
+  "bkf-weiterbildung-modul-5-gueterverkehr-spezial": { maxSpots: 20, spotsLeft: 10 },
+  "bkf-weiterbildung-modul-1-intelligent-fahren": { maxSpots: 20, spotsLeft: 12 },
+  "bkf-weiterbildung-modul-2-rechtssicher-dokumentieren": { maxSpots: 20, spotsLeft: 7 },
+  "bkf-weiterbildung-modul-3-sicher-und-gesund-unterwegs": { maxSpots: 20, spotsLeft: 15 },
+  "bkf-weiterbildung-modul-4-professionell-kundenorientiertu": { maxSpots: 20, spotsLeft: 4 },
+  "bkf-weiterbildung-modul-5-personenverkehr-spezial": { maxSpots: 20, spotsLeft: 9 },
   "citylogistiker": { maxSpots: 14, spotsLeft: 7 },
+  "auslieferungsfahrer": { maxSpots: 16, spotsLeft: 11 },
 };
 
 function getUrgencyLevel(spotsLeft: number, maxSpots: number) {
@@ -54,9 +72,9 @@ export function CoursesFromDB() {
   const [activeCategory, setActiveCategory] = useState("all");
   const { data: courses, isLoading, error } = useCourses();
 
-  // Only return capacity for courses that have marketing data (not all)
-  const getCapacity = (slug: string): CourseCapacityData | null => {
-    return marketingCapacity[slug] || null;
+  // Return capacity for all courses – fallback for unlisted ones
+  const getCapacity = (slug: string): CourseCapacityData => {
+    return marketingCapacity[slug] || { maxSpots: 20, spotsLeft: 12 };
   };
 
   const filteredCourses = courses?.filter(course => 
@@ -126,9 +144,8 @@ export function CoursesFromDB() {
             const Icon = categoryIcons[course.category] || Truck;
             const isFeatured = featuredSlugs.includes(course.slug);
             const capacity = getCapacity(course.slug);
-            const urgency = capacity ? getUrgencyLevel(capacity.spotsLeft, capacity.maxSpots) : "normal";
-            const isUrgent = capacity && (urgency === "critical" || urgency === "warning");
-            const showCapacity = capacity !== null;
+            const urgency = getUrgencyLevel(capacity.spotsLeft, capacity.maxSpots);
+            const isUrgent = urgency === "critical" || urgency === "warning";
             
             return (
               <div
@@ -185,49 +202,47 @@ export function CoursesFromDB() {
                   </div>
                 </div>
 
-                {/* Capacity indicator - only for select courses */}
-                {showCapacity && capacity && (
-                  <div className={cn(
-                    "mb-4 p-3 rounded-lg border",
-                    urgency === "critical" && "bg-destructive/10 border-destructive/30",
-                    urgency === "warning" && "bg-orange-500/10 border-orange-500/30",
-                    urgency === "moderate" && "bg-yellow-500/10 border-yellow-500/30",
-                    urgency === "normal" && "bg-muted/50 border-border"
-                  )}>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        {isUrgent && <Flame className="h-4 w-4 text-destructive animate-pulse" />}
-                        <Users className={cn(
-                          "h-4 w-4",
-                          isUrgent ? "text-destructive" : "text-muted-foreground"
-                        )} />
-                        <span className={cn(
-                          "text-sm font-medium",
-                          urgency === "critical" && "text-destructive",
-                          urgency === "warning" && "text-orange-600 dark:text-orange-400"
-                        )}>
-                          {capacity.spotsLeft <= 2 
-                            ? `Nur noch ${capacity.spotsLeft} Plätze!` 
-                            : `Noch ${capacity.spotsLeft} von ${capacity.maxSpots} Plätzen`}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="h-2 bg-muted rounded-full overflow-hidden">
-                      <div 
-                        className={cn(
-                          "h-full rounded-full transition-all duration-500",
-                          urgency === "critical" && "bg-destructive",
-                          urgency === "warning" && "bg-orange-500",
-                          urgency === "moderate" && "bg-yellow-500",
-                          urgency === "normal" && "bg-primary"
-                        )}
-                        style={{ 
-                          width: `${((capacity.maxSpots - capacity.spotsLeft) / capacity.maxSpots) * 100}%` 
-                        }}
-                      />
+                {/* Capacity indicator */}
+                <div className={cn(
+                  "mb-4 p-3 rounded-lg border",
+                  urgency === "critical" && "bg-destructive/10 border-destructive/30",
+                  urgency === "warning" && "bg-orange-500/10 border-orange-500/30",
+                  urgency === "moderate" && "bg-yellow-500/10 border-yellow-500/30",
+                  urgency === "normal" && "bg-muted/50 border-border"
+                )}>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      {isUrgent && <Flame className="h-4 w-4 text-destructive animate-pulse" />}
+                      <Users className={cn(
+                        "h-4 w-4",
+                        isUrgent ? "text-destructive" : "text-muted-foreground"
+                      )} />
+                      <span className={cn(
+                        "text-sm font-medium",
+                        urgency === "critical" && "text-destructive",
+                        urgency === "warning" && "text-orange-600 dark:text-orange-400"
+                      )}>
+                        {capacity.spotsLeft <= 2 
+                          ? `Nur noch ${capacity.spotsLeft} Plätze!` 
+                          : `Noch ${capacity.spotsLeft} von ${capacity.maxSpots} Plätzen`}
+                      </span>
                     </div>
                   </div>
-                )}
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
+                    <div 
+                      className={cn(
+                        "h-full rounded-full transition-all duration-500",
+                        urgency === "critical" && "bg-destructive",
+                        urgency === "warning" && "bg-orange-500",
+                        urgency === "moderate" && "bg-yellow-500",
+                        urgency === "normal" && "bg-primary"
+                      )}
+                      style={{ 
+                        width: `${((capacity.maxSpots - capacity.spotsLeft) / capacity.maxSpots) * 100}%` 
+                      }}
+                    />
+                  </div>
+                </div>
 
                 <Button 
                   variant={isUrgent ? "destructive" : "default"} 
