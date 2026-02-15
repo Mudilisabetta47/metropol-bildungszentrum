@@ -46,7 +46,7 @@ export function Footer() {
               <img 
                 src={logoMetropol} 
                 alt="Metropol Bildungszentrum GmbH" 
-                className="h-16 w-auto brightness-0"
+                className="h-16 w-auto brightness-0 opacity-70 sepia hue-rotate-[90deg] saturate-150"
               />
             </div>
             <p className="text-sm text-primary-foreground/80 leading-relaxed mb-4">
