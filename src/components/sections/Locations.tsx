@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { MapPin, Phone, Mail, Clock, ArrowRight, Loader2 } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, ArrowRight, Loader2, Train } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocations } from "@/hooks/useLocations";
 
@@ -88,6 +88,10 @@ export function Locations() {
                         <span className="text-muted-foreground">{location.opening_hours}</span>
                       </div>
                     )}
+                    <div className="flex items-center gap-3 text-sm">
+                      <Train className="h-5 w-5 text-muted-foreground shrink-0" />
+                      <span className="text-muted-foreground">Gut erreichbar mit ÖPNV</span>
+                    </div>
                   </div>
 
                   <Button variant="outline" className="w-full group/btn" asChild>
