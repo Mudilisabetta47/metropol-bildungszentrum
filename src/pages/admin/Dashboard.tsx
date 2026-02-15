@@ -55,7 +55,7 @@ export default function Dashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-lg font-semibold text-foreground">
-            Übersicht
+            Moin Vedat, Chef
           </h1>
           {isInitialLoading ? (
             <Skeleton className="h-4 w-48 mt-1" />
