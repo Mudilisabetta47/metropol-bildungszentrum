@@ -21,6 +21,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { AdminCommandSearch } from "./AdminCommandSearch";
+import { AdminNotifications } from "./AdminNotifications";
+import { AdminBreadcrumbs } from "./AdminBreadcrumbs";
+import { AdminThemeToggle } from "./AdminThemeToggle";
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -38,6 +42,15 @@ const navigation = [
   { name: "Einstellungen", href: "/admin/settings", icon: Settings },
 ];
 
+// Mobile bottom nav - most important items
+const mobileNavItems = [
+  { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { name: "Teilnehmer", href: "/admin/participants", icon: Users },
+  { name: "Rechnungen", href: "/admin/invoices", icon: Receipt },
+  { name: "Termine", href: "/admin/schedule", icon: Calendar },
+  { name: "Mehr", href: "#menu", icon: Menu },
+];
+
 export function AdminLayout() {
   const { user, isLoading, isStaff, signOut } = useAuth();
   const navigate = useNavigate();
@@ -52,8 +65,7 @@ export function AdminLayout() {
 
   useEffect(() => {
     if (!isLoading && user && !isStaff) {
-      // User is logged in but not staff - show message or redirect
-      // For now we'll allow access but with limited functionality
+      // User is logged in but not staff
     }
   }, [isLoading, user, isStaff]);
 
@@ -75,6 +87,14 @@ export function AdminLayout() {
   const handleSignOut = async () => {
     await signOut();
     navigate("/");
+  };
+
+  const handleMobileNavClick = (href: string) => {
+    if (href === "#menu") {
+      setSidebarOpen(true);
+    } else {
+      navigate(href);
+    }
   };
 
   return (
@@ -155,9 +175,9 @@ export function AdminLayout() {
       </aside>
 
       {/* Main content */}
-      <div className="lg:pl-64">
+      <div className="lg:pl-64 pb-16 lg:pb-0">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 bg-background border-b border-border">
+        <header className="sticky top-0 z-30 bg-background/95 backdrop-blur-sm border-b border-border">
           <div className="flex items-center justify-between px-4 py-3">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -165,8 +185,17 @@ export function AdminLayout() {
             >
               <Menu className="h-5 w-5" />
             </button>
-            <div className="flex items-center gap-2 ml-auto">
-              <Link to="/">
+
+            {/* Global Search */}
+            <div className="flex-1 flex justify-center lg:justify-start lg:ml-4">
+              <AdminCommandSearch />
+            </div>
+
+            {/* Right side actions */}
+            <div className="flex items-center gap-1">
+              <AdminThemeToggle />
+              <AdminNotifications />
+              <Link to="/" className="hidden sm:block">
                 <Button variant="outline" size="sm">
                   Zur Website
                 </Button>
@@ -177,9 +206,34 @@ export function AdminLayout() {
 
         {/* Page content */}
         <main className="p-4 lg:p-6">
+          <AdminBreadcrumbs />
           <Outlet />
         </main>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-background border-t border-border lg:hidden">
+        <div className="flex items-center justify-around py-1.5">
+          {mobileNavItems.map((item) => {
+            const isActive = item.href !== "#menu" && location.pathname === item.href;
+            return (
+              <button
+                key={item.name}
+                onClick={() => handleMobileNavClick(item.href)}
+                className={cn(
+                  "flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-colors min-w-[56px]",
+                  isActive
+                    ? "text-primary"
+                    : "text-muted-foreground"
+                )}
+              >
+                <item.icon className={cn("h-5 w-5", isActive && "stroke-[2.5px]")} />
+                <span className="text-[10px] font-medium">{item.name}</span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
     </div>
   );
 }
