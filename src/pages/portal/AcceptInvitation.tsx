@@ -40,19 +40,17 @@ export default function AcceptInvitation() {
         return;
       }
 
-      const { data, error } = await supabase
-        .from("participant_portal_invitations")
-        // Wichtig: Wir verwenden invitation.email (steht direkt in der Einladung).
-        // Der Join auf participants kann in einem anderen Browser (ohne Login) wegen RLS null sein.
-        .select("id, email, participant_id, expires_at, accepted_at, participants(first_name, last_name)")
-        .eq("token", token)
-        .maybeSingle();
+      const { data: responseData, error: fnError } = await supabase.functions.invoke("validate-invitation", {
+        body: { token },
+      });
 
-      if (error || !data) {
+      if (fnError || !responseData?.invitation) {
         setError("Einladung nicht gefunden");
         setIsLoading(false);
         return;
       }
+
+      const data = responseData.invitation;
 
       if (data.accepted_at) {
         setError("Diese Einladung wurde bereits angenommen. Bitte melden Sie sich an.");
