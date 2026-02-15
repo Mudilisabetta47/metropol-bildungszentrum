@@ -10,7 +10,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Contact } from "@/components/sections/Contact";
 import { useLocation as useLocationData } from "@/hooks/useLocations";
-import { useCourses } from "@/hooks/useCourses";
+import { useCoursesByLocation } from "@/hooks/useCourses";
 import tqcertLogo from "@/assets/tqcert-logo.webp";
 import agenturLogo from "@/assets/agentur-fuer-arbeit-logo.png";
 import trucksImage from "@/assets/trucks-metropol.jpg";
@@ -36,7 +36,7 @@ const courseIcons: Record<string, React.ElementType> = {
 export default function LocationPage() {
   const { locationSlug } = useParams<{ locationSlug: string }>();
   const { data: location, isLoading, error } = useLocationData(locationSlug || "");
-  const { data: courses = [] } = useCourses();
+  const { data: locationCourses = [] } = useCoursesByLocation(location?.id);
 
   // Update document title and meta tags for SEO
   useEffect(() => {
@@ -134,7 +134,7 @@ export default function LocationPage() {
   }
 
   const heroImage = locationHeroImages[location.slug] || trucksImage;
-  const activeCourses = courses.filter(c => c.is_active);
+  const activeCourses = locationCourses;
 
   // Location-specific features (these could be added to DB later)
   const features = [
