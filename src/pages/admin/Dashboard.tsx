@@ -11,6 +11,7 @@ import {
   useUpcomingCourseDates,
   useMonthlyTrend,
 } from "@/hooks/useDashboardData";
+import { DashboardQuickActions } from "@/components/admin/dashboard/DashboardQuickActions";
 import { DashboardKPICards } from "@/components/admin/dashboard/DashboardKPICards";
 import { DashboardCharts } from "@/components/admin/dashboard/DashboardCharts";
 import { DashboardRecentActivity } from "@/components/admin/dashboard/DashboardRecentActivity";
@@ -74,6 +75,9 @@ export default function Dashboard() {
           Aktualisieren
         </Button>
       </div>
+
+      {/* Quick Actions */}
+      <DashboardQuickActions />
 
       {/* KPI Cards */}
       <DashboardKPICards stats={stats || defaultStats} isLoading={isInitialLoading} />
