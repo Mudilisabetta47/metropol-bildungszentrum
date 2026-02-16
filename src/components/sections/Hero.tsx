@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -49,6 +49,21 @@ const slides = [
 export function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [scrollY, setScrollY] = useState(0);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (sectionRef.current) {
+        const rect = sectionRef.current.getBoundingClientRect();
+        if (rect.bottom > 0) {
+          setScrollY(window.scrollY);
+        }
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     if (!isAutoPlaying) return;
@@ -63,7 +78,6 @@ export function Hero() {
   const goToSlide = (index: number) => {
     setCurrentSlide(index);
     setIsAutoPlaying(false);
-    // Resume autoplay after 10 seconds
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
@@ -79,8 +93,10 @@ export function Hero() {
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
+  const parallaxOffset = scrollY * 0.35;
+
   return (
-    <section className="pt-28 sm:pt-32 relative">
+    <section ref={sectionRef} className="pt-28 sm:pt-32 relative overflow-hidden">
       <div className="relative w-full overflow-hidden">
         {/* Slides */}
         <div 
@@ -92,18 +108,22 @@ export function Hero() {
               key={slide.id}
               className="w-full flex-shrink-0 relative"
             >
-              {/* Image */}
-              <div className="relative aspect-[16/9] md:aspect-[21/9] w-full">
+              {/* Image with parallax */}
+              <div className="relative aspect-[16/9] md:aspect-[21/9] w-full overflow-hidden">
                 <img
                   src={slide.image}
                   alt={`${slide.title} ${slide.highlight}`}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover will-change-transform transition-transform duration-100"
+                  style={{ transform: `translateY(${parallaxOffset * 0.3}px) scale(1.15)` }}
                 />
                 {/* Gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
                 
-                {/* Content overlay */}
-                <div className="absolute inset-0 flex items-center">
+                {/* Content overlay with inverse parallax */}
+                <div
+                  className="absolute inset-0 flex items-center"
+                  style={{ transform: `translateY(${-parallaxOffset * 0.1}px)` }}
+                >
                   <div className="section-container">
                     <div className="max-w-2xl text-white">
                       <p className="text-sm sm:text-base font-medium text-white/80 mb-2 uppercase tracking-wider">
