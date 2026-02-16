@@ -58,9 +58,7 @@ export function Hero() {
     const handleScroll = () => {
       if (sectionRef.current) {
         const rect = sectionRef.current.getBoundingClientRect();
-        if (rect.bottom > 0) {
-          setScrollY(window.scrollY);
-        }
+        if (rect.bottom > 0) setScrollY(window.scrollY);
       }
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -75,53 +73,59 @@ export function Hero() {
     return () => clearInterval(timer);
   }, [isAutoPlaying]);
 
-  const goToSlide = (index: number) => {
-    setCurrentSlide(index);
+  const pause = () => {
     setIsAutoPlaying(false);
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
-  const goToPrevious = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-    setIsAutoPlaying(false);
-    setTimeout(() => setIsAutoPlaying(true), 10000);
-  };
-
-  const goToNext = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-    setIsAutoPlaying(false);
-    setTimeout(() => setIsAutoPlaying(true), 10000);
-  };
+  const goToSlide = (i: number) => { setCurrentSlide(i); pause(); };
+  const goToPrevious = () => { setCurrentSlide((p) => (p - 1 + slides.length) % slides.length); pause(); };
+  const goToNext = () => { setCurrentSlide((p) => (p + 1) % slides.length); pause(); };
 
   const parallaxOffset = scrollY * 0.35;
 
   return (
     <section ref={sectionRef} className="relative w-full h-screen min-h-[600px] max-h-[1000px] overflow-hidden">
-      {/* Slides */}
-      <div
-        className="flex h-full transition-transform duration-700 ease-in-out"
-        style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-      >
-        {slides.map((slide) => (
-          <div key={slide.id} className="w-full h-full flex-shrink-0 relative">
-            {/* Fullscreen image with parallax */}
+      {/* Stacked slides – no bleed */}
+      {slides.map((slide, index) => {
+        const isActive = index === currentSlide;
+        return (
+          <div
+            key={slide.id}
+            className="absolute inset-0 transition-opacity duration-700 ease-in-out"
+            style={{ opacity: isActive ? 1 : 0, zIndex: isActive ? 1 : 0, pointerEvents: isActive ? "auto" : "none" }}
+          >
+            {/* Image */}
             <img
               src={slide.image}
               alt={`${slide.title} ${slide.highlight}`}
               className="absolute inset-0 w-full h-full object-cover will-change-transform"
               style={{ transform: `translateY(${parallaxOffset * 0.3}px) scale(1.1)` }}
             />
-            {/* Dark overlay */}
+            {/* Overlays */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/30" />
             <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent" />
 
             {/* Content */}
             <div
-              className="absolute inset-0 flex items-end pb-24 sm:pb-28 md:items-center md:pb-0"
+              className="absolute inset-0 flex items-end pb-20 sm:pb-24 md:items-center md:pb-0"
               style={{ transform: `translateY(${-parallaxOffset * 0.1}px)` }}
             >
               <div className="section-container w-full">
                 <div className="max-w-2xl text-white">
+                  {/* Trust badges inside slide */}
+                  <div className="flex flex-wrap gap-2 mb-5">
+                    {badges.map((b, i) => (
+                      <span
+                        key={i}
+                        className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-white/70 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1 border border-white/10"
+                      >
+                        <span className="text-primary">{b.icon}</span>
+                        {b.text}
+                      </span>
+                    ))}
+                  </div>
+
                   <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] mb-4">
                     {slide.title}
                     <br />
@@ -150,20 +154,8 @@ export function Hero() {
               </div>
             </div>
           </div>
-        ))}
-      </div>
-
-      {/* Bottom badges bar */}
-      <div className="absolute bottom-0 left-0 right-0 bg-black/40 backdrop-blur-sm border-t border-white/10 z-10">
-        <div className="section-container py-3 flex flex-wrap justify-center sm:justify-start gap-x-6 gap-y-1">
-          {badges.map((b, i) => (
-            <span key={i} className="text-xs sm:text-sm text-white/70 flex items-center gap-1.5">
-              <span className="text-primary text-xs">{b.icon}</span>
-              {b.text}
-            </span>
-          ))}
-        </div>
-      </div>
+        );
+      })}
 
       {/* Navigation arrows */}
       <button
@@ -182,7 +174,7 @@ export function Hero() {
       </button>
 
       {/* Slide indicators */}
-      <div className="absolute bottom-14 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
         {slides.map((_, index) => (
           <button
             key={index}
