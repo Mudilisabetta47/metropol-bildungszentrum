@@ -1,99 +1,134 @@
 import { useState, useEffect, useCallback } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
-type LightState = "red" | "yellow" | "green";
+type LightState = "off" | "red" | "yellow" | "green";
 
 const NotFound = () => {
   const location = useLocation();
-  const [light, setLight] = useState<LightState>("red");
-  const [transitioning, setTransitioning] = useState(false);
+  const navigate = useNavigate();
+  const [light, setLight] = useState<LightState>("off");
+  const [phase, setPhase] = useState<"intro" | "idle" | "leaving">("intro");
+  const [hovered, setHovered] = useState(false);
 
   useEffect(() => {
-    console.error("404 Error: User attempted to access non-existent route:", location.pathname);
+    console.error("404:", location.pathname);
   }, [location.pathname]);
 
-  // Auto cycle: red → yellow → red
+  // Intro sequence: off → red, then yellow blink
   useEffect(() => {
-    if (light === "green") return;
-    const interval = setInterval(() => {
-      setLight((prev) => (prev === "red" ? "yellow" : "red"));
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [light]);
-
-  const handleGo = useCallback(() => {
-    setTransitioning(true);
-    setLight("green");
+    const t1 = setTimeout(() => setLight("red"), 400);
+    const t2 = setTimeout(() => setLight("yellow"), 2400);
+    const t3 = setTimeout(() => setLight("red"), 2900);
+    const t4 = setTimeout(() => {
+      setLight("red");
+      setPhase("idle");
+    }, 3200);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
   }, []);
 
-  const message =
-    light === "red"
-      ? "Stop! Diese Seite existiert nicht."
-      : light === "yellow"
-        ? "Moment… wir suchen die richtige Richtung."
-        : "Gute Fahrt! Du wirst weitergeleitet…";
+  const handleGo = useCallback(() => {
+    setLight("green");
+    setPhase("leaving");
+    setTimeout(() => navigate("/"), 1200);
+  }, [navigate]);
+
+  const subtitle =
+    light === "yellow"
+      ? "Moment… wir denken nach."
+      : light === "green"
+        ? "Grüne Welle – du wirst weitergeleitet."
+        : "Aber keine Sorge. Wir bringen dich zurück auf die richtige Spur.";
 
   return (
     <div
-      className={`min-h-screen flex flex-col items-center justify-center px-4 relative overflow-hidden transition-colors duration-700 ${
-        light === "green" ? "bg-[hsl(136,30%,8%)]" : "bg-[hsl(220,20%,8%)]"
+      className={`min-h-screen flex flex-col items-center justify-center relative overflow-hidden transition-all duration-1000 ${
+        phase === "leaving" ? "opacity-0 scale-105" : "opacity-100 scale-100"
       }`}
+      style={{ background: "radial-gradient(ellipse at 50% 40%, hsl(220,20%,12%) 0%, hsl(220,25%,5%) 100%)" }}
     >
-      {/* Subtle street atmosphere */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-px h-1/3 opacity-10 bg-gradient-to-t from-white to-transparent" />
-        <div className="absolute bottom-0 left-[calc(50%-60px)] w-px h-1/4 opacity-5 bg-gradient-to-t from-white to-transparent" />
-        <div className="absolute bottom-0 left-[calc(50%+60px)] w-px h-1/4 opacity-5 bg-gradient-to-t from-white to-transparent" />
+      {/* Fog / ambient */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Ambient glow */}
         <div
-          className="absolute top-1/4 left-1/2 -translate-x-1/2 w-80 h-80 rounded-full blur-[120px] opacity-20 transition-colors duration-700"
+          className="absolute top-[30%] left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full blur-[150px] transition-all duration-700"
           style={{
-            backgroundColor:
-              light === "red" ? "#ef4444" : light === "yellow" ? "#eab308" : "#22c55e",
+            opacity: light === "off" ? 0 : hovered ? 0.35 : 0.2,
+            backgroundColor: light === "red" ? "#ef4444" : light === "yellow" ? "#facc15" : light === "green" ? "#22c55e" : "transparent",
           }}
+        />
+        {/* Fog layers */}
+        <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/40 to-transparent" />
+        <div
+          className="absolute bottom-[10%] left-0 right-0 h-32 opacity-[0.04]"
+          style={{ background: "repeating-linear-gradient(90deg, transparent 0px, transparent 80px, white 80px, white 81px)" }}
         />
       </div>
 
-      {/* 404 large background text */}
-      <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[16rem] sm:text-[24rem] font-display font-black text-white/[0.03] select-none pointer-events-none leading-none">
+      {/* Giant 404 watermark */}
+      <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[18rem] sm:text-[26rem] lg:text-[32rem] font-display font-black text-white/[0.015] select-none pointer-events-none leading-none tracking-tighter">
         404
       </span>
 
-      {/* Traffic Light */}
-      <div className="relative z-10 flex flex-col items-center">
-        {/* Pole top */}
-        <div className="w-3 h-10 bg-gradient-to-b from-zinc-500 to-zinc-700 rounded-t-full" />
+      {/* Traffic light */}
+      <div
+        className="relative z-10 flex flex-col items-center cursor-default"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        {/* Arm */}
+        <div className="w-2 h-8 bg-gradient-to-b from-zinc-500 to-zinc-600 rounded-t-full" />
 
         {/* Housing */}
-        <div className="relative bg-gradient-to-b from-zinc-800 to-zinc-900 rounded-2xl p-4 flex flex-col items-center gap-3 shadow-2xl border border-white/5">
+        <div
+          className="relative rounded-[1.25rem] p-3.5 sm:p-4 flex flex-col items-center gap-2.5 sm:gap-3 transition-shadow duration-500"
+          style={{
+            background: "linear-gradient(180deg, hsl(220,10%,18%) 0%, hsl(220,12%,10%) 100%)",
+            border: "1px solid rgba(255,255,255,0.06)",
+            boxShadow: hovered
+              ? `0 0 60px 10px ${light === "red" ? "rgba(239,68,68,0.15)" : light === "yellow" ? "rgba(250,204,21,0.15)" : light === "green" ? "rgba(34,197,94,0.15)" : "transparent"}, 0 25px 50px -12px rgba(0,0,0,0.8)`
+              : "0 25px 50px -12px rgba(0,0,0,0.6)",
+          }}
+        >
           {(["red", "yellow", "green"] as const).map((color) => {
             const isActive = light === color;
-            const colorMap = {
-              red: { bg: "#ef4444", shadow: "0 0 40px 8px rgba(239,68,68,0.5)" },
-              yellow: { bg: "#eab308", shadow: "0 0 40px 8px rgba(234,179,8,0.5)" },
-              green: { bg: "#22c55e", shadow: "0 0 40px 8px rgba(34,197,94,0.5)" },
+            const cfg = {
+              red: { bg: "#ef4444", glow: "rgba(239,68,68,0.6)", ring: "rgba(239,68,68,0.3)" },
+              yellow: { bg: "#facc15", glow: "rgba(250,204,21,0.6)", ring: "rgba(250,204,21,0.3)" },
+              green: { bg: "#22c55e", glow: "rgba(34,197,94,0.6)", ring: "rgba(34,197,94,0.3)" },
             };
 
             return (
-              <div key={color} className="relative">
+              <div key={color} className="relative flex items-center justify-center">
                 {/* Visor */}
-                <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-[4.5rem] sm:w-[5.5rem] h-4 bg-zinc-900 rounded-t-lg border-x border-t border-white/5" />
-                {/* Light */}
                 <div
-                  className="w-14 h-14 sm:w-[4.5rem] sm:h-[4.5rem] rounded-full border-2 transition-all duration-500"
+                  className="absolute -top-1.5 left-1/2 -translate-x-1/2 h-3 rounded-t-md"
                   style={{
-                    backgroundColor: isActive ? colorMap[color].bg : "hsl(220,10%,15%)",
-                    borderColor: isActive ? colorMap[color].bg : "hsl(220,10%,20%)",
-                    boxShadow: isActive ? colorMap[color].shadow : "none",
+                    width: "calc(100% + 12px)",
+                    background: "linear-gradient(180deg, hsl(220,10%,14%) 0%, hsl(220,10%,10%) 100%)",
+                    borderTop: "1px solid rgba(255,255,255,0.04)",
+                    borderLeft: "1px solid rgba(255,255,255,0.03)",
+                    borderRight: "1px solid rgba(255,255,255,0.03)",
+                  }}
+                />
+                {/* Lens */}
+                <div
+                  className={`w-14 h-14 sm:w-[4.5rem] sm:h-[4.5rem] rounded-full transition-all duration-500 ${
+                    isActive && light === "red" ? "animate-[pulse_2s_ease-in-out_infinite]" : ""
+                  }`}
+                  style={{
+                    backgroundColor: isActive ? cfg[color].bg : "hsl(220,8%,13%)",
+                    border: `2px solid ${isActive ? cfg[color].ring : "hsl(220,8%,18%)"}`,
+                    boxShadow: isActive
+                      ? `0 0 30px 6px ${cfg[color].glow}, inset 0 -4px 8px rgba(0,0,0,0.3)`
+                      : "inset 0 2px 4px rgba(0,0,0,0.4)",
                   }}
                 >
-                  {/* Inner reflection */}
+                  {/* Glass reflection */}
                   <div
-                    className={`w-full h-full rounded-full transition-opacity duration-500 ${
-                      isActive ? "opacity-100" : "opacity-0"
-                    }`}
+                    className={`w-full h-full rounded-full transition-opacity duration-500 ${isActive ? "opacity-100" : "opacity-0"}`}
                     style={{
-                      background: "radial-gradient(circle at 38% 32%, rgba(255,255,255,0.35) 0%, transparent 55%)",
+                      background: "radial-gradient(ellipse at 35% 28%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.05) 40%, transparent 70%)",
                     }}
                   />
                 </div>
@@ -102,63 +137,69 @@ const NotFound = () => {
           })}
         </div>
 
-        {/* Pole bottom */}
-        <div className="w-3 h-20 bg-gradient-to-b from-zinc-700 to-zinc-800" />
-        <div className="w-10 h-2 bg-zinc-700 rounded-full" />
+        {/* Pole */}
+        <div className="w-2 h-24 bg-gradient-to-b from-zinc-600 via-zinc-700 to-zinc-800" />
+        <div className="w-12 h-1.5 bg-zinc-700 rounded-full shadow-lg" />
       </div>
 
-      {/* Text content */}
-      <div className="relative z-10 mt-10 text-center max-w-md">
-        <h1 className="text-3xl sm:text-4xl font-display font-bold text-white mb-3">
-          404 – Falsche Richtung
+      {/* Content */}
+      <div className="relative z-10 mt-12 text-center max-w-lg px-6">
+        <h1
+          className="font-display font-bold text-white mb-4 transition-all duration-700"
+          style={{ fontSize: "clamp(1.75rem, 5vw, 2.75rem)", letterSpacing: "-0.025em" }}
+        >
+          404 – Stop.{" "}
+          <span className="text-white/50">Diese Seite gibt es nicht.</span>
         </h1>
-        <p className="text-white/50 text-xs mb-2 font-mono">
-          {location.pathname}
-        </p>
-        <p className="text-white/60 text-sm sm:text-base mb-8 transition-all duration-500 min-h-[3rem]">
-          {message}
+
+        <p className="text-white/40 text-sm sm:text-base leading-relaxed mb-10 min-h-[2.5rem] transition-all duration-500">
+          {subtitle}
         </p>
 
-        {transitioning ? (
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 bg-[#22c55e] text-white font-semibold px-8 py-3.5 rounded-full shadow-[0_8px_30px_-6px_rgba(34,197,94,0.5)] animate-pulse"
-          >
-            Weiterleitung…
-          </Link>
-        ) : (
+        {phase !== "leaving" ? (
           <button
             onClick={handleGo}
-            className="group inline-flex items-center gap-2 bg-white/10 hover:bg-[#22c55e] text-white font-semibold px-8 py-3.5 rounded-full backdrop-blur-sm border border-white/10 hover:border-[#22c55e] transition-all duration-300 hover:shadow-[0_8px_30px_-6px_rgba(34,197,94,0.5)] hover:scale-105 active:scale-95"
+            className="group relative inline-flex items-center gap-3 text-white font-semibold px-8 py-4 rounded-full transition-all duration-300 hover:scale-[1.04] active:scale-[0.97] cursor-pointer"
+            style={{
+              background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              backdropFilter: "blur(12px)",
+              boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "rgba(34,197,94,0.4)";
+              e.currentTarget.style.boxShadow = "0 8px 40px rgba(34,197,94,0.15)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
+              e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,0,0,0.3)";
+            }}
           >
             <span>Zur Startseite</span>
-            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/10 transition-all duration-300 group-hover:bg-[#22c55e] group-hover:rotate-0">
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+            </span>
           </button>
+        ) : (
+          <div className="inline-flex items-center gap-2 text-[#22c55e] font-medium animate-pulse">
+            <div className="w-2 h-2 rounded-full bg-[#22c55e]" />
+            Weiterleitung…
+          </div>
         )}
       </div>
 
-      {/* Bottom road dashes */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none">
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col gap-3 items-center">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="w-1 h-5 bg-white/[0.08] rounded-full" />
-          ))}
-        </div>
+      {/* Road center line */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pb-4 pointer-events-none">
+        {[...Array(5)].map((_, i) => (
+          <div
+            key={i}
+            className="w-0.5 rounded-full bg-white/[0.06]"
+            style={{ height: `${12 + i * 4}px`, opacity: 0.04 + i * 0.015 }}
+          />
+        ))}
       </div>
-
-      {transitioning && <AutoRedirect />}
     </div>
   );
 };
-
-function AutoRedirect() {
-  useEffect(() => {
-    const t = setTimeout(() => {
-      window.location.href = "/";
-    }, 1500);
-    return () => clearTimeout(t);
-  }, []);
-  return null;
-}
 
 export default NotFound;
