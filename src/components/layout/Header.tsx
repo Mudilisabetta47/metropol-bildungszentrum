@@ -124,10 +124,10 @@ export function Header() {
             >
               <span className="relative z-10 flex items-center gap-2.5">
                 {/* Mini traffic light */}
-                <span className="inline-flex flex-col items-center justify-center gap-[2px] w-8 h-10 rounded-md bg-zinc-900 p-1 border border-white/10">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#ef4444]/20 transition-all duration-300 group-hover:bg-[#ef4444] group-hover:shadow-[0_0_8px_2px_rgba(239,68,68,0.7)]" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#facc15]/15" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#22c55e] shadow-[0_0_8px_2px_rgba(34,197,94,0.6)] transition-all duration-300 group-hover:bg-[#22c55e]/20 group-hover:shadow-none" />
+                <span className="inline-flex flex-col items-center justify-center gap-[2px] w-6 h-8 rounded-[4px] bg-zinc-900 p-[3px] border border-white/10">
+                  <span className="w-[7px] h-[7px] rounded-full bg-white/10 transition-all duration-300 group-hover:bg-[#ef4444] group-hover:shadow-[0_0_6px_1px_rgba(239,68,68,0.7)]" />
+                  <span className="w-[7px] h-[7px] rounded-full bg-white/10" />
+                  <span className="w-[7px] h-[7px] rounded-full bg-[#22c55e] shadow-[0_0_6px_1px_rgba(34,197,94,0.6)] transition-all duration-300 group-hover:bg-white/10 group-hover:shadow-none" />
                 </span>
                 <span>Freie Fahrt!</span>
               </span>
