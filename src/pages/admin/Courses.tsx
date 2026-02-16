@@ -28,7 +28,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, Copy } from "lucide-react";
 import { CapacityBadge } from "@/components/ui/capacity-badge";
 
 interface CourseCapacityInfo {
@@ -305,6 +305,35 @@ export default function Courses() {
     }
   };
 
+  const handleDuplicate = async (course: Course) => {
+    try {
+      const newSlug = `${course.slug}-kopie-${Date.now().toString(36)}`;
+      const { error } = await supabase.from("courses").insert({
+        title: `${course.title} (Kopie)`,
+        slug: newSlug,
+        description: course.description,
+        category: course.category as any,
+        duration_info: course.duration_info,
+        price_info: course.price_info,
+        requirements: course.requirements,
+        benefits: course.benefits,
+        is_active: false,
+      });
+
+      if (error) throw error;
+
+      toast({ title: "Erfolg", description: "Kurs wurde dupliziert." });
+      fetchCourses();
+    } catch (error: any) {
+      console.error("Error duplicating course:", error);
+      toast({
+        variant: "destructive",
+        title: "Fehler",
+        description: error.message || "Kurs konnte nicht dupliziert werden.",
+      });
+    }
+  };
+
   const getCategoryLabel = (value: string) => {
     return categories.find((c) => c.value === value)?.label || value;
   };
@@ -514,6 +543,14 @@ export default function Courses() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDuplicate(course)}
+                            title="Kurs duplizieren"
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
                           <Button
                             variant="ghost"
                             size="sm"
