@@ -15,6 +15,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import tqcertLogo from "@/assets/tqcert-logo.webp";
+import { TrafficSignPattern } from "@/components/ui/TrafficSignPattern";
 import agenturLogo from "@/assets/agentur-fuer-arbeit-logo.png";
 import reginaMartin from "@/assets/regina-martin.png";
 import { useSiteSettings, formatPhoneLink } from "@/hooks/useSiteSettings";
@@ -181,8 +182,9 @@ export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
   }
 
   return (
-    <section id="kontakt" className="py-24 bg-secondary">
-      <div className="section-container">
+    <section id="kontakt" className="py-24 bg-secondary relative overflow-hidden">
+      <TrafficSignPattern />
+      <div className="section-container relative z-10">
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           {/* Info */}
           <div>

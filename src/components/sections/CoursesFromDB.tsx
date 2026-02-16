@@ -4,6 +4,8 @@ import { ArrowRight, Clock, MapPin, Truck, Bus, GraduationCap, BookOpen, Award, 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useCourses } from "@/hooks/useCourses";
+import { AnimatedSection } from "@/components/ui/AnimatedSection";
+import { TrafficSignPattern } from "@/components/ui/TrafficSignPattern";
 
 
 const categories = [
@@ -107,10 +109,11 @@ export function CoursesFromDB() {
   }
 
   return (
-    <section id="kurse" className="py-24 bg-secondary">
-      <div className="section-container">
+    <section id="kurse" className="py-24 bg-secondary relative overflow-hidden">
+      <TrafficSignPattern />
+      <div className="section-container relative z-10">
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
+        <AnimatedSection className="text-center max-w-3xl mx-auto mb-12">
           <p className="text-primary font-semibold text-sm uppercase tracking-wider mb-4">Unser Angebot</p>
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
             Professionelle Aus- und Weiterbildung
@@ -118,7 +121,7 @@ export function CoursesFromDB() {
           <p className="text-lg text-muted-foreground">
             Wählen Sie aus unserem umfangreichen Kursangebot und starten Sie Ihre Karriere im Transportwesen.
           </p>
-        </div>
+        </AnimatedSection>
 
         {/* Category filters */}
         <div className="flex flex-wrap justify-center gap-2 mb-12">
@@ -148,10 +151,10 @@ export function CoursesFromDB() {
             const isUrgent = urgency === "critical" || urgency === "warning";
             
             return (
+              <AnimatedSection key={course.id} delay={index * 80}>
               <div
-                key={course.id}
                 className={cn(
-                  "card-elevated p-6 flex flex-col relative overflow-hidden",
+                  "card-elevated p-6 flex flex-col relative overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300",
                   isFeatured && "ring-2 ring-primary",
                   isUrgent && "ring-2 ring-destructive/50"
                 )}
@@ -255,6 +258,7 @@ export function CoursesFromDB() {
                   </Link>
                 </Button>
               </div>
+              </AnimatedSection>
             );
           })}
         </div>
