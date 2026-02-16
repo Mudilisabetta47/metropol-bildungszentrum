@@ -120,15 +120,14 @@ export function Header() {
           <div className="hidden lg:flex items-center">
             <Link
               to="/kontakt"
-              className={`group relative inline-flex items-center gap-2 font-semibold px-6 py-3 rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 ${
-                isTransparent
-                  ? "bg-primary text-primary-foreground hover:shadow-[0_8px_30px_-6px_hsl(136_100%_40%/0.5)]"
-                  : "bg-primary text-primary-foreground hover:shadow-[0_8px_30px_-6px_hsl(136_100%_40%/0.5)]"
-              }`}
+              className={`group relative inline-flex items-center gap-2.5 font-semibold px-6 py-3 rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 bg-primary text-primary-foreground hover:shadow-[0_8px_30px_-6px_hsl(136_100%_40%/0.5)]`}
             >
-              <span className="relative z-10 flex items-center gap-2">
-                <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-primary-foreground/20 transition-transform duration-300 group-hover:rotate-45">
-                  <ArrowRight className="h-4 w-4" />
+              <span className="relative z-10 flex items-center gap-2.5">
+                {/* Mini traffic light */}
+                <span className="inline-flex flex-col items-center justify-center gap-[3px] w-7 h-7 rounded-full bg-black/30 p-1">
+                  <span className="w-[6px] h-[6px] rounded-full bg-[#ef4444]/30 transition-all duration-300 group-hover:bg-[#ef4444] group-hover:shadow-[0_0_6px_rgba(239,68,68,0.6)]" />
+                  <span className="w-[6px] h-[6px] rounded-full bg-[#facc15]/20" />
+                  <span className="w-[6px] h-[6px] rounded-full bg-[#22c55e] shadow-[0_0_6px_rgba(34,197,94,0.5)] transition-all duration-300 group-hover:bg-[#22c55e]/30 group-hover:shadow-none" />
                 </span>
                 <span>Freie Fahrt!</span>
               </span>
