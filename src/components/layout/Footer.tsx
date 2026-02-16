@@ -213,7 +213,7 @@ export function Footer() {
               to="/auth"
               className="text-sm text-primary-foreground/60 hover:text-primary-foreground transition-colors"
             >
-              Mitarbeiter-Login
+              Agentur Login
             </Link>
           </div>
         </div>

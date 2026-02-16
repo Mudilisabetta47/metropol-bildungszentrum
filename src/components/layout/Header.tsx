@@ -46,12 +46,7 @@ export function Header() {
               <span>Hannover • Bremen • Garbsen</span>
             </div>
           </div>
-          <Link 
-            to="/admin" 
-            className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
-          >
-            Mitarbeiter-Login
-          </Link>
+          <span className="text-primary-foreground/60 text-xs">Bildungszentrum GmbH</span>
         </div>
       </div>
 
