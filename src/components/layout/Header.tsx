@@ -80,7 +80,7 @@ export function Header() {
                 Führerscheinklassen
                 <ChevronDown className="h-4 w-4" />
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64">
+              <DropdownMenuContent align="start" className="w-64">
                 {licenseClasses.map((item) => (
                   <DropdownMenuItem key={item.href} asChild>
                     <Link to={item.href} className="flex flex-col items-start py-2">
