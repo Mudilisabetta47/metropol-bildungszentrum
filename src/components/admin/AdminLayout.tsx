@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import logoMetropol from "@/assets/logo-metropol.webp";
 import {
   LayoutDashboard,
@@ -58,6 +60,27 @@ export function AdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const { data: profile } = useQuery({
+    queryKey: ["staff-profile", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("first_name, last_name, position, avatar_url")
+        .eq("user_id", user!.id)
+        .single();
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
+  const displayName = profile?.first_name 
+    ? `${profile.first_name} ${profile.last_name || ""}`.trim()
+    : user?.email;
+  
+  const initials = profile?.first_name 
+    ? `${profile.first_name.charAt(0)}${profile.last_name?.charAt(0) || ""}`.toUpperCase()
+    : user?.email?.charAt(0).toUpperCase();
 
   useEffect(() => {
     if (!isLoading && !user) navigate("/auth");
@@ -143,17 +166,17 @@ export function AdminLayout() {
           {/* User section */}
           <div className="p-3 border-t border-border">
             <div className="flex items-center gap-2.5 mb-2">
-              <div className="h-8 w-8 rounded-md bg-muted flex items-center justify-center">
-                <span className="text-xs font-semibold text-muted-foreground">
-                  {user.email?.charAt(0).toUpperCase()}
+              <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center">
+                <span className="text-xs font-semibold text-primary">
+                  {initials}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-medium text-foreground truncate">
-                  {user.email}
+                  {displayName}
                 </p>
                 <p className="text-[10px] text-muted-foreground">
-                  {isStaff ? "Mitarbeiter" : "Benutzer"}
+                  {profile?.position || (isStaff ? "Mitarbeiter" : "Benutzer")}
                 </p>
               </div>
             </div>
