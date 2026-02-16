@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -28,8 +28,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Loader2, Copy } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, Copy, ChevronDown, ChevronRight, Calendar, MapPin, Users } from "lucide-react";
 import { CapacityBadge } from "@/components/ui/capacity-badge";
+import { format } from "date-fns";
+import { de } from "date-fns/locale";
 
 interface CourseCapacityInfo {
   totalMax: number;
@@ -52,6 +54,18 @@ interface Course {
   created_at: string;
 }
 
+interface CourseDateInfo {
+  id: string;
+  start_date: string;
+  end_date: string | null;
+  start_time: string | null;
+  end_time: string | null;
+  max_participants: number;
+  current_participants: number;
+  is_active: boolean;
+  locations: { name: string } | null;
+}
+
 const categories = [
   { value: "lkw", label: "LKW" },
   { value: "bus", label: "Bus" },
@@ -64,6 +78,8 @@ const categories = [
 export default function Courses() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [courseCapacity, setCourseCapacity] = useState<Record<string, CourseCapacityInfo>>({});
+  const [courseDatesMap, setCourseDatesMap] = useState<Record<string, CourseDateInfo[]>>({});
+  const [expandedCourses, setExpandedCourses] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
@@ -133,6 +149,30 @@ export default function Courses() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const toggleExpanded = async (courseId: string) => {
+    const next = new Set(expandedCourses);
+    if (next.has(courseId)) {
+      next.delete(courseId);
+    } else {
+      next.add(courseId);
+      if (!courseDatesMap[courseId]) {
+        try {
+          const { data, error } = await supabase
+            .from("course_dates")
+            .select("id, start_date, end_date, start_time, end_time, max_participants, current_participants, is_active, locations(name)")
+            .eq("course_id", courseId)
+            .order("start_date", { ascending: true });
+
+          if (error) throw error;
+          setCourseDatesMap((prev) => ({ ...prev, [courseId]: (data || []) as CourseDateInfo[] }));
+        } catch (error) {
+          console.error("Error fetching course dates:", error);
+        }
+      }
+    }
+    setExpandedCourses(next);
   };
 
   const handleOpenDialog = (course?: Course) => {
@@ -491,6 +531,7 @@ export default function Courses() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-10"></TableHead>
                 <TableHead>Titel</TableHead>
                 <TableHead>Kategorie</TableHead>
                 <TableHead>Dauer</TableHead>
@@ -502,73 +543,111 @@ export default function Courses() {
             <TableBody>
               {courses.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                     Noch keine Kurse vorhanden
                   </TableCell>
                 </TableRow>
               ) : (
                 courses.map((course) => {
                   const capacity = courseCapacity[course.id];
+                  const isExpanded = expandedCourses.has(course.id);
+                  const dates = courseDatesMap[course.id] || [];
                   return (
-                    <TableRow key={course.id}>
-                      <TableCell className="font-medium">{course.title}</TableCell>
-                      <TableCell>{getCategoryLabel(course.category)}</TableCell>
-                      <TableCell>{course.duration_info || "-"}</TableCell>
-                      <TableCell>
-                        {capacity ? (
-                          <div className="flex flex-col gap-1">
-                            <CapacityBadge 
-                              current={capacity.totalCurrent} 
-                              max={capacity.totalMax} 
-                              size="sm"
-                            />
-                            <span className="text-xs text-muted-foreground">
-                              {capacity.upcomingDates} Termin{capacity.upcomingDates !== 1 ? 'e' : ''}
-                            </span>
+                    <React.Fragment key={course.id}>
+                      <TableRow className="cursor-pointer hover:bg-muted/50" onClick={() => toggleExpanded(course.id)}>
+                        <TableCell className="w-10 px-2">
+                          {isExpanded ? (
+                            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                          ) : (
+                            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                          )}
+                        </TableCell>
+                        <TableCell className="font-medium">{course.title}</TableCell>
+                        <TableCell>{getCategoryLabel(course.category)}</TableCell>
+                        <TableCell>{course.duration_info || "-"}</TableCell>
+                        <TableCell>
+                          {capacity ? (
+                            <div className="flex flex-col gap-1">
+                              <CapacityBadge 
+                                current={capacity.totalCurrent} 
+                                max={capacity.totalMax} 
+                                size="sm"
+                              />
+                              <span className="text-xs text-muted-foreground">
+                                {capacity.upcomingDates} Termin{capacity.upcomingDates !== 1 ? 'e' : ''}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">Keine Termine</span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              course.is_active
+                                ? "bg-accent/20 text-accent-foreground"
+                                : "bg-muted text-muted-foreground"
+                            }`}
+                          >
+                            {course.is_active ? "Aktiv" : "Inaktiv"}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+                          <div className="flex justify-end gap-2">
+                            <Button variant="ghost" size="sm" onClick={() => handleDuplicate(course)} title="Kurs duplizieren">
+                              <Copy className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => handleOpenDialog(course)}>
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => handleDelete(course.id)} className="text-destructive hover:text-destructive">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
                           </div>
-                        ) : (
-                          <span className="text-xs text-muted-foreground">Keine Termine</span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            course.is_active
-                              ? "bg-accent/20 text-accent-foreground"
-                              : "bg-muted text-muted-foreground"
-                          }`}
-                        >
-                          {course.is_active ? "Aktiv" : "Inaktiv"}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDuplicate(course)}
-                            title="Kurs duplizieren"
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleOpenDialog(course)}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDelete(course.id)}
-                            className="text-destructive hover:text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
+                        </TableCell>
+                      </TableRow>
+                      {isExpanded && (
+                        <TableRow>
+                          <TableCell colSpan={7} className="bg-muted/30 p-0">
+                            <div className="px-6 py-3">
+                              {dates.length === 0 ? (
+                                <p className="text-sm text-muted-foreground py-2">Keine Termine für diesen Kurs angelegt.</p>
+                              ) : (
+                                <div className="space-y-2">
+                                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Termine ({dates.length})</p>
+                                  {dates.map((cd) => (
+                                    <div key={cd.id} className="flex items-center gap-4 text-sm bg-background rounded-md px-3 py-2 border">
+                                      <div className="flex items-center gap-1.5 min-w-[140px]">
+                                        <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+                                        <span>{format(new Date(cd.start_date), "dd.MM.yyyy", { locale: de })}</span>
+                                        {cd.end_date && cd.end_date !== cd.start_date && (
+                                          <span className="text-muted-foreground">– {format(new Date(cd.end_date), "dd.MM.yyyy", { locale: de })}</span>
+                                        )}
+                                      </div>
+                                      <div className="flex items-center gap-1.5 min-w-[80px] text-muted-foreground">
+                                        {cd.start_time ? cd.start_time.slice(0, 5) : "–"}
+                                        {cd.end_time && ` – ${cd.end_time.slice(0, 5)}`}
+                                      </div>
+                                      <div className="flex items-center gap-1.5 min-w-[120px]">
+                                        <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+                                        <span>{cd.locations?.name || "–"}</span>
+                                      </div>
+                                      <div className="flex items-center gap-1.5">
+                                        <Users className="h-3.5 w-3.5 text-muted-foreground" />
+                                        <span>{cd.current_participants}/{cd.max_participants}</span>
+                                      </div>
+                                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${cd.is_active ? "bg-green-100 text-green-800" : "bg-muted text-muted-foreground"}`}>
+                                        {cd.is_active ? "Aktiv" : "Inaktiv"}
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </React.Fragment>
                   );
                 })
               )}
