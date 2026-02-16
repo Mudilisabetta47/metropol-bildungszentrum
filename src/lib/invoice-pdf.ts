@@ -320,7 +320,7 @@ export async function generateInvoicePDF(
     doc.text(invoice.notes, margin, y, { maxWidth: pageWidth - 2 * margin });
   }
 
-  // === CLOSING WITH STAMP ===
+  // === CLOSING ===
   y += 18;
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
@@ -329,31 +329,6 @@ export async function generateInvoicePDF(
   y += 7;
   doc.setFont("helvetica", "bold");
   doc.text(settings.company_ceo || "Geschäftsführung", margin, y);
-
-  // Logo stamp next to signature (wide, semi-transparent look)
-  if (logoBase64) {
-    try {
-      const stampWidth = 55;
-      const stampHeight = 20;
-      const stampX = pageWidth - margin - stampWidth;
-      const stampY = y - 15;
-
-      // Light circular/rounded border for stamp effect
-      doc.setDrawColor(180);
-      doc.setLineWidth(0.8);
-      doc.roundedRect(stampX - 5, stampY - 3, stampWidth + 10, stampHeight + 6, 3, 3, "S");
-
-      // Inner thin border
-      doc.setLineWidth(0.3);
-      doc.roundedRect(stampX - 3, stampY - 1, stampWidth + 6, stampHeight + 2, 2, 2, "S");
-
-      // Logo inside stamp area
-      doc.addImage(logoBase64, "WEBP", stampX, stampY, stampWidth, stampHeight);
-    } catch {
-      // Fallback: no stamp if logo fails
-    }
-  }
-
   // === FOOTER ===
   const footerY = pageHeight - 22;
 
