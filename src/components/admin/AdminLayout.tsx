@@ -166,17 +166,25 @@ export function AdminLayout() {
           {/* User section */}
           <div className="p-3 border-t border-border">
             <div className="flex items-center gap-2.5 mb-2">
-              <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center">
-                <span className="text-xs font-semibold text-primary">
-                  {initials}
-                </span>
-              </div>
+              {profile?.avatar_url ? (
+                <img 
+                  src={profile.avatar_url} 
+                  alt={displayName || ""} 
+                  className="h-8 w-8 rounded-md object-cover"
+                />
+              ) : (
+                <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center">
+                  <span className="text-xs font-semibold text-primary">
+                    {initials}
+                  </span>
+                </div>
+              )}
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-medium text-foreground truncate">
                   {displayName}
                 </p>
                 <p className="text-[10px] text-muted-foreground">
-                  {profile?.position || (isStaff ? "Mitarbeiter" : "Benutzer")}
+                  {profile?.position || (isStaff ? "Team" : "Benutzer")}
                 </p>
               </div>
             </div>
