@@ -80,12 +80,12 @@ export function Header() {
                 Führerscheinklassen
                 <ChevronDown className="h-4 w-4" />
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-64">
+              <DropdownMenuContent align="start" className="w-64 text-left">
                 {licenseClasses.map((item) => (
-                  <DropdownMenuItem key={item.href} asChild>
-                    <Link to={item.href} className="flex flex-col items-start py-2">
-                      <span className="font-medium">{item.name}</span>
-                      <span className="text-xs text-muted-foreground">{item.description}</span>
+                  <DropdownMenuItem key={item.href} asChild className="justify-start">
+                    <Link to={item.href} className="flex flex-col items-start py-2 text-left w-full">
+                      <span className="font-medium text-left">{item.name}</span>
+                      <span className="text-xs text-muted-foreground text-left">{item.description}</span>
                     </Link>
                   </DropdownMenuItem>
                 ))}
