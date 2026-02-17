@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-const SITE_URL = "https://metropol-bildungszentrum.lovable.app";
+const SITE_URL = "https://metropol-bz.de";
 
 const organizationData = {
   "@context": "https://schema.org",
