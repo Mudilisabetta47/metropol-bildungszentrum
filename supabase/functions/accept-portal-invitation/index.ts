@@ -9,11 +9,10 @@ const corsHeaders = {
 
 interface AcceptInvitationRequest {
   token: string;
-  userId: string;
+  password: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
-  // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -22,24 +21,27 @@ const handler = async (req: Request): Promise<Response> => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
 
     const body = await req.json();
-    console.log("Received request body:", JSON.stringify(body));
-    
-    const { token, userId }: AcceptInvitationRequest = body;
+    const { token, password }: AcceptInvitationRequest = body;
 
-    if (!token || !userId) {
-      console.error("Missing token or userId:", { token: !!token, userId: !!userId });
-      throw new Error("Token und User ID sind erforderlich");
+    if (!token || !password) {
+      throw new Error("Token und Passwort sind erforderlich");
     }
 
-    console.log("Accepting portal invitation:", { token: token.substring(0, 8) + "...", userId });
+    if (password.length < 8) {
+      throw new Error("Das Passwort muss mindestens 8 Zeichen lang sein");
+    }
+
+    console.log("Accepting portal invitation:", { token: token.substring(0, 8) + "..." });
 
     // 1. Get the invitation
     const { data: invitation, error: invError } = await supabase
       .from("participant_portal_invitations")
-      .select("*, participants(id, email)")
+      .select("*, participants(id, email, first_name, last_name)")
       .eq("token", token)
       .is("accepted_at", null)
       .maybeSingle();
@@ -57,12 +59,38 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("Einladung ist abgelaufen");
     }
 
-    const participant = invitation.participants as { id: string; email: string } | null;
+    const participant = invitation.participants as { id: string; email: string; first_name: string; last_name: string } | null;
     if (!participant) {
       throw new Error("Teilnehmer nicht gefunden");
     }
 
-    // 2. Link participant to user
+    // 2. Create user account via Admin API (bypasses signup restrictions)
+    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      email: participant.email,
+      password,
+      email_confirm: true,
+      user_metadata: {
+        first_name: participant.first_name,
+        last_name: participant.last_name,
+      },
+    });
+
+    if (authError) {
+      console.error("Error creating user:", authError);
+      if (authError.message.includes("already been registered") || authError.message.includes("already exists")) {
+        throw new Error("Diese E-Mail-Adresse ist bereits registriert. Bitte melden Sie sich an.");
+      }
+      throw new Error("Benutzer konnte nicht erstellt werden: " + authError.message);
+    }
+
+    if (!authData.user) {
+      throw new Error("Benutzer konnte nicht erstellt werden");
+    }
+
+    const userId = authData.user.id;
+    console.log("User created successfully:", userId);
+
+    // 3. Link participant to user
     const { error: linkError } = await supabase
       .from("participants")
       .update({ user_id: userId })
@@ -73,7 +101,7 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("Teilnehmer konnte nicht verknüpft werden");
     }
 
-    // 3. Mark invitation as accepted
+    // 4. Mark invitation as accepted
     const { error: acceptError } = await supabase
       .from("participant_portal_invitations")
       .update({ accepted_at: new Date().toISOString() })
@@ -81,10 +109,9 @@ const handler = async (req: Request): Promise<Response> => {
 
     if (acceptError) {
       console.error("Error marking invitation as accepted:", acceptError);
-      // Don't throw, the user is already linked
     }
 
-    // 4. Add user role (optional - for participant role)
+    // 5. Add user role
     const { error: roleError } = await supabase
       .from("user_roles")
       .insert({ user_id: userId, role: "user" });
