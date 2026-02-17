@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, ArrowRight, Phone } from "lucide-react";
 import fleetTeam from "@/assets/fleet-team.webp";
-import trucksMetropol from "@/assets/trucks-metropol.jpg";
+import fahrlehrerSlide from "@/assets/fahrlehrer-slide.png";
 import busMetropol from "@/assets/bus-metropol.jpg";
 import fleetVehicles from "@/assets/fleet-vehicles.jpg";
 
@@ -25,7 +25,7 @@ const slides = [
   },
   {
     id: 3,
-    image: trucksMetropol,
+    image: fahrlehrerSlide,
     title: "Werde",
     highlight: "Fahrlehrer*in.",
     subtitle: "Werden Sie Teil unseres Teams und geben Sie Ihr Wissen an die nächste Generation weiter.",
