@@ -10,9 +10,9 @@ const slides = [
   {
     id: 1,
     image: fleetTeam,
-    title: "Dein erstes Mal",
-    highlight: "hinterm Steuer.",
-    subtitle: "Das Kribbeln, wenn du zum ersten Mal alleine fährst. Dieses Gefühl schaffen wir zusammen – mit Geduld, Erfahrung und Fahrlehrern, die dich wirklich verstehen.",
+    title: "Neue Jobperspektive",
+    highlight: "bei Metropol.",
+    subtitle: "Starten Sie Ihre Karriere als Berufskraftfahrer – mit professioneller Ausbildung, erfahrenen Fahrlehrern und 100% Förderung durch Bildungsgutschein.",
     link: "/fuehrerschein/c-ce",
   },
   {
