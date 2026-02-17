@@ -143,7 +143,7 @@ export function Hero() {
                       <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                     </Link>
                     <a
-                      href="tel:+49511123456"
+                      href="tel:+495116425068"
                       className="inline-flex items-center gap-2 text-white/90 hover:text-white font-medium transition-colors"
                     >
                       <Phone className="h-4 w-4" />
