@@ -102,7 +102,7 @@ const handler = async (req: Request): Promise<Response> => {
     const hasPortalAccess = participant?.user_id != null;
 
     // 3. Build portal URL
-    const baseUrl = req.headers.get("origin") || "https://metropol-bildungszentrum.lovable.app";
+    const baseUrl = req.headers.get("origin") || "https://metropol-bz.de";
     const portalUrl = `${baseUrl}/portal/rechnungen`;
 
     // 4. Send email

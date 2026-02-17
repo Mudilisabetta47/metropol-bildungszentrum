@@ -2,170 +2,170 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Hauptseiten -->
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/</loc>
+    <loc>https://metropol-bz.de/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/ueber-uns</loc>
+    <loc>https://metropol-bz.de/ueber-uns</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/kontakt</loc>
+    <loc>https://metropol-bz.de/kontakt</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/impressum</loc>
+    <loc>https://metropol-bz.de/impressum</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/datenschutz</loc>
+    <loc>https://metropol-bz.de/datenschutz</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
 
   <!-- Standorte -->
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/standort/hannover</loc>
+    <loc>https://metropol-bz.de/standort/hannover</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/standort/bremen</loc>
+    <loc>https://metropol-bz.de/standort/bremen</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/standort/garbsen</loc>
+    <loc>https://metropol-bz.de/standort/garbsen</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <!-- Führerschein-Kurse -->
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/c-ce</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/c-ce</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/c1-c1e</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/c1-c1e</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/d-de</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/d-de</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/citylogistiker</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/citylogistiker</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/auslieferungsfahrer</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/auslieferungsfahrer</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <!-- Fahrlehrer-Ausbildung -->
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/fahrlehrer-ce</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/fahrlehrer-ce</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/fahrlehrer-de</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/fahrlehrer-de</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/fahrlehrer-ausbildung-be</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/fahrlehrer-ausbildung-be</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/fahrlehrer-a</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/fahrlehrer-a</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/fahrlehrer-fortbildungslehrgang-53-abs-1</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/fahrlehrer-fortbildungslehrgang-53-abs-1</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/fortbildungslehrgang-fuer-ausbildungsfahrlehrer-53-abs-3</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/fortbildungslehrgang-fuer-ausbildungsfahrlehrer-53-abs-3</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/fahrlehrer-fortbildungslehrgang-nach-7-bkrfqv</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/fahrlehrer-fortbildungslehrgang-nach-7-bkrfqv</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <!-- BKF-Weiterbildung -->
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/beschleunigte-grundqualifikation-nach-bkrfqg</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/beschleunigte-grundqualifikation-nach-bkrfqg</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/bkf-weiterbildung-module-1-5-nach-bkrfqg</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/bkf-weiterbildung-module-1-5-nach-bkrfqg</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/bkf-weiterbildung-modul-1-intelligent-fahren</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/bkf-weiterbildung-modul-1-intelligent-fahren</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/bkf-weiterbildung-modul-1-eco-training-assistenzsysteme</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/bkf-weiterbildung-modul-1-eco-training-assistenzsysteme</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/bkf-weiterbildung-modul-2-sozialvorschriften-fahrtenschreiber</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/bkf-weiterbildung-modul-2-sozialvorschriften-fahrtenschreiber</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/bkf-weiterbildung-modul-2-rechtssicher-dokumentieren</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/bkf-weiterbildung-modul-2-rechtssicher-dokumentieren</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/bkf-weiterbildung-modul-3-sicher-gesund-unterwegs</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/bkf-weiterbildung-modul-3-sicher-gesund-unterwegs</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/bkf-weiterbildung-modul-3-sicher-und-gesund-unterwegs</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/bkf-weiterbildung-modul-3-sicher-und-gesund-unterwegs</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/bkf-weiterbildung-modul-4-professionell-kundenorientiert</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/bkf-weiterbildung-modul-4-professionell-kundenorientiert</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/bkf-weiterbildung-modul-4-professionell-kundenorientiertu</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/bkf-weiterbildung-modul-4-professionell-kundenorientiertu</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/bkf-weiterbildung-modul-5-gueterverkehr-spezial</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/bkf-weiterbildung-modul-5-gueterverkehr-spezial</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://metropol-bildungszentrum.lovable.app/fuehrerschein/bkf-weiterbildung-modul-5-personenverkehr-spezial</loc>
+    <loc>https://metropol-bz.de/fuehrerschein/bkf-weiterbildung-modul-5-personenverkehr-spezial</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

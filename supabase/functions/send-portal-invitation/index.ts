@@ -101,7 +101,7 @@ const handler = async (req: Request): Promise<Response> => {
     const companyEmail = settingsMap.company_email || "info@metropol-bildung.de";
 
     // 6. Build invitation URL
-    const baseUrl = req.headers.get("origin") || "https://metropol-bildungszentrum.lovable.app";
+    const baseUrl = req.headers.get("origin") || "https://metropol-bz.de";
     const invitationUrl = `${baseUrl}/portal/einladung/${token}`;
 
     // 7. Send email
