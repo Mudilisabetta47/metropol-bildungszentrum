@@ -25,7 +25,7 @@ const slides = [
   },
   {
     id: 3,
-    image: trucksMetropol,
+    image: fahrlehrerSlide,
     title: "Werde",
     highlight: "Fahrlehrer*in.",
     subtitle: "Werden Sie Teil unseres Teams und geben Sie Ihr Wissen an die nächste Generation weiter.",
