@@ -242,45 +242,26 @@ export function useParticipantInvoices() {
 export function useAcceptPortalInvitation() {
   return useMutation({
     mutationFn: async ({ token, password }: { token: string; password: string }) => {
-      // 1. Get invitation
-      const { data: invitation, error: invError } = await supabase
-        .from("participant_portal_invitations")
-        .select("*, participants(email, first_name, last_name)")
-        .eq("token", token)
-        .is("accepted_at", null)
-        .gt("expires_at", new Date().toISOString())
-        .maybeSingle();
-
-      if (invError) throw invError;
-      if (!invitation) throw new Error("Einladung nicht gefunden oder abgelaufen");
-
-      const participant = invitation.participants as { email: string; first_name: string; last_name: string } | null;
-      if (!participant) throw new Error("Teilnehmer nicht gefunden");
-
-      // 2. Create user account
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: participant.email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/portal`,
-          data: {
-            first_name: participant.first_name,
-            last_name: participant.last_name,
-          },
-        },
+      const { data, error } = await supabase.functions.invoke("accept-portal-invitation", {
+        body: { token, password },
       });
 
-      if (authError) throw authError;
-      if (!authData.user) throw new Error("Benutzer konnte nicht erstellt werden");
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
 
-      // 3. Link participant to user (will be done via edge function for security)
-      const { error: linkError } = await supabase.functions.invoke("accept-portal-invitation", {
-        body: { token, userId: authData.user.id },
+      // Auto sign-in after successful creation
+      const { data: invData } = await supabase.functions.invoke("validate-invitation", {
+        body: { token },
       });
+      
+      if (invData?.invitation?.email) {
+        await supabase.auth.signInWithPassword({
+          email: invData.invitation.email,
+          password,
+        });
+      }
 
-      if (linkError) throw linkError;
-
-      return { user: authData.user };
+      return data;
     },
   });
 }

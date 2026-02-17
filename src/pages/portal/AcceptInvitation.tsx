@@ -88,63 +88,36 @@ export default function AcceptInvitation() {
     setIsSubmitting(true);
 
     try {
-      console.log("Starting account creation for:", invitation?.email);
+      console.log("Starting account creation via edge function for:", invitation?.email);
       
-      // 1. Create user account
-      const options: Parameters<typeof supabase.auth.signUp>[0]["options"] = {
-        emailRedirectTo: `${window.location.origin}/portal`,
-      };
+      // Call edge function to create user, link participant and mark invitation as accepted
+      const { data: responseData, error: fnError } = await supabase.functions.invoke("accept-portal-invitation", {
+        body: { token, password },
+      });
 
-      // Optional: Namen nur mitschicken, wenn sie vorhanden sind
-      if (invitation?.participants?.first_name || invitation?.participants?.last_name) {
-        options.data = {
-          first_name: invitation?.participants?.first_name,
-          last_name: invitation?.participants?.last_name,
-        };
+      console.log("Edge function response:", { data: responseData, error: fnError });
+
+      if (fnError) {
+        console.error("Edge function error:", fnError);
+        setError("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
+        setIsSubmitting(false);
+        return;
       }
 
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      if (responseData?.error) {
+        setError(responseData.error);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Sign in the user after successful creation
+      const { error: signInError } = await supabase.auth.signInWithPassword({
         email: invitation!.email,
         password,
-        options: {
-          ...options,
-        },
       });
 
-      console.log("Auth signup result:", { userId: authData?.user?.id, error: authError?.message });
-
-      if (authError) {
-        if (authError.message.includes("already registered")) {
-          setError("Diese E-Mail-Adresse ist bereits registriert. Bitte melden Sie sich an.");
-        } else {
-          console.error("Auth error:", authError);
-          setError(authError.message);
-        }
-        setIsSubmitting(false);
-        return;
-      }
-
-      if (!authData.user) {
-        console.error("No user returned from signup");
-        setError("Benutzer konnte nicht erstellt werden.");
-        setIsSubmitting(false);
-        return;
-      }
-
-      console.log("User created successfully:", authData.user.id);
-
-      // 2. Call edge function to link participant and mark invitation as accepted
-      console.log("Calling accept-portal-invitation with:", { token: token?.substring(0, 8) + "...", userId: authData.user.id });
-      
-      const { data: linkData, error: linkError } = await supabase.functions.invoke("accept-portal-invitation", {
-        body: { token, userId: authData.user.id },
-      });
-
-      console.log("Edge function response:", { data: linkData, error: linkError });
-
-      if (linkError) {
-        console.error("Link error details:", linkError);
-        // Continue anyway, the user is created
+      if (signInError) {
+        console.error("Auto sign-in failed:", signInError);
       }
 
       setSuccess(true);
@@ -205,15 +178,15 @@ export default function AcceptInvitation() {
 
             {success && (
               <div className="space-y-4">
-                <Alert className="border-green-500 bg-green-50">
-                  <CheckCircle2 className="h-4 w-4 text-green-600" />
-                  <AlertDescription className="text-green-800">
-                    Ihr Zugang wurde erfolgreich eingerichtet. Bitte überprüfen Sie Ihre E-Mails, um Ihre E-Mail-Adresse zu bestätigen.
+                <Alert className="border-emerald-500/50 bg-emerald-50 dark:bg-emerald-950/20">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                  <AlertDescription className="text-emerald-800 dark:text-emerald-200">
+                    Ihr Zugang wurde erfolgreich eingerichtet! Sie können sich jetzt anmelden.
                   </AlertDescription>
                 </Alert>
                 <div className="text-center">
-                  <Button onClick={() => navigate("/portal/login")}>
-                    Zur Anmeldung
+                  <Button onClick={() => navigate("/portal")}>
+                    Zum Portal
                   </Button>
                 </div>
               </div>
