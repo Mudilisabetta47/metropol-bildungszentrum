@@ -32,7 +32,7 @@ const slides = [
     highlight: "Fahrlehrer*in.",
     subtitle: "Werden Sie Teil unseres Teams und geben Sie Ihr Wissen an die nächste Generation weiter.",
     link: "/fuehrerschein/fahrlehrer",
-    objectPosition: "center 25%",
+    objectPosition: "center 15%",
   },
   {
     id: 4,
