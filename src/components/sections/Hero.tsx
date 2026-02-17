@@ -14,6 +14,7 @@ const slides = [
     highlight: "bei Metropol.",
     subtitle: "Starten Sie Ihre Karriere als Berufskraftfahrer – mit professioneller Ausbildung, erfahrenen Fahrlehrern und 100% Förderung durch Bildungsgutschein.",
     link: "/fuehrerschein/c-ce",
+    objectPosition: "center center",
   },
   {
     id: 2,
@@ -22,6 +23,7 @@ const slides = [
     highlight: "Busfahrer*in.",
     subtitle: "Führerschein Klasse D/DE für den Personenverkehr – starte deine Karriere im ÖPNV.",
     link: "/fuehrerschein/d-de",
+    objectPosition: "center center",
   },
   {
     id: 3,
@@ -30,6 +32,7 @@ const slides = [
     highlight: "Fahrlehrer*in.",
     subtitle: "Werden Sie Teil unseres Teams und geben Sie Ihr Wissen an die nächste Generation weiter.",
     link: "/fuehrerschein/fahrlehrer",
+    objectPosition: "center 25%",
   },
   {
     id: 4,
@@ -38,6 +41,7 @@ const slides = [
     highlight: "Module 1–5.",
     subtitle: "Gesetzlich vorgeschriebene Weiterbildung für Berufskraftfahrer – flexibel und praxisnah.",
     link: "/fuehrerschein/bkf-weiterbildung",
+    objectPosition: "center center",
   },
 ];
 
@@ -100,7 +104,7 @@ export function Hero() {
               src={slide.image}
               alt={`${slide.title} ${slide.highlight}`}
               className="absolute inset-0 w-full h-full object-cover will-change-transform"
-              style={{ transform: `translateY(${parallaxOffset * 0.3}px) scale(1.1)` }}
+              style={{ transform: `translateY(${parallaxOffset * 0.3}px) scale(1.1)`, objectPosition: slide.objectPosition }}
             />
             {/* Overlays */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/30" />
