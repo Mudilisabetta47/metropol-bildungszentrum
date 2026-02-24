@@ -92,7 +92,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const settingsMap = Object.fromEntries((settings || []).map(s => [s.key, s.value]));
     const companyName = settingsMap.company_name || "Metropol Bildungszentrum";
-    const companyEmail = settingsMap.company_email || "info@metropol-bildung.de";
+    const companyEmail = settingsMap.company_email || "info@metropol-bz.de";
 
     // 6. Build invitation URL
     const baseUrl = req.headers.get("origin") || "https://metropol-bz.de";
