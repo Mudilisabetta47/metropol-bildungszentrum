@@ -3,7 +3,7 @@ import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import logoMetropol from "@/assets/logo-metropol.webp";
+import logoMetropol from "@/assets/logo-metropol.png";
 import {
   LayoutDashboard,
   GraduationCap,

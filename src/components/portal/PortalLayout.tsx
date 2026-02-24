@@ -18,7 +18,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import logoMetropol from "@/assets/logo-metropol.webp";
+import logoMetropol from "@/assets/logo-metropol.png";
 
 interface PortalLayoutProps {
   children: ReactNode;

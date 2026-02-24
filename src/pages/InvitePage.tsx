@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Lock, Mail, CheckCircle, XCircle } from "lucide-react";
-import logoMetropol from "@/assets/logo-metropol.webp";
+import logoMetropol from "@/assets/logo-metropol.png";
 
 const passwordSchema = z.object({
   password: z.string().min(8, "Passwort muss mindestens 8 Zeichen lang sein"),

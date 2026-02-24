@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Phone, Mail, Clock, Facebook, Instagram, Linkedin, Star } from "lucide-react";
-import logoMetropol from "@/assets/logo-metropol.webp";
+import logoMetropol from "@/assets/logo-metropol.png";
 import { useLocations } from "@/hooks/useLocations";
 import { useSiteSettings, formatPhoneLink } from "@/hooks/useSiteSettings";
 const courses = [
