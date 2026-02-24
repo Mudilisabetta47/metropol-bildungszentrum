@@ -57,18 +57,12 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("Teilnehmer hat bereits einen Portal-Zugang");
     }
 
-    // 2. Check for existing pending invitation
-    const { data: existingInvitation } = await supabase
+    // 2. Delete any existing pending invitations so we can resend
+    await supabase
       .from("participant_portal_invitations")
-      .select("id, expires_at")
+      .delete()
       .eq("participant_id", participantId)
-      .is("accepted_at", null)
-      .gt("expires_at", new Date().toISOString())
-      .maybeSingle();
-
-    if (existingInvitation) {
-      throw new Error("Es gibt bereits eine aktive Einladung für diesen Teilnehmer");
-    }
+      .is("accepted_at", null);
 
     // 3. Generate invitation token
     const token = crypto.randomUUID() + "-" + crypto.randomUUID();
