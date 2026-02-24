@@ -200,6 +200,11 @@ const handler = async (req: Request): Promise<Response> => {
         to: [email],
         subject: `Ihre Anfrage: ${course} - Metropol Bildungszentrum`,
         html: customerEmailHtml,
+        headers: {
+          "X-Priority": "1",
+          "X-MSMail-Priority": "High",
+          "Importance": "High",
+        },
       }),
     });
 
@@ -212,7 +217,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send notification to admin
     // Admin email addresses
-    const adminEmails = ["info@mep-agentur.de"];
+    const adminEmails = ["info@metropol-bz.de"];
     
     console.log("Sending notification email to admin:", adminEmails);
     const adminEmailResponse = await fetch("https://api.resend.com/emails", {
@@ -227,6 +232,11 @@ const handler = async (req: Request): Promise<Response> => {
         subject: `🔔 Neue Anfrage: ${course} von ${name}`,
         html: adminEmailHtml,
         reply_to: email,
+        headers: {
+          "X-Priority": "1",
+          "X-MSMail-Priority": "High",
+          "Importance": "High",
+        },
       }),
     });
 
