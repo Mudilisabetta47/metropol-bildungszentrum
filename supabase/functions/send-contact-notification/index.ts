@@ -196,7 +196,7 @@ const handler = async (req: Request): Promise<Response> => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Metropol Bildungszentrum <onboarding@resend.dev>",
+        from: "Metropol Bildungszentrum <info@metropol-bz.de>",
         to: [email],
         subject: `Ihre Anfrage: ${course} - Metropol Bildungszentrum`,
         html: customerEmailHtml,
@@ -227,7 +227,7 @@ const handler = async (req: Request): Promise<Response> => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Metropol Website <onboarding@resend.dev>",
+        from: "Metropol Website <info@metropol-bz.de>",
         to: adminEmails,
         subject: `🔔 Neue Anfrage: ${course} von ${name}`,
         html: adminEmailHtml,
