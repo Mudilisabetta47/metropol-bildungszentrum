@@ -100,7 +100,7 @@ const handler = async (req: Request): Promise<Response> => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Metropol System <onboarding@resend.dev>",
+        from: "Metropol System <info@metropol-bz.de>",
         to: ["info@metropol-bz.de"],
         subject: `🐛 [${label}] ${title}`,
         html: emailHtml,
