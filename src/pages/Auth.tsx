@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Mail, Lock, ArrowRight } from "lucide-react";
-import logoMetropol from "@/assets/logo-metropol.webp";
+import logoMetropol from "@/assets/logo-metropol.png";
 
 const authSchema = z.object({
   email: z.string().email("Bitte geben Sie eine gültige E-Mail-Adresse ein"),

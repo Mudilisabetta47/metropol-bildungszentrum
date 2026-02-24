@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown, ArrowRight } from "lucide-react";
-import logoMetropol from "@/assets/logo-metropol.webp";
+import logoMetropol from "@/assets/logo-metropol.png";
 import {
   DropdownMenu,
   DropdownMenuContent,

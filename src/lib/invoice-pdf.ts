@@ -12,7 +12,7 @@ async function loadLogoAsBase64(): Promise<string | null> {
   if (cachedLogoBase64) return cachedLogoBase64;
   
   try {
-    const logoModule = await import("@/assets/logo-metropol.webp");
+    const logoModule = await import("@/assets/logo-metropol.png");
     const logoUrl = logoModule.default;
     
     const response = await fetch(logoUrl);
