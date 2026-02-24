@@ -101,7 +101,7 @@ const handler = async (req: Request): Promise<Response> => {
       },
       body: JSON.stringify({
         from: "Metropol System <onboarding@resend.dev>",
-        to: ["info@mep-agentur.de"],
+        to: ["info@metropol-bz.de"],
         subject: `🐛 [${label}] ${title}`,
         html: emailHtml,
       }),
