@@ -13,6 +13,7 @@ import { CookieSettingsButton } from "@/components/CookieSettingsButton";
 import Index from "./pages/Index";
 
 // Lazy loaded pages
+const FahrlehrerPage = lazy(() => import("./pages/FahrlehrerPage"));
 const LicenseClassPage = lazy(() => import("./pages/LicenseClassPage"));
 const LocationPage = lazy(() => import("./pages/LocationPage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
