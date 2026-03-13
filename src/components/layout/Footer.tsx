@@ -15,15 +15,15 @@ const courses = [
 
 const seoLinks = [
   { name: "Fahrlehrer Ausbildung Hannover", href: "/standort/hannover", location: "Hannover" },
-  { name: "Fahrlehrer werden Bremen", href: "/standort/bremen", location: "Bremen" },
-  { name: "Fahrlehrer werden Garbsen", href: "/standort/garbsen", location: "Garbsen" },
   { name: "LKW Führerschein Hannover", href: "/fuehrerschein/c-ce", location: "Hannover" },
-  { name: "Busfahrer Ausbildung Bremen", href: "/fuehrerschein/d-de", location: "Bremen" },
+  { name: "Bus Führerschein Hannover", href: "/fuehrerschein/d-de", location: "Hannover" },
   { name: "BKF Weiterbildung Hannover", href: "/fuehrerschein/bkf-weiterbildung", location: "Hannover" },
+  { name: "Fahrlehrer werden Garbsen", href: "/standort/garbsen", location: "Garbsen" },
   { name: "Berufskraftfahrer Ausbildung Niedersachsen", href: "/fuehrerschein/c-ce", location: "Region" },
   { name: "BKF Module Niedersachsen", href: "/fuehrerschein/bkf-weiterbildung", location: "Region" },
+  { name: "Fahrlehrer werden Bremen", href: "/standort/bremen", location: "Bremen" },
+  { name: "Busfahrer Ausbildung Bremen", href: "/fuehrerschein/d-de", location: "Bremen" },
   { name: "LKW Führerschein Bremen", href: "/fuehrerschein/c-ce", location: "Bremen" },
-  { name: "Bus Führerschein Hannover", href: "/fuehrerschein/d-de", location: "Hannover" },
 ];
 
 const legal = [
