@@ -17,7 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 import { generateBreadcrumbData, SITE_URL } from "@/components/seo/StructuredData";
-import fahrlehrerHero from "@/assets/fahrlehrer-hero.jpg";
+import fahrlehrerHero from "@/assets/fahrlehrer-hero.webp";
 import fahrlehrerSlide from "@/assets/fahrlehrer-slide.png";
 import tqcertLogo from "@/assets/tqcert-logo.webp";
 import agenturLogo from "@/assets/agentur-fuer-arbeit-logo.png";
