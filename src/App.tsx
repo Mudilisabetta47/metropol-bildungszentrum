@@ -13,6 +13,7 @@ import { CookieSettingsButton } from "@/components/CookieSettingsButton";
 import Index from "./pages/Index";
 
 // Lazy loaded pages
+const FahrlehrerPage = lazy(() => import("./pages/FahrlehrerPage"));
 const LicenseClassPage = lazy(() => import("./pages/LicenseClassPage"));
 const LocationPage = lazy(() => import("./pages/LocationPage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
@@ -74,6 +75,7 @@ const App = () => (
                 <Route path="/kontakt" element={<ContactPage />} />
                 <Route path="/impressum" element={<ImpressumPage />} />
                 <Route path="/datenschutz" element={<DatenschutzPage />} />
+                <Route path="/fahrlehrer-ausbildung" element={<FahrlehrerPage />} />
                 <Route path="/fuehrerschein/:classType" element={<LicenseClassPage />} />
                 <Route path="/standort/:locationSlug" element={<LocationPage />} />
 
