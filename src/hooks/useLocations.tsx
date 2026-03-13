@@ -22,11 +22,15 @@ export function useLocations() {
       const { data, error } = await supabase
         .from("locations")
         .select("*")
-        .eq("is_active", true)
-        .order("name");
+        .eq("is_active", true);
 
       if (error) throw error;
-      return (data || []) as Location[];
+      
+      // Custom sort order: Hannover, Garbsen, Bremen
+      const sortOrder: Record<string, number> = { hannover: 0, garbsen: 1, bremen: 2 };
+      return ((data || []) as Location[]).sort(
+        (a, b) => (sortOrder[a.slug] ?? 99) - (sortOrder[b.slug] ?? 99)
+      );
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
   });

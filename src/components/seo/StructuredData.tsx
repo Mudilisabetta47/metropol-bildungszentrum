@@ -73,22 +73,22 @@ const locationsData = [
   {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    "@id": `${SITE_URL}/#location-bremen`,
-    name: "METROPOL Bildungszentrum Bremen",
-    description: "Fahrlehrer-Ausbildung, Bus-Führerschein und BKF-Weiterbildung in Bremen",
-    parentOrganization: { "@id": `${SITE_URL}/#organization` },
-    address: { "@type": "PostalAddress", streetAddress: "Bahnhofsplatz 41", addressLocality: "Bremen", postalCode: "28195", addressCountry: "DE" },
-    url: `${SITE_URL}/standort/bremen`
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
     "@id": `${SITE_URL}/#location-garbsen`,
     name: "METROPOL Bildungszentrum Garbsen",
     description: "Fahrlehrer-Ausbildung und Berufskraftfahrer-Ausbildung in Garbsen",
     parentOrganization: { "@id": `${SITE_URL}/#organization` },
     address: { "@type": "PostalAddress", streetAddress: "Planetenring 25-27", addressLocality: "Garbsen", postalCode: "30823", addressCountry: "DE" },
     url: `${SITE_URL}/standort/garbsen`
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": `${SITE_URL}/#location-bremen`,
+    name: "METROPOL Bildungszentrum Bremen",
+    description: "Fahrlehrer-Ausbildung, Bus-Führerschein und BKF-Weiterbildung in Bremen",
+    parentOrganization: { "@id": `${SITE_URL}/#organization` },
+    address: { "@type": "PostalAddress", streetAddress: "Bahnhofsplatz 41", addressLocality: "Bremen", postalCode: "28195", addressCountry: "DE" },
+    url: `${SITE_URL}/standort/bremen`
   }
 ];
 
