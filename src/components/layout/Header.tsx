@@ -13,7 +13,7 @@ const licenseClasses = [
   { name: "Führerschein C/CE", href: "/fuehrerschein/c-ce", description: "LKW-Führerschein" },
   { name: "Führerschein C1/C1E", href: "/fuehrerschein/c1-c1e", description: "LKW bis 7,5t" },
   { name: "Führerschein D/DE", href: "/fuehrerschein/d-de", description: "Bus-Führerschein" },
-  { name: "Fahrlehrer-Ausbildung", href: "/fuehrerschein/fahrlehrer", description: "Werden Sie Fahrlehrer" },
+  { name: "Fahrlehrer-Ausbildung", href: "/fahrlehrer-ausbildung", description: "Werden Sie Fahrlehrer" },
   { name: "BKF-Weiterbildung", href: "/fuehrerschein/bkf-weiterbildung", description: "Module 1-5" },
   { name: "Auslieferungsfahrer", href: "/fuehrerschein/auslieferungsfahrer", description: "Klasse B" },
   { name: "Citylogistiker", href: "/fuehrerschein/citylogistiker", description: "Klasse B/BE" },
