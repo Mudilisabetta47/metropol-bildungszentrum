@@ -27,6 +27,13 @@
     <priority>0.3</priority>
   </url>
 
+  <!-- Fahrlehrer-Ausbildung Landing Page -->
+  <url>
+    <loc>https://metropol-bz.de/fahrlehrer-ausbildung</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
   <!-- Standorte -->
   <url>
     <loc>https://metropol-bz.de/standort/hannover</loc>
