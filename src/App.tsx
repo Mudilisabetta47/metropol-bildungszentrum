@@ -75,6 +75,7 @@ const App = () => (
                 <Route path="/kontakt" element={<ContactPage />} />
                 <Route path="/impressum" element={<ImpressumPage />} />
                 <Route path="/datenschutz" element={<DatenschutzPage />} />
+                <Route path="/fahrlehrer-ausbildung" element={<FahrlehrerPage />} />
                 <Route path="/fuehrerschein/:classType" element={<LicenseClassPage />} />
                 <Route path="/standort/:locationSlug" element={<LocationPage />} />
 

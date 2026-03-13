@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
-  ArrowRight, Phone, CheckCircle, Clock, MapPin, Euro, Award,
+  ArrowRight, Phone, CheckCircle, MapPin, Euro, Award,
   Users, GraduationCap, BookOpen, Car, Calendar, Shield, Star,
-  FileText, HelpCircle, Loader2
+  HelpCircle
 } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
