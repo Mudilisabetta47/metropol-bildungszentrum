@@ -17,7 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 import { generateBreadcrumbData, SITE_URL } from "@/components/seo/StructuredData";
-import fahrlehrerHero from "@/assets/fahrlehrer-hero.jpg";
+import fahrlehrerHero from "@/assets/fahrlehrer-hero.webp";
 import fahrlehrerSlide from "@/assets/fahrlehrer-slide.png";
 import tqcertLogo from "@/assets/tqcert-logo.webp";
 import agenturLogo from "@/assets/agentur-fuer-arbeit-logo.png";
@@ -254,21 +254,21 @@ export default function FahrlehrerPage() {
       </section>
 
       {/* ── TRUST BAR ── */}
-      <section className="bg-primary py-4">
-        <div className="section-container flex flex-wrap items-center justify-center gap-8 text-primary-foreground">
+      <section className="bg-secondary border-y border-border py-5">
+        <div className="section-container flex flex-wrap items-center justify-center gap-8 text-foreground">
           <div className="flex items-center gap-2 text-sm font-medium">
-            <Star className="h-4 w-4 fill-yellow-300 text-yellow-300" />
+            <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
             4.8 Google Bewertung
           </div>
-          <div className="hidden sm:block w-px h-6 bg-primary-foreground/30" />
+          <div className="hidden sm:block w-px h-6 bg-border" />
           <div className="flex items-center gap-3">
-            <img src={tqcertLogo} alt="TQCert zertifiziert" className="h-8 brightness-0 invert opacity-80" />
-            <span className="text-sm">AZAV-zertifiziert</span>
+            <img src={tqcertLogo} alt="TQCert zertifiziert" className="h-10" />
+            <span className="text-sm font-medium">AZAV-zertifiziert</span>
           </div>
-          <div className="hidden sm:block w-px h-6 bg-primary-foreground/30" />
+          <div className="hidden sm:block w-px h-6 bg-border" />
           <div className="flex items-center gap-3">
-            <img src={agenturLogo} alt="Agentur für Arbeit" className="h-8 brightness-0 invert opacity-80" />
-            <span className="text-sm">Förderfähig</span>
+            <img src={agenturLogo} alt="Agentur für Arbeit" className="h-10" />
+            <span className="text-sm font-medium">Förderfähig</span>
           </div>
         </div>
       </section>
