@@ -7,7 +7,7 @@ const courses = [
   { name: "Berufskraftfahrer C/CE", href: "/fuehrerschein/c-ce" },
   { name: "Führerschein C1/C1E", href: "/fuehrerschein/c1-c1e" },
   { name: "Busführerschein D/DE", href: "/fuehrerschein/d-de" },
-  { name: "Fahrlehrer*innen-Ausbildung", href: "/fuehrerschein/fahrlehrer" },
+  { name: "Fahrlehrer*innen-Ausbildung", href: "/fahrlehrer-ausbildung" },
   { name: "BKF-Weiterbildung Module 1-5", href: "/fuehrerschein/bkf-weiterbildung" },
   { name: "Auslieferungsfahrer", href: "/fuehrerschein/auslieferungsfahrer" },
   { name: "Citylogistiker", href: "/fuehrerschein/citylogistiker" },
