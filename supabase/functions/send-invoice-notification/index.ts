@@ -129,7 +129,7 @@ const handler = async (req: Request): Promise<Response> => {
               <h1 style="color: #059669; margin: 0; font-size: 24px;">${companyName}</h1>
             </div>
             
-            <h2 style="color: #1f2937; margin-top: 0;">Hallo ${invoice.recipient_name}!</h2>
+            <h2 style="color: #1f2937; margin-top: 0;">Hallo ${escapeHtml(invoice.recipient_name)}!</h2>
             
             <p>Wir haben eine neue Rechnung für Sie erstellt:</p>
             

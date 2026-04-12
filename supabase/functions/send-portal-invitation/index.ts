@@ -121,7 +121,7 @@ const handler = async (req: Request): Promise<Response> => {
             <h1 style="color: #059669; margin: 0;">${companyName}</h1>
           </div>
           
-          <h2 style="color: #1f2937;">Hallo ${participant.first_name}!</h2>
+          <h2 style="color: #1f2937;">Hallo ${escapeHtml(participant.first_name)}!</h2>
           
           <p>Sie wurden zum Teilnehmer-Portal eingeladen. Dort können Sie:</p>
           

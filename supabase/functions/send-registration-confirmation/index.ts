@@ -79,17 +79,17 @@ const handler = async (req: Request): Promise<Response> => {
                 Vielen Dank für Ihre Anmeldung!
               </h2>
               <p style="color: #555555; line-height: 1.6; margin: 0 0 20px 0;">
-                Hallo ${firstName} ${lastName},
+                Hallo ${escapeHtml(firstName)} ${escapeHtml(lastName)},
               </p>
               <p style="color: #555555; line-height: 1.6; margin: 0 0 30px 0;">
                 wir freuen uns, Ihre Anmeldung für den folgenden Kurs bestätigen zu können:
               </p>
               <div style="background-color: #f8f9fa; border-radius: 8px; padding: 25px; margin-bottom: 30px; border-left: 4px solid #00CC28;">
                 <p style="margin: 0 0 12px 0; color: #333333;">
-                  <strong>Kurs:</strong> ${courseName}
+                  <strong>Kurs:</strong> ${escapeHtml(courseName)}
                 </p>
                 <p style="margin: 0 0 12px 0; color: #333333;">
-                  <strong>Standort:</strong> ${locationName || "Wird bekannt gegeben"}
+                  <strong>Standort:</strong> ${escapeHtml(locationName) || "Wird bekannt gegeben"}
                 </p>
                 <p style="margin: 0; color: #333333;">
                   <strong>Startdatum:</strong> ${formattedDate}
@@ -132,7 +132,7 @@ const handler = async (req: Request): Promise<Response> => {
       body: JSON.stringify({
         from: "Metropol Bildungszentrum <info@metropol-bz.de>",
         to: [email],
-        subject: `Anmeldebestätigung: ${courseName}`,
+        subject: `Anmeldebestätigung: ${escapeHtml(courseName)}`,
         html: emailHtml,
       }),
     });
