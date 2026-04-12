@@ -161,9 +161,9 @@ function generateEmailHTML(invoice: Invoice, settings: Record<string, string>, c
     <div>${settings.company_address || ""} · ${settings.company_zip_city || ""}</div>
   </div>
 
-  <p>Sehr geehrte(r) ${invoice.recipient_name},</p>
+  <p>Sehr geehrte(r) ${escapeHtml(invoice.recipient_name)},</p>
 
-  ${customMessage ? `<div class="message">${customMessage}</div>` : `<p>anbei erhalten Sie Ihre Rechnung Nr. <strong>${invoice.invoice_number}</strong>.</p>`}
+  ${customMessage ? `<div class="message">${escapeHtml(customMessage)}</div>` : `<p>anbei erhalten Sie Ihre Rechnung Nr. <strong>${escapeHtml(invoice.invoice_number)}</strong>.</p>`}
 
   <div class="invoice-details">
     <table style="width: 100%;">
@@ -201,8 +201,8 @@ function generateEmailHTML(invoice: Invoice, settings: Record<string, string>, c
     <tbody>
       ${invoice.invoice_items.map(item => `
       <tr>
-        <td>${item.description}</td>
-        <td style="text-align: right;">${item.quantity} ${item.unit}</td>
+        <td>${escapeHtml(item.description)}</td>
+        <td style="text-align: right;">${item.quantity} ${escapeHtml(item.unit)}</td>
         <td style="text-align: right;">${formatCurrency(item.unit_price)}</td>
         <td style="text-align: right;">${formatCurrency(item.gross_amount)}</td>
       </tr>
@@ -237,7 +237,7 @@ function generateEmailHTML(invoice: Invoice, settings: Record<string, string>, c
     </p>
   </div>
 
-  ${invoice.notes ? `<p><em>Hinweis: ${invoice.notes}</em></p>` : ""}
+  ${invoice.notes ? `<p><em>Hinweis: ${escapeHtml(invoice.notes)}</em></p>` : ""}
 
   <p>Bei Fragen stehen wir Ihnen gerne zur Verfügung.</p>
 
