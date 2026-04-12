@@ -26,8 +26,6 @@ interface Invitation {
   id: string;
   email: string;
   role: string;
-  expires_at: string;
-  accepted_at: string | null;
 }
 
 const roleLabels: Record<string, string> = {
@@ -65,28 +63,16 @@ export default function InvitePage() {
 
   const validateToken = async () => {
     try {
-      const { data, error } = await supabase
-        .from("staff_invitations")
-        .select("*")
-        .eq("token", token)
-        .single();
+      const { data, error: fnError } = await supabase.functions.invoke("validate-staff-invitation", {
+        body: { token },
+      });
 
-      if (error || !data) {
-        setError("Ungültiger Einladungslink");
+      if (fnError || !data?.valid) {
+        setError(data?.error || "Ungültiger Einladungslink");
         return;
       }
 
-      if (data.accepted_at) {
-        setError("Diese Einladung wurde bereits verwendet");
-        return;
-      }
-
-      if (new Date(data.expires_at) < new Date()) {
-        setError("Diese Einladung ist abgelaufen");
-        return;
-      }
-
-      setInvitation(data);
+      setInvitation(data.invitation);
     } catch (err) {
       setError("Fehler beim Validieren der Einladung");
     } finally {
@@ -99,48 +85,23 @@ export default function InvitePage() {
 
     setIsSubmitting(true);
     try {
-      // Create the user account
-      const { data: authData, error: signUpError } = await supabase.auth.signUp({
-        email: invitation.email,
-        password: data.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/admin`,
-        },
+      const { data: result, error: fnError } = await supabase.functions.invoke("accept-staff-invitation", {
+        body: { token, password: data.password },
       });
 
-      if (signUpError) throw signUpError;
-
-      if (authData.user) {
-        // Add the user role
-        const { error: roleError } = await supabase
-          .from("user_roles")
-          .insert([{
-            user_id: authData.user.id,
-            role: invitation.role as "admin" | "employee" | "instructor" | "super_admin" | "support" | "user",
-          }]);
-
-        if (roleError) {
-          console.error("Role assignment error:", roleError);
-          // Continue anyway - role can be assigned later
-        }
-
-        // Mark invitation as accepted
-        await supabase
-          .from("staff_invitations")
-          .update({ accepted_at: new Date().toISOString() })
-          .eq("id", invitation.id);
-
-        setSuccess(true);
-        toast({
-          title: "Konto erstellt!",
-          description: "Bitte überprüfen Sie Ihre E-Mails zur Bestätigung.",
-        });
-
-        // Redirect after a short delay
-        setTimeout(() => {
-          navigate("/auth");
-        }, 3000);
+      if (fnError || !result?.success) {
+        throw new Error(result?.error || "Registrierung fehlgeschlagen");
       }
+
+      setSuccess(true);
+      toast({
+        title: "Konto erstellt!",
+        description: "Sie können sich jetzt anmelden.",
+      });
+
+      setTimeout(() => {
+        navigate("/auth");
+      }, 3000);
     } catch (err: unknown) {
       console.error("Registration error:", err);
       const errorMessage = err instanceof Error ? err.message : "Registrierung fehlgeschlagen";
@@ -190,7 +151,6 @@ export default function InvitePage() {
               <CheckCircle className="h-16 w-16 mx-auto text-green-500 mb-4" />
               <h2 className="text-xl font-bold mb-2">Konto erstellt!</h2>
               <p className="text-muted-foreground mb-6">
-                Bitte überprüfen Sie Ihre E-Mails zur Bestätigung Ihres Kontos.
                 Sie werden in Kürze zur Anmeldeseite weitergeleitet.
               </p>
               <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />
