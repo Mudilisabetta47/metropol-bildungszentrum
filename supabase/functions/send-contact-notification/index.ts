@@ -2,6 +2,12 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
+function escapeHtml(text: string | null | undefined): string {
+  if (!text) return "";
+  const map: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+  return text.replace(/[&<>"']/g, m => map[m]);
+}
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -77,17 +83,17 @@ const handler = async (req: Request): Promise<Response> => {
                 Vielen Dank für Ihre Anfrage!
               </h2>
               <p style="color: #555555; line-height: 1.6; margin: 0 0 20px 0;">
-                Hallo ${name},
+                Hallo ${escapeHtml(name)},
               </p>
               <p style="color: #555555; line-height: 1.6; margin: 0 0 30px 0;">
                 wir haben Ihre Anfrage erhalten und werden uns schnellstmöglich bei Ihnen melden.
               </p>
               <div style="background-color: #f8f9fa; border-radius: 8px; padding: 25px; margin-bottom: 30px; border-left: 4px solid #00CC28;">
                 <p style="margin: 0 0 12px 0; color: #333333;">
-                  <strong>Ihr Interesse:</strong> ${course}
+                  <strong>Ihr Interesse:</strong> ${escapeHtml(course)}
                 </p>
-                ${location ? `<p style="margin: 0 0 12px 0; color: #333333;"><strong>Standort:</strong> ${location}</p>` : ""}
-                ${message ? `<p style="margin: 0; color: #333333;"><strong>Ihre Nachricht:</strong> ${message}</p>` : ""}
+                ${location ? `<p style="margin: 0 0 12px 0; color: #333333;"><strong>Standort:</strong> ${escapeHtml(location)}</p>` : ""}
+                ${message ? `<p style="margin: 0; color: #333333;"><strong>Ihre Nachricht:</strong> ${escapeHtml(message)}</p>` : ""}
               </div>
               <p style="color: #555555; line-height: 1.6; margin: 0 0 20px 0;">
                 <strong>Was passiert als nächstes?</strong><br>
@@ -140,27 +146,27 @@ const handler = async (req: Request): Promise<Response> => {
               <div style="background-color: #e8f5e9; border-radius: 8px; padding: 25px; margin-bottom: 20px; border-left: 4px solid #00CC28;">
                 <h3 style="margin: 0 0 15px 0; color: #00CC28;">Kursinteresse</h3>
                 <p style="margin: 0; color: #333333; font-size: 18px; font-weight: bold;">
-                  ${course}
+                   ${escapeHtml(course)}
                 </p>
-                ${location ? `<p style="margin: 10px 0 0 0; color: #555555;">Standort: ${location}</p>` : ""}
+                ${location ? `<p style="margin: 10px 0 0 0; color: #555555;">Standort: ${escapeHtml(location)}</p>` : ""}
               </div>
 
               <div style="background-color: #f8f9fa; border-radius: 8px; padding: 25px; margin-bottom: 20px;">
                 <h3 style="margin: 0 0 15px 0; color: #333333;">Kontaktdaten</h3>
                 <p style="margin: 0 0 8px 0; color: #333333;">
-                  <strong>Name:</strong> ${name}
+                  <strong>Name:</strong> ${escapeHtml(name)}
                 </p>
                 <p style="margin: 0 0 8px 0; color: #333333;">
-                  <strong>E-Mail:</strong> <a href="mailto:${email}" style="color: #00CC28;">${email}</a>
-                </p>
-                ${phone ? `<p style="margin: 0; color: #333333;"><strong>Telefon:</strong> <a href="tel:${phone}" style="color: #00CC28;">${phone}</a></p>` : '<p style="margin: 0; color: #888888;"><em>Keine Telefonnummer angegeben</em></p>'}
-              </div>
+                   <strong>E-Mail:</strong> <a href="mailto:${escapeHtml(email)}" style="color: #00CC28;">${escapeHtml(email)}</a>
+                 </p>
+                ${phone ? `<p style="margin: 0; color: #333333;"><strong>Telefon:</strong> <a href="tel:${escapeHtml(phone)}" style="color: #00CC28;">${escapeHtml(phone)}</a></p>` : '<p style="margin: 0; color: #888888;"><em>Keine Telefonnummer angegeben</em></p>'}
+               </div>
 
               ${message ? `
               <div style="background-color: #fff8e1; border-radius: 8px; padding: 25px; margin-bottom: 20px; border-left: 4px solid #ffc107;">
                 <h3 style="margin: 0 0 15px 0; color: #333333;">Nachricht</h3>
-                <p style="margin: 0; color: #555555; white-space: pre-wrap;">${message}</p>
-              </div>
+                <p style="margin: 0; color: #555555; white-space: pre-wrap;">${escapeHtml(message)}</p>
+               </div>
               ` : ""}
 
               <div style="background-color: #e3f2fd; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
@@ -229,8 +235,8 @@ const handler = async (req: Request): Promise<Response> => {
       body: JSON.stringify({
         from: "Metropol Website <info@metropol-bz.de>",
         to: adminEmails,
-        subject: `🔔 Neue Anfrage: ${course} von ${name}`,
-        html: adminEmailHtml,
+         subject: `🔔 Neue Anfrage: ${escapeHtml(course)} von ${escapeHtml(name)}`,
+         html: adminEmailHtml,
         reply_to: email,
         headers: {
           "X-Priority": "1",

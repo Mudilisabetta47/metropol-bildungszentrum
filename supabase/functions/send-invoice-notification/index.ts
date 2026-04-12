@@ -2,6 +2,12 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.93.3";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 
+function escapeHtml(text: string | null | undefined): string {
+  if (!text) return "";
+  const map: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+  return text.replace(/[&<>"']/g, m => map[m]);
+}
+
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
 const corsHeaders = {
@@ -123,7 +129,7 @@ const handler = async (req: Request): Promise<Response> => {
               <h1 style="color: #059669; margin: 0; font-size: 24px;">${companyName}</h1>
             </div>
             
-            <h2 style="color: #1f2937; margin-top: 0;">Hallo ${invoice.recipient_name}!</h2>
+            <h2 style="color: #1f2937; margin-top: 0;">Hallo ${escapeHtml(invoice.recipient_name)}!</h2>
             
             <p>Wir haben eine neue Rechnung für Sie erstellt:</p>
             
