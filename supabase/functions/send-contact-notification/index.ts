@@ -90,10 +90,10 @@ const handler = async (req: Request): Promise<Response> => {
               </p>
               <div style="background-color: #f8f9fa; border-radius: 8px; padding: 25px; margin-bottom: 30px; border-left: 4px solid #00CC28;">
                 <p style="margin: 0 0 12px 0; color: #333333;">
-                  <strong>Ihr Interesse:</strong> ${course}
+                  <strong>Ihr Interesse:</strong> ${escapeHtml(course)}
                 </p>
-                ${location ? `<p style="margin: 0 0 12px 0; color: #333333;"><strong>Standort:</strong> ${location}</p>` : ""}
-                ${message ? `<p style="margin: 0; color: #333333;"><strong>Ihre Nachricht:</strong> ${message}</p>` : ""}
+                ${location ? `<p style="margin: 0 0 12px 0; color: #333333;"><strong>Standort:</strong> ${escapeHtml(location)}</p>` : ""}
+                ${message ? `<p style="margin: 0; color: #333333;"><strong>Ihre Nachricht:</strong> ${escapeHtml(message)}</p>` : ""}
               </div>
               <p style="color: #555555; line-height: 1.6; margin: 0 0 20px 0;">
                 <strong>Was passiert als nächstes?</strong><br>
