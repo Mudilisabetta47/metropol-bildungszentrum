@@ -39,6 +39,7 @@ const Participants = lazy(() => import("./pages/admin/Participants"));
 const Payments = lazy(() => import("./pages/admin/Payments"));
 const Invoices = lazy(() => import("./pages/admin/Invoices"));
 const Certificates = lazy(() => import("./pages/admin/Certificates"));
+const SeoMonitoring = lazy(() => import("./pages/admin/SeoMonitoring"));
 
 // Portal (lazy)
 const PortalLogin = lazy(() => import("./pages/portal/PortalLogin"));
