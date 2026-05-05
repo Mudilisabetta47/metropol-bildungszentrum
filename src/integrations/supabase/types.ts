@@ -1106,6 +1106,119 @@ export type Database = {
           },
         ]
       }
+      seo_crawl_results: {
+        Row: {
+          checked_at: string
+          content_length: number | null
+          error_message: string | null
+          id: string
+          redirected_to: string | null
+          response_time_ms: number | null
+          run_id: string
+          status_code: number | null
+          url: string
+        }
+        Insert: {
+          checked_at?: string
+          content_length?: number | null
+          error_message?: string | null
+          id?: string
+          redirected_to?: string | null
+          response_time_ms?: number | null
+          run_id: string
+          status_code?: number | null
+          url: string
+        }
+        Update: {
+          checked_at?: string
+          content_length?: number | null
+          error_message?: string | null
+          id?: string
+          redirected_to?: string | null
+          response_time_ms?: number | null
+          run_id?: string
+          status_code?: number | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seo_crawl_results_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "seo_crawl_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      seo_crawl_runs: {
+        Row: {
+          duration_ms: number | null
+          error_count: number
+          finished_at: string | null
+          id: string
+          notes: string | null
+          ok_count: number
+          redirect_count: number
+          source: string
+          started_at: string
+          total_urls: number
+        }
+        Insert: {
+          duration_ms?: number | null
+          error_count?: number
+          finished_at?: string | null
+          id?: string
+          notes?: string | null
+          ok_count?: number
+          redirect_count?: number
+          source?: string
+          started_at?: string
+          total_urls?: number
+        }
+        Update: {
+          duration_ms?: number | null
+          error_count?: number
+          finished_at?: string | null
+          id?: string
+          notes?: string | null
+          ok_count?: number
+          redirect_count?: number
+          source?: string
+          started_at?: string
+          total_urls?: number
+        }
+        Relationships: []
+      }
+      seo_sitemap_snapshots: {
+        Row: {
+          added_urls: Json
+          captured_at: string
+          content_hash: string
+          id: string
+          removed_urls: Json
+          url_count: number
+          urls: Json
+        }
+        Insert: {
+          added_urls?: Json
+          captured_at?: string
+          content_hash: string
+          id?: string
+          removed_urls?: Json
+          url_count?: number
+          urls?: Json
+        }
+        Update: {
+          added_urls?: Json
+          captured_at?: string
+          content_hash?: string
+          id?: string
+          removed_urls?: Json
+          url_count?: number
+          urls?: Json
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           category: string
