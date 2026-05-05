@@ -94,6 +94,7 @@ const App = () => (
                   <Route path="statistics" element={<Statistics />} />
                   <Route path="locations" element={<Locations />} />
                   <Route path="team" element={<Team />} />
+                  <Route path="seo-monitoring" element={<SeoMonitoring />} />
                   <Route path="settings" element={<Settings />} />
                 </Route>
 
