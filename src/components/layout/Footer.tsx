@@ -3,6 +3,7 @@ import { Phone, Mail, Clock, Facebook, Instagram, Linkedin, Star } from "lucide-
 import logoMetropol from "@/assets/logo-metropol.png";
 import { useLocations } from "@/hooks/useLocations";
 import { useSiteSettings, formatPhoneLink } from "@/hooks/useSiteSettings";
+import { SeoKeywordCloud } from "@/components/seo/SeoKeywordCloud";
 const courses = [
   { name: "Berufskraftfahrer C/CE", href: "/fuehrerschein/c-ce" },
   { name: "Führerschein C1/C1E", href: "/fuehrerschein/c1-c1e" },
@@ -37,6 +38,7 @@ export function Footer() {
   const { data: settings } = useSiteSettings();
   return (
     <footer className="bg-primary text-primary-foreground">
+      <SeoKeywordCloud />
       {/* Main footer content */}
       <div className="section-container py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
