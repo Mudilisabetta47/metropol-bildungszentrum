@@ -21,6 +21,7 @@ import {
   Award,
   ChevronRight,
   X,
+  Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -44,6 +45,7 @@ const navigation = [
   { name: "Statistiken", href: "/admin/statistics", icon: BarChart3 },
   { name: "Standorte", href: "/admin/locations", icon: MapPin },
   { name: "Team", href: "/admin/team", icon: Users },
+  { name: "SEO Monitoring", href: "/admin/seo-monitoring", icon: Search },
   { name: "Einstellungen", href: "/admin/settings", icon: Settings },
 ];
 
