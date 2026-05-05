@@ -33,6 +33,7 @@ interface CrawlResult {
   error_message: string | null;
   redirected_to: string | null;
   checked_at: string;
+  content_length: number | null;
 }
 
 interface SitemapSnapshot {
