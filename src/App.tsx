@@ -39,6 +39,7 @@ const Participants = lazy(() => import("./pages/admin/Participants"));
 const Payments = lazy(() => import("./pages/admin/Payments"));
 const Invoices = lazy(() => import("./pages/admin/Invoices"));
 const Certificates = lazy(() => import("./pages/admin/Certificates"));
+const SeoMonitoring = lazy(() => import("./pages/admin/SeoMonitoring"));
 
 // Portal (lazy)
 const PortalLogin = lazy(() => import("./pages/portal/PortalLogin"));
@@ -93,6 +94,7 @@ const App = () => (
                   <Route path="statistics" element={<Statistics />} />
                   <Route path="locations" element={<Locations />} />
                   <Route path="team" element={<Team />} />
+                  <Route path="seo-monitoring" element={<SeoMonitoring />} />
                   <Route path="settings" element={<Settings />} />
                 </Route>
 
