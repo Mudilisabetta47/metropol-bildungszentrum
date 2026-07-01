@@ -43,6 +43,11 @@ export async function generateInvoicePDF(
   const margin = 25;
   const rightCol = 130;
 
+  const vatExempt = (settings.vat_exemption_active || "true") === "true";
+  const vatNote =
+    settings.vat_exemption_note ||
+    "Umsatzsteuerbefreit gemäß §4 Nr. 21 UStG (Bildungsleistung).";
+
   // Helper functions
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("de-DE", {
@@ -257,23 +262,33 @@ export async function generateInvoicePDF(
   const valueX = margin + 55;
 
   doc.setFont("helvetica", "normal");
-  doc.text("Nettobetrag:", labelX, y);
-  doc.text(formatCurrency(invoice.net_amount), valueX, y);
-
-  y += 6;
-  doc.text(`zzgl. ${invoice.vat_rate}% MwSt.:`, labelX, y);
-  doc.text(formatCurrency(invoice.vat_amount), valueX, y);
-
-  y += 2;
-  doc.setDrawColor(0);
-  doc.setLineWidth(0.5);
-  doc.line(labelX, y + 2, valueX + 30, y + 2);
-
-  y += 7;
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
-  doc.text("Gesamtbetrag:", labelX, y);
-  doc.text(formatCurrency(invoice.gross_amount), valueX, y);
+  if (vatExempt) {
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text("Gesamtbetrag:", labelX, y);
+    doc.text(formatCurrency(invoice.net_amount), valueX, y);
+    y += 6;
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(8);
+    doc.setTextColor(90);
+    doc.text(vatNote, labelX, y, { maxWidth: pageWidth - 2 * margin });
+    doc.setTextColor(0);
+  } else {
+    doc.text("Nettobetrag:", labelX, y);
+    doc.text(formatCurrency(invoice.net_amount), valueX, y);
+    y += 6;
+    doc.text(`zzgl. ${invoice.vat_rate}% MwSt.:`, labelX, y);
+    doc.text(formatCurrency(invoice.vat_amount), valueX, y);
+    y += 2;
+    doc.setDrawColor(0);
+    doc.setLineWidth(0.5);
+    doc.line(labelX, y + 2, valueX + 30, y + 2);
+    y += 7;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text("Gesamtbetrag:", labelX, y);
+    doc.text(formatCurrency(invoice.gross_amount), valueX, y);
+  }
 
   // === PAYMENT INSTRUCTIONS (bold, like reference) ===
   y += 14;
@@ -281,7 +296,8 @@ export async function generateInvoicePDF(
   doc.setFont("helvetica", "bold");
   doc.setTextColor(0);
 
-  const paymentLine = `Bitte begleichen Sie den Gesamtbetrag von ${formatCurrency(invoice.gross_amount)}`;
+  const totalDue = vatExempt ? invoice.net_amount : invoice.gross_amount;
+  const paymentLine = `Bitte begleichen Sie den Gesamtbetrag von ${formatCurrency(totalDue)}`;
   const dueLine = invoice.due_date
     ? ` bis zum ${formatDate(invoice.due_date)}`
     : "";
@@ -368,7 +384,9 @@ export async function generateInvoicePDF(
   // Column 4: Tax
   doc.text(`Steuer-Nr.: ${settings.company_tax_id || "-"}`, col4X, footerY);
   doc.text(settings.company_register || "", col4X, footerY + 3.5);
-  if (settings.company_vat_id) {
+  if (vatExempt) {
+    doc.text("USt-befreit §4 Nr.21 UStG", col4X, footerY + 7);
+  } else if (settings.company_vat_id) {
     doc.text(`USt-IdNr.: ${settings.company_vat_id}`, col4X, footerY + 7);
   }
 
