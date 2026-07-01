@@ -1023,6 +1023,258 @@ export type Database = {
         }
         Relationships: []
       }
+      quote_history: {
+        Row: {
+          action: string
+          change_reason: string | null
+          id: string
+          new_data: Json | null
+          old_data: Json | null
+          performed_at: string
+          performed_by: string | null
+          quote_id: string
+        }
+        Insert: {
+          action: string
+          change_reason?: string | null
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+          performed_at?: string
+          performed_by?: string | null
+          quote_id: string
+        }
+        Update: {
+          action?: string
+          change_reason?: string | null
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+          performed_at?: string
+          performed_by?: string | null
+          quote_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_history_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "active_quotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_history_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quote_items: {
+        Row: {
+          catalog_item_id: string | null
+          course_id: string | null
+          created_at: string
+          description: string
+          gross_amount: number
+          id: string
+          net_amount: number
+          position: number
+          quantity: number
+          quote_id: string
+          unit: string | null
+          unit_price: number
+          vat_amount: number
+          vat_rate: number
+        }
+        Insert: {
+          catalog_item_id?: string | null
+          course_id?: string | null
+          created_at?: string
+          description: string
+          gross_amount: number
+          id?: string
+          net_amount: number
+          position: number
+          quantity?: number
+          quote_id: string
+          unit?: string | null
+          unit_price: number
+          vat_amount?: number
+          vat_rate?: number
+        }
+        Update: {
+          catalog_item_id?: string | null
+          course_id?: string | null
+          created_at?: string
+          description?: string
+          gross_amount?: number
+          id?: string
+          net_amount?: number
+          position?: number
+          quantity?: number
+          quote_id?: string
+          unit?: string | null
+          unit_price?: number
+          vat_amount?: number
+          vat_rate?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_items_catalog_item_id_fkey"
+            columns: ["catalog_item_id"]
+            isOneToOne: false
+            referencedRelation: "service_catalog_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_items_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_items_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "active_quotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_items_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quotes: {
+        Row: {
+          converted_at: string | null
+          converted_to_invoice_id: string | null
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          deleted_by: string | null
+          gross_amount: number
+          id: string
+          internal_notes: string | null
+          is_deleted: boolean
+          is_locked: boolean
+          net_amount: number
+          notes: string | null
+          participant_id: string | null
+          pdf_generated_at: string | null
+          pdf_url: string | null
+          quote_date: string
+          quote_number: string
+          recipient_address: string | null
+          recipient_email: string | null
+          recipient_name: string
+          recipient_zip_city: string | null
+          service_date: string | null
+          service_period_end: string | null
+          service_period_start: string | null
+          status: string
+          updated_at: string
+          valid_until: string | null
+          vat_amount: number
+          vat_rate: number
+          version: number
+        }
+        Insert: {
+          converted_at?: string | null
+          converted_to_invoice_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          gross_amount?: number
+          id?: string
+          internal_notes?: string | null
+          is_deleted?: boolean
+          is_locked?: boolean
+          net_amount?: number
+          notes?: string | null
+          participant_id?: string | null
+          pdf_generated_at?: string | null
+          pdf_url?: string | null
+          quote_date?: string
+          quote_number: string
+          recipient_address?: string | null
+          recipient_email?: string | null
+          recipient_name: string
+          recipient_zip_city?: string | null
+          service_date?: string | null
+          service_period_end?: string | null
+          service_period_start?: string | null
+          status?: string
+          updated_at?: string
+          valid_until?: string | null
+          vat_amount?: number
+          vat_rate?: number
+          version?: number
+        }
+        Update: {
+          converted_at?: string | null
+          converted_to_invoice_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          gross_amount?: number
+          id?: string
+          internal_notes?: string | null
+          is_deleted?: boolean
+          is_locked?: boolean
+          net_amount?: number
+          notes?: string | null
+          participant_id?: string | null
+          pdf_generated_at?: string | null
+          pdf_url?: string | null
+          quote_date?: string
+          quote_number?: string
+          recipient_address?: string | null
+          recipient_email?: string | null
+          recipient_name?: string
+          recipient_zip_city?: string | null
+          service_date?: string | null
+          service_period_end?: string | null
+          service_period_start?: string | null
+          status?: string
+          updated_at?: string
+          valid_until?: string | null
+          vat_amount?: number
+          vat_rate?: number
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotes_converted_to_invoice_id_fkey"
+            columns: ["converted_to_invoice_id"]
+            isOneToOne: false
+            referencedRelation: "active_invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_converted_to_invoice_id_fkey"
+            columns: ["converted_to_invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       registrations: {
         Row: {
           address: string | null
@@ -1218,6 +1470,83 @@ export type Database = {
           urls?: Json
         }
         Relationships: []
+      }
+      service_catalog_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      service_catalog_items: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          sort_order: number
+          unit: string
+          unit_price: number
+          updated_at: string
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          sort_order?: number
+          unit?: string
+          unit_price?: number
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          sort_order?: number
+          unit?: string
+          unit_price?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_catalog_items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "service_catalog_categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       site_settings: {
         Row: {
@@ -1469,6 +1798,130 @@ export type Database = {
           },
         ]
       }
+      active_quotes: {
+        Row: {
+          converted_at: string | null
+          converted_to_invoice_id: string | null
+          created_at: string | null
+          created_by: string | null
+          deleted_at: string | null
+          deleted_by: string | null
+          gross_amount: number | null
+          id: string | null
+          internal_notes: string | null
+          is_deleted: boolean | null
+          is_locked: boolean | null
+          net_amount: number | null
+          notes: string | null
+          participant_id: string | null
+          pdf_generated_at: string | null
+          pdf_url: string | null
+          quote_date: string | null
+          quote_number: string | null
+          recipient_address: string | null
+          recipient_email: string | null
+          recipient_name: string | null
+          recipient_zip_city: string | null
+          service_date: string | null
+          service_period_end: string | null
+          service_period_start: string | null
+          status: string | null
+          updated_at: string | null
+          valid_until: string | null
+          vat_amount: number | null
+          vat_rate: number | null
+          version: number | null
+        }
+        Insert: {
+          converted_at?: string | null
+          converted_to_invoice_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          gross_amount?: number | null
+          id?: string | null
+          internal_notes?: string | null
+          is_deleted?: boolean | null
+          is_locked?: boolean | null
+          net_amount?: number | null
+          notes?: string | null
+          participant_id?: string | null
+          pdf_generated_at?: string | null
+          pdf_url?: string | null
+          quote_date?: string | null
+          quote_number?: string | null
+          recipient_address?: string | null
+          recipient_email?: string | null
+          recipient_name?: string | null
+          recipient_zip_city?: string | null
+          service_date?: string | null
+          service_period_end?: string | null
+          service_period_start?: string | null
+          status?: string | null
+          updated_at?: string | null
+          valid_until?: string | null
+          vat_amount?: number | null
+          vat_rate?: number | null
+          version?: number | null
+        }
+        Update: {
+          converted_at?: string | null
+          converted_to_invoice_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          gross_amount?: number | null
+          id?: string | null
+          internal_notes?: string | null
+          is_deleted?: boolean | null
+          is_locked?: boolean | null
+          net_amount?: number | null
+          notes?: string | null
+          participant_id?: string | null
+          pdf_generated_at?: string | null
+          pdf_url?: string | null
+          quote_date?: string | null
+          quote_number?: string | null
+          recipient_address?: string | null
+          recipient_email?: string | null
+          recipient_name?: string | null
+          recipient_zip_city?: string | null
+          service_date?: string | null
+          service_period_end?: string | null
+          service_period_start?: string | null
+          status?: string | null
+          updated_at?: string | null
+          valid_until?: string | null
+          vat_amount?: number | null
+          vat_rate?: number | null
+          version?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotes_converted_to_invoice_id_fkey"
+            columns: ["converted_to_invoice_id"]
+            isOneToOne: false
+            referencedRelation: "active_invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_converted_to_invoice_id_fkey"
+            columns: ["converted_to_invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       datev_export: {
         Row: {
           Belegdatum: string | null
@@ -1515,6 +1968,7 @@ export type Database = {
     Functions: {
       generate_certificate_number: { Args: never; Returns: string }
       generate_invoice_number: { Args: never; Returns: string }
+      generate_quote_number: { Args: never; Returns: string }
       has_any_role: {
         Args: {
           _roles: Database["public"]["Enums"]["app_role"][]

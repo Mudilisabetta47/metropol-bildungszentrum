@@ -22,6 +22,8 @@ import {
   ChevronRight,
   X,
   Search,
+  FileSignature,
+  Package,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -39,6 +41,8 @@ const navigation = [
   { name: "Termine", href: "/admin/schedule", icon: Calendar },
   { name: "Anmeldungen", href: "/admin/registrations", icon: Users },
   { name: "Rechnungen", href: "/admin/invoices", icon: Receipt },
+  { name: "Kostenvoranschläge", href: "/admin/quotes", icon: FileSignature },
+  { name: "Leistungskatalog", href: "/admin/service-catalog", icon: Package },
   { name: "Zertifikate", href: "/admin/certificates", icon: Award },
   { name: "Zahlungen", href: "/admin/payments", icon: CreditCard },
   { name: "Kontaktanfragen", href: "/admin/contacts", icon: MessageSquare },

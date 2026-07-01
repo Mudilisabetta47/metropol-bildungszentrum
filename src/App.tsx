@@ -40,6 +40,8 @@ const Payments = lazy(() => import("./pages/admin/Payments"));
 const Invoices = lazy(() => import("./pages/admin/Invoices"));
 const Certificates = lazy(() => import("./pages/admin/Certificates"));
 const SeoMonitoring = lazy(() => import("./pages/admin/SeoMonitoring"));
+const Quotes = lazy(() => import("./pages/admin/Quotes"));
+const ServiceCatalog = lazy(() => import("./pages/admin/ServiceCatalog"));
 
 // Portal (lazy)
 const PortalLogin = lazy(() => import("./pages/portal/PortalLogin"));
@@ -88,6 +90,8 @@ const App = () => (
                   <Route path="schedule" element={<Schedule />} />
                   <Route path="registrations" element={<Registrations />} />
                   <Route path="invoices" element={<Invoices />} />
+                  <Route path="quotes" element={<Quotes />} />
+                  <Route path="service-catalog" element={<ServiceCatalog />} />
                   <Route path="certificates" element={<Certificates />} />
                   <Route path="payments" element={<Payments />} />
                   <Route path="contacts" element={<Contacts />} />
