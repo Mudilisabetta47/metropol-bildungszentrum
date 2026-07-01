@@ -262,6 +262,12 @@ export function InvoiceForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {vatExempt && (
+        <div className="p-3 rounded-lg border border-primary/30 bg-primary/5 text-sm flex items-start gap-2">
+          <Mail className="h-4 w-4 mt-0.5 text-primary shrink-0" />
+          <span>{vatNote}</span>
+        </div>
+      )}
       {/* Smart Participant Search */}
       <div className="space-y-3">
         <Label className="text-base font-semibold">Teilnehmer auswählen</Label>
