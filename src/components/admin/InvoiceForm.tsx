@@ -18,6 +18,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ParticipantSearch, type ParticipantSearchResult } from "./ParticipantSearch";
+import { ServiceItemPicker } from "./ServiceItemPicker";
 import { Plus, Trash2, Loader2, User, X, Mail, Send } from "lucide-react";
 import { format, addDays } from "date-fns";
 
@@ -71,9 +72,14 @@ export function InvoiceForm({
       quantity: 1,
       unit: "Stück",
       unit_price: 0,
-      vat_rate: parseInt(settings?.default_vat_rate || "19"),
+      vat_rate: parseInt(settings?.default_vat_rate ?? "0"),
     },
   ]);
+
+  const vatExempt = (settings?.vat_exemption_active || "true") === "true";
+  const vatNote =
+    settings?.vat_exemption_note ||
+    "Umsatzsteuerbefreit gemäß §4 Nr. 21 UStG (Bildungsleistung).";
 
   // Update due date when settings change
   useEffect(() => {
@@ -387,10 +393,27 @@ export function InvoiceForm({
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <Label>Rechnungspositionen</Label>
+        <div className="flex gap-2">
+          <ServiceItemPicker
+            onSelect={(it) =>
+              setItems((prev) => [
+                ...prev,
+                {
+                  id: crypto.randomUUID(),
+                  description: it.name + (it.description ? ` – ${it.description}` : ""),
+                  quantity: 1,
+                  unit: it.unit,
+                  unit_price: Number(it.unit_price),
+                  vat_rate: vatExempt ? 0 : parseInt(settings?.default_vat_rate ?? "0"),
+                },
+              ])
+            }
+          />
           <Button type="button" variant="outline" size="sm" onClick={addItem}>
             <Plus className="mr-1 h-4 w-4" />
             Position hinzufügen
           </Button>
+        </div>
         </div>
 
         {items.map((item) => (
