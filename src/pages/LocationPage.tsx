@@ -41,8 +41,8 @@ export default function LocationPage() {
   // Update document title and meta tags for SEO
   useEffect(() => {
     if (location) {
-      const metaTitle = `Fahrschule ${location.name} – LKW & Bus Führerschein | Metropol Bildungszentrum`;
-      const metaDescription = `LKW-Führerschein C/CE, Busführerschein D/DE und BKF-Weiterbildung in ${location.name}. AZAV-zertifiziert, 100% Förderung möglich. Jetzt Beratung anfragen!`;
+      const metaTitle = `Fahrschule ${location.name} (m/w/d) – LKW- & Busführerschein | Metropol Bildungszentrum`;
+      const metaDescription = `LKW-Führerschein C/CE, Busführerschein D/DE und BKF-Weiterbildung für Berufskraftfahrer (m/w/d) in ${location.name}. AZAV-zertifiziert, 100% Förderung durch Bildungsgutschein möglich. Jetzt Beratung anfragen!`;
       
       document.title = metaTitle;
       

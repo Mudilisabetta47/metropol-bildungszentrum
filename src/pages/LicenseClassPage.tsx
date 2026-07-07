@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowRight, Clock, MapPin, Calendar, CheckCircle, Phone, Euro, Award, Users, FileText, Loader2 } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -111,6 +111,51 @@ export default function LicenseClassPage() {
   const { data: allLocations = [] } = useLocations();
   const [selectedModuleInfo, setSelectedModuleInfo] = useState<string | null>(null);
   const { data: settings } = useSiteSettings();
+
+  // SEO: dynamic meta title & description including "(m/w/d)" for better job-search rankings
+  useEffect(() => {
+    if (!course) return;
+
+    const baseTitle = course.title.includes("(m/w/d)")
+      ? course.title
+      : `${course.title} (m/w/d)`;
+    const metaTitle = `${baseTitle} | Metropol Bildungszentrum`;
+
+    const shortDesc = (course.description || "").replace(/\s+/g, " ").trim();
+    const descBase = shortDesc
+      ? shortDesc
+      : `Professionelle Ausbildung "${course.title}" für Berufskraftfahrer (m/w/d) in Hannover, Garbsen und Bremen.`;
+    const metaDescription = `${descBase} AZAV-zertifiziert, 100% Förderung durch Bildungsgutschein möglich. Jetzt Beratung anfragen!`.slice(0, 300);
+
+    const previousTitle = document.title;
+    document.title = metaTitle;
+
+    let metaEl = document.querySelector('meta[name="description"]');
+    const previousDesc = metaEl?.getAttribute("content") ?? null;
+    if (!metaEl) {
+      metaEl = document.createElement("meta");
+      metaEl.setAttribute("name", "description");
+      document.head.appendChild(metaEl);
+    }
+    metaEl.setAttribute("content", metaDescription);
+
+    const setOg = (property: string, content: string) => {
+      let el = document.querySelector(`meta[property="${property}"]`);
+      if (!el) {
+        el = document.createElement("meta");
+        el.setAttribute("property", property);
+        document.head.appendChild(el);
+      }
+      el.setAttribute("content", content);
+    };
+    setOg("og:title", metaTitle);
+    setOg("og:description", metaDescription);
+
+    return () => {
+      document.title = previousTitle;
+      if (previousDesc !== null) metaEl?.setAttribute("content", previousDesc);
+    };
+  }, [course]);
 
   const handleModuleSelect = (moduleName: string, date: string) => {
     setSelectedModuleInfo(`${moduleName} – ${date}`);
