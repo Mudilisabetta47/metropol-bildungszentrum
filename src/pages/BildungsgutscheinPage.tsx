@@ -14,6 +14,10 @@ import {
 } from "@/components/ui/accordion";
 import { generateBreadcrumbData, SITE_URL } from "@/components/seo/StructuredData";
 import { bildungsgutscheinFaqs } from "@/data/bildungsgutschein";
+import trucksImg from "@/assets/trucks-metropol.jpg";
+import busImg from "@/assets/bus-metropol.jpg";
+import fleetImg from "@/assets/fleet-vehicles.jpg";
+import teamImg from "@/assets/fleet-team.webp";
 
 const PAGE_URL = `${SITE_URL}/bildungsgutschein`;
 
@@ -31,6 +35,8 @@ function BildungsgutscheinMeta() {
         "Mit dem Bildungsgutschein der Agentur für Arbeit oder vom Jobcenter zu 100 % geförderter Weiterbildung in Hannover, Garbsen und Bremen.",
       "og:type": "website",
       "og:url": PAGE_URL,
+      "og:image": `${SITE_URL}${trucksImg}`,
+      "twitter:card": "summary_large_image",
     };
 
     const created: HTMLElement[] = [];
