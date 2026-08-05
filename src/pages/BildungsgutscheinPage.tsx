@@ -176,7 +176,8 @@ export default function BildungsgutscheinPage() {
                 <li aria-current="page" className="text-foreground">Bildungsgutschein</li>
               </ol>
             </nav>
-            <div className="max-w-3xl">
+            <div className="grid lg:grid-cols-2 gap-10 items-center">
+            <div>
               <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-4">
                 <CreditCard className="h-4 w-4" />
                 AZAV-zertifiziert – 100 % Förderung möglich
@@ -202,6 +203,21 @@ export default function BildungsgutscheinPage() {
                   <a href="#bildungsgutschein-beantragen">Bildungsgutschein beantragen</a>
                 </Button>
               </div>
+            </div>
+            <figure className="relative rounded-2xl overflow-hidden border border-border shadow-lg">
+              <img
+                src={trucksImg}
+                alt="LKW-Flotte des METROPOL Bildungszentrums für die Ausbildung mit Bildungsgutschein in Hannover, Garbsen und Bremen"
+                width={1200}
+                height={800}
+                loading="eager"
+                className="w-full h-[320px] lg:h-[420px] object-cover"
+              />
+              <figcaption className="absolute bottom-0 inset-x-0 bg-background/85 backdrop-blur px-4 py-3 text-sm">
+                Eigene LKW-Flotte – Ausbildung zum Berufskraftfahrer (m/w/d) mit
+                Bildungsgutschein
+              </figcaption>
+            </figure>
             </div>
           </div>
         </section>
