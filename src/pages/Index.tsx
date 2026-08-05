@@ -4,6 +4,7 @@ import { Hero } from "@/components/sections/Hero";
 import { VideoPromo } from "@/components/sections/VideoPromo";
 import { CoursesFromDB } from "@/components/sections/CoursesFromDB";
 import { Features } from "@/components/sections/Features";
+import { Bildungsgutschein } from "@/components/sections/Bildungsgutschein";
 import { Locations } from "@/components/sections/Locations";
 import { Contact } from "@/components/sections/Contact";
 import { CTA } from "@/components/sections/CTA";
@@ -19,6 +20,7 @@ const Index = () => {
         <VideoPromo />
         <CoursesFromDB />
         <Features />
+        <Bildungsgutschein />
         <Locations />
         <CTA />
         <Contact />
