@@ -14,6 +14,10 @@ import {
 } from "@/components/ui/accordion";
 import { generateBreadcrumbData, SITE_URL } from "@/components/seo/StructuredData";
 import { bildungsgutscheinFaqs } from "@/data/bildungsgutschein";
+import trucksImg from "@/assets/trucks-metropol.jpg";
+import busImg from "@/assets/bus-metropol.jpg";
+import fleetImg from "@/assets/fleet-vehicles.jpg";
+import teamImg from "@/assets/fleet-team.webp";
 
 const PAGE_URL = `${SITE_URL}/bildungsgutschein`;
 
@@ -31,6 +35,8 @@ function BildungsgutscheinMeta() {
         "Mit dem Bildungsgutschein der Agentur für Arbeit oder vom Jobcenter zu 100 % geförderter Weiterbildung in Hannover, Garbsen und Bremen.",
       "og:type": "website",
       "og:url": PAGE_URL,
+      "og:image": `${SITE_URL}${trucksImg}`,
+      "twitter:card": "summary_large_image",
     };
 
     const created: HTMLElement[] = [];
@@ -82,6 +88,7 @@ function BildungsgutscheinMeta() {
           url: SITE_URL,
         },
         courseMode: "onsite",
+        image: [`${SITE_URL}${trucksImg}`, `${SITE_URL}${busImg}`],
         availableLanguage: ["German"],
         url: PAGE_URL,
         offers: {
@@ -170,7 +177,8 @@ export default function BildungsgutscheinPage() {
                 <li aria-current="page" className="text-foreground">Bildungsgutschein</li>
               </ol>
             </nav>
-            <div className="max-w-3xl">
+            <div className="grid lg:grid-cols-2 gap-10 items-center">
+            <div>
               <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-4">
                 <CreditCard className="h-4 w-4" />
                 AZAV-zertifiziert – 100 % Förderung möglich
@@ -196,6 +204,21 @@ export default function BildungsgutscheinPage() {
                   <a href="#bildungsgutschein-beantragen">Bildungsgutschein beantragen</a>
                 </Button>
               </div>
+            </div>
+            <figure className="relative rounded-2xl overflow-hidden border border-border shadow-lg">
+              <img
+                src={trucksImg}
+                alt="LKW-Flotte des METROPOL Bildungszentrums für die Ausbildung mit Bildungsgutschein in Hannover, Garbsen und Bremen"
+                width={1200}
+                height={800}
+                loading="eager"
+                className="w-full h-[320px] lg:h-[420px] object-cover"
+              />
+              <figcaption className="absolute bottom-0 inset-x-0 bg-background/85 backdrop-blur px-4 py-3 text-sm">
+                Eigene LKW-Flotte – Ausbildung zum Berufskraftfahrer (m/w/d) mit
+                Bildungsgutschein
+              </figcaption>
+            </figure>
             </div>
           </div>
         </section>
@@ -295,8 +318,59 @@ export default function BildungsgutscheinPage() {
           </div>
         </section>
 
+        {/* Fuhrpark-Galerie */}
+        <section className="py-16 bg-secondary" aria-labelledby="bg-fuhrpark">
+          <div className="container mx-auto px-4">
+            <h2 id="bg-fuhrpark" className="text-3xl font-bold mb-4 text-center">
+              Unsere LKW- und Bus-Flotte für Ihre geförderte Ausbildung
+            </h2>
+            <p className="text-muted-foreground text-center max-w-2xl mx-auto mb-10">
+              Moderne Ausbildungsfahrzeuge an allen Standorten – damit Sie Ihren
+              Bildungsgutschein in eine Praxisausbildung auf aktuellem Stand der Technik
+              einlösen.
+            </p>
+            <div className="grid gap-6 md:grid-cols-3">
+              {[
+                {
+                  src: fleetImg,
+                  alt: "Ausbildungs-LKW Klasse C/CE des METROPOL Bildungszentrums in Hannover",
+                  caption: "LKW Klasse C / CE",
+                },
+                {
+                  src: busImg,
+                  alt: "Ausbildungsbus Klasse D/DE für den Busführerschein mit Bildungsgutschein in Bremen",
+                  caption: "Bus Klasse D / DE",
+                },
+                {
+                  src: teamImg,
+                  alt: "Fahrlehrer-Team und Fahrzeugflotte des METROPOL Bildungszentrums in Garbsen",
+                  caption: "Team & Fuhrpark",
+                },
+              ].map((img) => (
+                <figure
+                  key={img.caption}
+                  className="rounded-xl overflow-hidden border border-border bg-card"
+                >
+                  <img
+                    src={img.src}
+                    alt={img.alt}
+                    width={800}
+                    height={600}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-56 object-cover"
+                  />
+                  <figcaption className="px-4 py-3 text-sm font-medium">
+                    {img.caption}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* FAQ */}
-        <section className="py-16 bg-secondary" aria-labelledby="bg-faq">
+        <section className="py-16" aria-labelledby="bg-faq">
           <div className="container mx-auto px-4 max-w-3xl">
             <h2 id="bg-faq" className="text-3xl font-bold mb-8 text-center">
               Häufige Fragen zum Bildungsgutschein
