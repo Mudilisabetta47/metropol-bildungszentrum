@@ -8,6 +8,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { bildungsgutscheinFaqs } from "@/data/bildungsgutschein";
+
+const faqs = bildungsgutscheinFaqs.slice(0, 5);
 
 const steps = [
   {
@@ -36,50 +39,13 @@ const steps = [
   },
 ];
 
-const faqs = [
-  {
-    q: "Kann ich mit einem Bildungsgutschein der Agentur für Arbeit zu METROPOL kommen?",
-    a: "Ja. METROPOL Bildungszentrum ist ein AZAV-zertifizierter Bildungsträger in Hannover, Garbsen und Bremen. Ihr Bildungsgutschein von der Agentur für Arbeit oder vom Jobcenter wird bei uns für alle geförderten Maßnahmen anerkannt – von der LKW-Ausbildung (Klasse C/CE) über die Busausbildung (Klasse D/DE) bis zur Berufskraftfahrer-Weiterbildung und Fahrlehrer-Ausbildung.",
-  },
-  {
-    q: "Für welche Kurse gilt der Bildungsgutschein?",
-    a: "Für alle AZAV-zertifizierten Maßnahmen bei uns: LKW-Ausbildung Klasse C/CE, Busausbildung Klasse D/DE, beschleunigte Grundqualifikation, BKF-Weiterbildung Module 1–5 sowie die Fahrlehrer-Ausbildung (m/w/d).",
-  },
-  {
-    q: "Was kostet mich die Ausbildung mit Bildungsgutschein?",
-    a: "In der Regel nichts. Bei einer Förderung durch Agentur für Arbeit oder Jobcenter werden die Lehrgangskosten zu 100 % übernommen. Wir sind zudem nach §4 Nr. 21 UStG umsatzsteuerbefreit – es entstehen keine versteckten Mehrwertsteuerkosten.",
-  },
-  {
-    q: "Wie schnell kann ich starten?",
-    a: "Sobald der Bildungsgutschein vorliegt, können Sie an unseren Standorten Hannover, Garbsen und Bremen meist innerhalb weniger Tage einsteigen. Bei laufenden Kursen prüfen wir kurzfristig freie Plätze für Sie.",
-  },
-  {
-    q: "Welche Unterlagen brauche ich?",
-    a: "Bildungsgutschein, Personalausweis und Ihr vorhandener Führerschein. Alles Weitere übernehmen wir für Sie.",
-  },
-];
-
 export function Bildungsgutschein() {
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((f) => ({
-      "@type": "Question",
-      name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
-    })),
-  };
-
   return (
     <section
       id="bildungsgutschein"
       className="py-20 bg-secondary"
       aria-labelledby="bildungsgutschein-heading"
     >
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
       <div className="container mx-auto px-4">
         <AnimatedSection>
           <div className="max-w-3xl mx-auto text-center mb-14">
@@ -140,8 +106,8 @@ export function Bildungsgutschein() {
                 </Link>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <Link to="/kontakt?anliegen=bildungsgutschein">
-                  Jetzt Kursplatz anfragen
+                <Link to="/bildungsgutschein">
+                  Alles zum Bildungsgutschein
                 </Link>
               </Button>
             </div>
