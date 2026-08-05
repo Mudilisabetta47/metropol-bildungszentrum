@@ -88,6 +88,7 @@ function BildungsgutscheinMeta() {
           url: SITE_URL,
         },
         courseMode: "onsite",
+        image: [`${SITE_URL}${trucksImg}`, `${SITE_URL}${busImg}`],
         availableLanguage: ["German"],
         url: PAGE_URL,
         offers: {
@@ -369,7 +370,7 @@ export default function BildungsgutscheinPage() {
         </section>
 
         {/* FAQ */}
-        <section className="py-16 bg-secondary" aria-labelledby="bg-faq">
+        <section className="py-16" aria-labelledby="bg-faq">
           <div className="container mx-auto px-4 max-w-3xl">
             <h2 id="bg-faq" className="text-3xl font-bold mb-8 text-center">
               Häufige Fragen zum Bildungsgutschein
