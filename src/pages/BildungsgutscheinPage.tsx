@@ -317,6 +317,57 @@ export default function BildungsgutscheinPage() {
           </div>
         </section>
 
+        {/* Fuhrpark-Galerie */}
+        <section className="py-16 bg-secondary" aria-labelledby="bg-fuhrpark">
+          <div className="container mx-auto px-4">
+            <h2 id="bg-fuhrpark" className="text-3xl font-bold mb-4 text-center">
+              Unsere LKW- und Bus-Flotte für Ihre geförderte Ausbildung
+            </h2>
+            <p className="text-muted-foreground text-center max-w-2xl mx-auto mb-10">
+              Moderne Ausbildungsfahrzeuge an allen Standorten – damit Sie Ihren
+              Bildungsgutschein in eine Praxisausbildung auf aktuellem Stand der Technik
+              einlösen.
+            </p>
+            <div className="grid gap-6 md:grid-cols-3">
+              {[
+                {
+                  src: fleetImg,
+                  alt: "Ausbildungs-LKW Klasse C/CE des METROPOL Bildungszentrums in Hannover",
+                  caption: "LKW Klasse C / CE",
+                },
+                {
+                  src: busImg,
+                  alt: "Ausbildungsbus Klasse D/DE für den Busführerschein mit Bildungsgutschein in Bremen",
+                  caption: "Bus Klasse D / DE",
+                },
+                {
+                  src: teamImg,
+                  alt: "Fahrlehrer-Team und Fahrzeugflotte des METROPOL Bildungszentrums in Garbsen",
+                  caption: "Team & Fuhrpark",
+                },
+              ].map((img) => (
+                <figure
+                  key={img.caption}
+                  className="rounded-xl overflow-hidden border border-border bg-card"
+                >
+                  <img
+                    src={img.src}
+                    alt={img.alt}
+                    width={800}
+                    height={600}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-56 object-cover"
+                  />
+                  <figcaption className="px-4 py-3 text-sm font-medium">
+                    {img.caption}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* FAQ */}
         <section className="py-16 bg-secondary" aria-labelledby="bg-faq">
           <div className="container mx-auto px-4 max-w-3xl">
