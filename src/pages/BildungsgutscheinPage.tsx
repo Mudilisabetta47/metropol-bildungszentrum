@@ -304,9 +304,7 @@ export default function BildungsgutscheinPage() {
             <Accordion type="single" collapsible className="w-full">
               {bildungsgutscheinFaqs.map((faq, i) => (
                 <AccordionItem key={faq.q} value={`faq-${i}`}>
-                  <AccordionTrigger className="text-left">
-                    <h3 className="text-base font-semibold">{faq.q}</h3>
-                  </AccordionTrigger>
+                  <AccordionTrigger className="text-left">{faq.q}</AccordionTrigger>
                   <AccordionContent className="text-muted-foreground leading-relaxed">
                     {faq.a}
                   </AccordionContent>
