@@ -1,4 +1,4 @@
-import { CreditCard, ArrowLeftRight, CheckCircle2, FileCheck, Phone } from "lucide-react";
+import { CreditCard, GraduationCap, CheckCircle2, FileCheck, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
@@ -23,10 +23,10 @@ const steps = [
       "Sie erhalten von uns ein Angebot und alle AZAV-Nachweise für Agentur für Arbeit oder Jobcenter – wir helfen beim Antrag.",
   },
   {
-    icon: ArrowLeftRight,
-    title: "3. Wechsel oder Start",
+    icon: GraduationCap,
+    title: "3. Ausbildung starten",
     description:
-      "Sie starten bei uns – auch mitten in der Ausbildung. Ein Fahrschulwechsel mit Bildungsgutschein ist jederzeit möglich.",
+      "Nach Bewilligung geht es los – mit festen Kursterminen an unseren Standorten Hannover, Garbsen und Bremen.",
   },
   {
     icon: CheckCircle2,
@@ -42,8 +42,8 @@ const faqs = [
     a: "Ja. METROPOL Bildungszentrum ist ein AZAV-zertifizierter Bildungsträger in Hannover, Garbsen und Bremen. Ihr Bildungsgutschein von der Agentur für Arbeit oder vom Jobcenter wird bei uns für alle geförderten Maßnahmen anerkannt – von der LKW-Ausbildung (Klasse C/CE) über die Busausbildung (Klasse D/DE) bis zur Berufskraftfahrer-Weiterbildung und Fahrlehrer-Ausbildung.",
   },
   {
-    q: "Ist ein Fahrschulwechsel mit Bildungsgutschein möglich?",
-    a: "Ja. Sie sind an keine Fahrschule gebunden. Sie können Ihren Bildungsgutschein frei bei jedem zugelassenen Träger einlösen und jederzeit zu uns wechseln – auch wenn Ihre Ausbildung bereits läuft. Bereits absolvierte Theorie- und Praxisstunden rechnen wir nach Prüfung an, damit nichts verloren geht.",
+    q: "Für welche Kurse gilt der Bildungsgutschein?",
+    a: "Für alle AZAV-zertifizierten Maßnahmen bei uns: LKW-Ausbildung Klasse C/CE, Busausbildung Klasse D/DE, beschleunigte Grundqualifikation, BKF-Weiterbildung Module 1–5 sowie die Fahrlehrer-Ausbildung (m/w/d).",
   },
   {
     q: "Was kostet mich die Ausbildung mit Bildungsgutschein?",
@@ -54,8 +54,8 @@ const faqs = [
     a: "Sobald der Bildungsgutschein vorliegt, können Sie an unseren Standorten Hannover, Garbsen und Bremen meist innerhalb weniger Tage einsteigen. Bei laufenden Kursen prüfen wir kurzfristig freie Plätze für Sie.",
   },
   {
-    q: "Welche Unterlagen brauche ich für den Wechsel?",
-    a: "Bildungsgutschein, Personalausweis, vorhandener Führerschein sowie – falls vorhanden – der Ausbildungsnachweis Ihrer bisherigen Fahrschule. Alles Weitere übernehmen wir für Sie.",
+    q: "Welche Unterlagen brauche ich?",
+    a: "Bildungsgutschein, Personalausweis und Ihr vorhandener Führerschein. Alles Weitere übernehmen wir für Sie.",
   },
 ];
 
@@ -91,14 +91,12 @@ export function Bildungsgutschein() {
               id="bildungsgutschein-heading"
               className="text-3xl md:text-4xl font-bold mb-4"
             >
-              Bildungsgutschein einlösen &amp; Fahrschule wechseln
+              Bildungsgutschein einlösen
             </h2>
             <p className="text-lg text-muted-foreground">
               Mit dem <strong>Bildungsgutschein der Agentur für Arbeit</strong> oder
               vom <strong>Jobcenter</strong> starten Sie bei uns in Hannover, Garbsen
-              und Bremen kostenfrei durch. Und falls Sie unzufrieden sind: Ein{" "}
-              <strong>Fahrschulwechsel</strong> ist jederzeit möglich – auch mitten
-              in der laufenden Ausbildung.
+              und Bremen in Ihre neue berufliche Zukunft.
             </p>
           </div>
         </AnimatedSection>
@@ -122,7 +120,7 @@ export function Bildungsgutschein() {
         <AnimatedSection>
           <div className="max-w-3xl mx-auto">
             <h3 className="text-2xl font-bold mb-6 text-center">
-              Häufige Fragen zu Bildungsgutschein &amp; Fahrschulwechsel
+              Häufige Fragen zum Bildungsgutschein
             </h3>
             <Accordion type="single" collapsible className="w-full">
               {faqs.map((faq, i) => (
@@ -142,8 +140,8 @@ export function Bildungsgutschein() {
                 </Link>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <Link to="/kontakt?anliegen=fahrschulwechsel">
-                  Jetzt Fahrschule wechseln
+                <Link to="/kontakt?anliegen=bildungsgutschein">
+                  Jetzt Kursplatz anfragen
                 </Link>
               </Button>
             </div>
