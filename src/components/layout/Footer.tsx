@@ -9,6 +9,7 @@ const courses = [
   { name: "Führerschein C1/C1E", href: "/fuehrerschein/c1-c1e" },
   { name: "Busführerschein D/DE", href: "/fuehrerschein/d-de" },
   { name: "Fahrlehrer*innen-Ausbildung", href: "/fahrlehrer-ausbildung" },
+  { name: "Bildungsgutschein einlösen", href: "/bildungsgutschein" },
   { name: "BKF-Weiterbildung Module 1-5", href: "/fuehrerschein/bkf-weiterbildung" },
   { name: "Auslieferungsfahrer", href: "/fuehrerschein/auslieferungsfahrer" },
   { name: "Citylogistiker", href: "/fuehrerschein/citylogistiker" },

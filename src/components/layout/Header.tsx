@@ -15,6 +15,7 @@ const licenseClasses = [
   { name: "Führerschein D/DE", href: "/fuehrerschein/d-de", description: "Bus-Führerschein" },
   { name: "Fahrlehrer-Ausbildung", href: "/fahrlehrer-ausbildung", description: "Werden Sie Fahrlehrer" },
   { name: "BKF-Weiterbildung", href: "/fuehrerschein/bkf-weiterbildung", description: "Module 1-5" },
+  { name: "Bildungsgutschein", href: "/bildungsgutschein", description: "100 % gefördert weiterbilden" },
   { name: "Auslieferungsfahrer", href: "/fuehrerschein/auslieferungsfahrer", description: "Klasse B" },
   { name: "Citylogistiker", href: "/fuehrerschein/citylogistiker", description: "Klasse B/BE" },
 ];
@@ -23,7 +24,8 @@ const navigation = [
   { name: "Startseite", href: "/", num: "01" },
   { name: "Führerschein", href: "#", num: "02", hasDropdown: true },
   { name: "Ausbildungsklassen", href: "/ueber-uns", num: "03" },
-  { name: "Kontakt", href: "/kontakt", num: "04" },
+  { name: "Bildungsgutschein", href: "/bildungsgutschein", num: "04" },
+  { name: "Kontakt", href: "/kontakt", num: "05" },
 ];
 
 export function Header() {

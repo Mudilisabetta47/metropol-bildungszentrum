@@ -14,6 +14,7 @@ import Index from "./pages/Index";
 
 // Lazy loaded pages
 const FahrlehrerPage = lazy(() => import("./pages/FahrlehrerPage"));
+const BildungsgutscheinPage = lazy(() => import("./pages/BildungsgutscheinPage"));
 const LicenseClassPage = lazy(() => import("./pages/LicenseClassPage"));
 const LocationPage = lazy(() => import("./pages/LocationPage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
@@ -62,6 +63,19 @@ function PageLoader() {
   );
 }
 
+function ScrollToHash() {
+  const { hash, pathname } = useLocation();
+  useEffect(() => {
+    if (!hash) return;
+    const id = hash.slice(1);
+    const t = window.setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 300);
+    return () => window.clearTimeout(t);
+  }, [hash, pathname]);
+  return null;
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -70,6 +84,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ScrollToHash />
             <Suspense fallback={<PageLoader />}>
               <Routes>
                 <Route path="/" element={<Index />} />
@@ -79,6 +94,7 @@ const App = () => (
                 <Route path="/impressum" element={<ImpressumPage />} />
                 <Route path="/datenschutz" element={<DatenschutzPage />} />
                 <Route path="/fahrlehrer-ausbildung" element={<FahrlehrerPage />} />
+                <Route path="/bildungsgutschein" element={<BildungsgutscheinPage />} />
                 <Route path="/fuehrerschein/:classType" element={<LicenseClassPage />} />
                 <Route path="/standort/:locationSlug" element={<LocationPage />} />
 
