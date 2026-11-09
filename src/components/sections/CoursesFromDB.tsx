@@ -85,7 +85,7 @@ export function CoursesFromDB() {
 
   if (isLoading) {
     return (
-      <section id="kurse" className="py-24 bg-secondary">
+      <section id="kurse" className="py-24 md:py-32 bg-secondary">
         <div className="section-container">
           <div className="flex items-center justify-center py-20">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -98,7 +98,7 @@ export function CoursesFromDB() {
 
   if (error) {
     return (
-      <section id="kurse" className="py-24 bg-secondary">
+      <section id="kurse" className="py-24 md:py-32 bg-secondary">
         <div className="section-container">
           <div className="text-center py-20">
             <p className="text-destructive">Fehler beim Laden der Kurse</p>
@@ -109,13 +109,13 @@ export function CoursesFromDB() {
   }
 
   return (
-    <section id="kurse" className="py-24 bg-secondary relative overflow-hidden">
+    <section id="kurse" className="py-24 md:py-32 bg-secondary relative overflow-hidden">
       <TrafficSignPattern />
       <div className="section-container relative z-10">
         {/* Header */}
         <AnimatedSection className="text-center max-w-3xl mx-auto mb-12">
-          <p className="text-primary font-semibold text-sm uppercase tracking-wider mb-4">Unser Angebot</p>
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
+          <p className="inline-flex items-center gap-3 text-primary font-semibold text-xs uppercase tracking-[0.2em] mb-5"><span className="h-px w-8 bg-primary" />Unser Angebot</p>
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground mb-6">
             Professionelle Aus- und Weiterbildung
           </h2>
           <p className="text-lg text-muted-foreground">
@@ -154,7 +154,7 @@ export function CoursesFromDB() {
               <AnimatedSection key={course.id} delay={index * 80}>
               <div
                 className={cn(
-                  "card-elevated p-6 flex flex-col relative overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300",
+                  "card-elevated rounded-3xl border border-border/60 p-7 flex flex-col relative overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300",
                   isFeatured && "ring-2 ring-primary",
                   isUrgent && "ring-2 ring-destructive/50"
                 )}

@@ -9,13 +9,13 @@ export function Locations() {
   const { data: locations = [], isLoading } = useLocations();
 
   return (
-    <section id="standorte" className="py-24 bg-background relative overflow-hidden">
+    <section id="standorte" className="py-24 md:py-32 bg-background relative overflow-hidden">
       <TrafficSignPattern className="opacity-50" />
       <div className="section-container relative z-10">
         {/* Header */}
         <AnimatedSection className="text-center max-w-3xl mx-auto mb-16">
-          <p className="text-accent font-semibold text-sm uppercase tracking-wider mb-4">Unsere Standorte</p>
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
+          <p className="inline-flex items-center gap-3 text-primary font-semibold text-xs uppercase tracking-[0.2em] mb-5"><span className="h-px w-8 bg-primary" />Unsere Standorte</p>
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground mb-6">
             {locations.length} Standorte in Ihrer Nähe
           </h2>
           <p className="text-lg text-muted-foreground">
@@ -33,7 +33,7 @@ export function Locations() {
           <div className="grid lg:grid-cols-3 gap-8">
             {locations.map((location, i) => (
               <AnimatedSection key={location.id} delay={i * 150}>
-                <div className="group card-elevated overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <div className="group card-elevated rounded-3xl border border-border/60 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                   {location.map_url && (
                     <div className="aspect-video bg-muted relative overflow-hidden">
                       <iframe
