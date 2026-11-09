@@ -33,7 +33,7 @@ export function Locations() {
           <div className="grid lg:grid-cols-3 gap-8">
             {locations.map((location, i) => (
               <AnimatedSection key={location.id} delay={i * 150}>
-                <div className="group card-elevated overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <div className="group card-elevated rounded-3xl border border-border/60 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                   {location.map_url && (
                     <div className="aspect-video bg-muted relative overflow-hidden">
                       <iframe

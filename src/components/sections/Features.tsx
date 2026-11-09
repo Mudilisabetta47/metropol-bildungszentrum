@@ -134,7 +134,7 @@ export function Features() {
               <img 
                 src={fleetVehicles}
                 alt="Metropol Fahrzeugflotte - LKW, Bus und Fahrschulwagen"
-                className="rounded-2xl shadow-xl w-full hover:shadow-2xl transition-shadow duration-500"
+                className="rounded-3xl shadow-2xl w-full hover:shadow-2xl transition-shadow duration-500"
               />
               <div className="absolute -bottom-6 -right-6 bg-primary text-primary-foreground rounded-xl p-6 shadow-xl hidden sm:block">
                 <p className="font-display text-3xl font-bold">25+</p>

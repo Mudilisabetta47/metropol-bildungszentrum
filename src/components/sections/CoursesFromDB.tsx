@@ -154,7 +154,7 @@ export function CoursesFromDB() {
               <AnimatedSection key={course.id} delay={index * 80}>
               <div
                 className={cn(
-                  "card-elevated p-6 flex flex-col relative overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300",
+                  "card-elevated rounded-3xl border border-border/60 p-7 flex flex-col relative overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300",
                   isFeatured && "ring-2 ring-primary",
                   isUrgent && "ring-2 ring-destructive/50"
                 )}
