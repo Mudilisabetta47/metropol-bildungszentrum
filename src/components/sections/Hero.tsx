@@ -31,7 +31,7 @@ const slides = [
     title: "Werde",
     highlight: "Fahrlehrer*in.",
     subtitle: "Werden Sie Teil unseres Teams und geben Sie Ihr Wissen an die nächste Generation weiter.",
-    link: "/fuehrerschein/fahrlehrer",
+    link: "/fahrlehrer-ausbildung",
     objectPosition: "center 15%",
   },
   {
@@ -107,16 +107,19 @@ export function Hero() {
               style={{ transform: `translateY(${parallaxOffset * 0.3}px) scale(1.1)`, objectPosition: slide.objectPosition }}
             />
             {/* Overlays */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/30" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-foreground/90 via-foreground/55 to-foreground/10" />
+            <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-transparent to-transparent" />
 
             {/* Content */}
             <div
-              className="absolute inset-0 flex items-end pb-20 sm:pb-24 md:items-center md:pb-0"
+              className="absolute inset-0 flex items-end pb-20 sm:pb-24 md:items-center md:pb-24"
               style={{ transform: `translateY(${-parallaxOffset * 0.1}px)` }}
             >
               <div className="section-container w-full">
-                <div className="max-w-2xl text-white">
+                <div className="max-w-2xl text-background animate-fade-in" key={isActive ? "on" : "off"}>
+                  <span className="inline-flex items-center gap-2 mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+                    <span className="h-px w-8 bg-primary" />METROPOL Bildungszentrum · Hannover · Garbsen · Bremen
+                  </span>
                   {/* Trust badges inside slide */}
                   <div className="flex flex-wrap gap-2 mb-5">
                     {badges.map((b, i) => (
@@ -177,8 +180,27 @@ export function Hero() {
         <ChevronRight className="h-5 w-5" />
       </button>
 
+      {/* Stats strip */}
+      <div className="absolute bottom-0 inset-x-0 z-10 hidden md:block">
+        <div className="section-container">
+          <div className="grid grid-cols-4 rounded-t-2xl bg-background/95 backdrop-blur-md shadow-2xl border border-border/60 divide-x divide-border">
+            {[
+              ["25+", "Jahre Erfahrung"],
+              ["95 %", "Erstbestehensquote"],
+              ["100 %", "Förderung mit Bildungsgutschein"],
+              ["3", "Standorte in Niedersachsen & Bremen"],
+            ].map(([v, l]) => (
+              <div key={l} className="px-6 py-5">
+                <div className="font-display text-3xl font-bold text-foreground">{v}</div>
+                <div className="text-sm text-muted-foreground">{l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Slide indicators */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+      <div className="absolute bottom-6 md:bottom-32 left-1/2 -translate-x-1/2 flex gap-2 z-10">
         {slides.map((_, index) => (
           <button
             key={index}
