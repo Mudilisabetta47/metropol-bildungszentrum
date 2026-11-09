@@ -95,7 +95,7 @@ function GoogleReviewBadge() {
 
 export function Features() {
   return (
-    <section id="ueber-uns" className="py-24 bg-background relative overflow-hidden">
+    <section id="ueber-uns" className="py-24 md:py-32 bg-background relative overflow-hidden">
       <TrafficSignPattern className="opacity-50" />
       <div className="section-container relative z-10">
         {/* Trust badges section */}
@@ -145,8 +145,8 @@ export function Features() {
 
           {/* Content */}
           <AnimatedSection direction="right" delay={200}>
-            <p className="text-primary font-semibold text-sm uppercase tracking-wider mb-4">Warum Metropol</p>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold text-foreground mb-6">Ihre Vorteile bei uns</h2>
+            <p className="inline-flex items-center gap-3 text-primary font-semibold text-xs uppercase tracking-[0.2em] mb-5"><span className="h-px w-8 bg-primary" />Warum Metropol</p>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-foreground mb-6">Ihre Vorteile bei uns</h2>
             <p className="text-lg text-muted-foreground mb-8">
               Wir setzen auf Qualität, Erfahrung und persönliche Betreuung für Ihren Erfolg.
             </p>

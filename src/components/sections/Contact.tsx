@@ -157,7 +157,7 @@ export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
 
   if (isSubmitted) {
     return (
-      <section id="kontakt" className="py-24 bg-secondary">
+      <section id="kontakt" className="py-24 md:py-32 bg-secondary">
         <div className="section-container">
           <div className="max-w-2xl mx-auto text-center">
             <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-accent/10 flex items-center justify-center">
@@ -182,14 +182,14 @@ export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
   }
 
   return (
-    <section id="kontakt" className="py-24 bg-secondary relative overflow-hidden">
+    <section id="kontakt" className="py-24 md:py-32 bg-secondary relative overflow-hidden">
       <TrafficSignPattern />
       <div className="section-container relative z-10">
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           {/* Info */}
           <div>
-            <p className="text-accent font-semibold text-sm uppercase tracking-wider mb-4">Kontakt & Beratung</p>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
+            <p className="inline-flex items-center gap-3 text-primary font-semibold text-xs uppercase tracking-[0.2em] mb-5"><span className="h-px w-8 bg-primary" />Kontakt & Beratung</p>
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground mb-6">
               {selectedCourse ? `Interesse an: ${courseLabel}` : "Starten Sie jetzt Ihre Ausbildung"}
             </h2>
             <p className="text-lg text-muted-foreground mb-8">
@@ -200,7 +200,7 @@ export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
 
             {/* Guarantee badges */}
             <div className="grid sm:grid-cols-2 gap-4 mb-8">
-              <div className="flex items-start gap-3 p-4 rounded-xl bg-card border border-border">
+              <div className="flex items-start gap-3 p-4 rounded-2xl bg-card border border-border/60 shadow-sm">
                 <div className="p-2 rounded-lg bg-accent/10">
                   <Clock className="h-5 w-5 text-accent" />
                 </div>
@@ -209,7 +209,7 @@ export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
                   <p className="text-xs text-muted-foreground">Innerhalb von 24 Stunden</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 p-4 rounded-xl bg-card border border-border">
+              <div className="flex items-start gap-3 p-4 rounded-2xl bg-card border border-border/60 shadow-sm">
                 <div className="p-2 rounded-lg bg-accent/10">
                   <Shield className="h-5 w-5 text-accent" />
                 </div>
@@ -222,7 +222,7 @@ export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
 
             {/* Contact options - with Regina Martin */}
             <div className="space-y-4 mb-8">
-              <div className="flex items-start gap-4 p-4 rounded-xl bg-card border border-border hover:border-primary/30 transition-colors">
+              <div className="flex items-start gap-4 p-4 rounded-2xl bg-card border border-border/60 shadow-sm hover:border-primary/30 transition-colors">
                 <img 
                   src={reginaMartin} 
                   alt={settings?.contact_person_name || "Ansprechpartnerin"} 
@@ -238,7 +238,7 @@ export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
                 </div>
               </div>
 
-              <div className="flex items-start gap-4 p-4 rounded-xl bg-card border border-border hover:border-primary/30 transition-colors">
+              <div className="flex items-start gap-4 p-4 rounded-2xl bg-card border border-border/60 shadow-sm hover:border-primary/30 transition-colors">
                 <div className="p-3 rounded-lg bg-primary text-primary-foreground">
                   <Mail className="h-5 w-5" />
                 </div>
@@ -274,7 +274,7 @@ export function Contact({ preselectedCourse, additionalInfo }: ContactProps) {
           </div>
 
           {/* Form */}
-          <div className="bg-card rounded-2xl border-2 border-primary/20 p-8 shadow-xl">
+          <div className="bg-card rounded-3xl border border-border/60 p-8 md:p-10 shadow-2xl">
             <div className="mb-6">
               <h3 className="font-display font-bold text-xl text-foreground mb-2">
                 Unverbindliche Anfrage
